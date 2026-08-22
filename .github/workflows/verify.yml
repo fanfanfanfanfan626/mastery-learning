@@ -1,0 +1,30 @@
+name: verify
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      PYTHONUTF8: "1"
+      MASTERY_HOME: ${{ github.workspace }}/work/ci-mastery-home
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Audit curriculum
+        run: python plugins/mastery-learning/skills/mastery-coach/scripts/curriculum_audit.py
+      - name: Compile Python sources
+        run: python -m compileall -q plugins quality
+      - name: Run system tests
+        run: python -m unittest discover -s quality -p "test_*.py" -v

@@ -1,0 +1,227 @@
+{
+  "schema_version": 1,
+  "id": "ml-ai-llm",
+  "version": "2026.08",
+  "title": "Machine Learning, AI, and LLM Capability Map",
+  "description": "A coverage baseline to prune and reorder after diagnostic evidence; not a fixed linear course.",
+  "scope": {
+    "included": [
+      "software and mathematical prerequisites",
+      "classical artificial intelligence and machine learning",
+      "deep learning and language-model foundations",
+      "LLM application engineering, evaluation, security, and operations",
+      "research reading, replication, and integrated capability"
+    ],
+    "excluded": [
+      "advanced robotics and control",
+      "domain-specialist computer vision and speech systems",
+      "custom accelerator and distributed-training implementation",
+      "formal certification or degree equivalence"
+    ]
+  },
+  "target_profiles": {
+    "llm-application-builder": ["production-ops", "responsible-ai", "agents-memory"],
+    "ml-engineer": ["linear-models", "trees-ensembles", "kernels-neighbors", "unsupervised-learning", "ml-pipelines", "convolution", "ml-production-ops"],
+    "ai-systems-builder": ["constraint-planning", "knowledge-representation", "sequential-decision-rl", "ml-production-ops"],
+    "llm-engineer": ["production-ops", "responsible-ai", "adaptation-alignment", "pretraining-scaling"],
+    "research": ["integrated-capstone"]
+  },
+  "target_outcomes": {
+    "llm-application-builder": ["Build and evaluate a grounded LLM application with typed tools, representative evals, and explicit security boundaries."],
+    "ml-engineer": ["Frame, train, evaluate, debug, and operate a reproducible machine-learning system against a real decision objective."],
+    "ai-systems-builder": ["Model and implement search, inference, planning, learning, and evaluation components for a bounded artificial-intelligence system."],
+    "llm-engineer": ["Explain and implement the major model and systems mechanisms behind a reliable language-model product."],
+    "research": ["Read, reproduce, challenge, and defend a scoped machine-learning or language-model research result with appropriate controls."]
+  },
+  "sources": [
+    {
+      "id": "d2l",
+      "title": "Dive into Deep Learning",
+      "organization": "Dive into Deep Learning authors and contributors",
+      "url": "https://d2l.ai/",
+      "type": "open-textbook",
+      "authority": "Maintained technical textbook with executable examples",
+      "version_or_date": "Current web edition checked 2026-08-22",
+      "license_reuse": "Link and paraphrase; verify the edition's stated license before redistributing text, figures, or code.",
+      "concepts": ["numpy", "linear-algebra", "calculus-autodiff", "probability", "optimization", "information-theory", "sequential-decision-rl", "tensors-backprop", "neural-training", "convolution", "sequence-models", "attention"],
+      "known_gaps": "Broad treatment; use original papers and framework documentation for fast-moving implementation details.",
+      "checked_at": "2026-08-22"
+    },
+    {
+      "id": "islp",
+      "title": "An Introduction to Statistical Learning",
+      "organization": "StatLearning authors and Springer",
+      "url": "https://www.statlearning.com/",
+      "type": "open-access-textbook",
+      "authority": "Widely used statistical-learning textbook maintained by its authors",
+      "version_or_date": "Current site and editions checked 2026-08-22",
+      "license_reuse": "Free access does not imply open redistribution; link and paraphrase unless publisher terms explicitly allow reuse.",
+      "concepts": ["probability", "statistics", "experiment-design", "linear-models", "trees-ensembles", "kernels-neighbors", "unsupervised-learning"],
+      "known_gaps": "Emphasizes statistical learning rather than production systems or modern foundation models.",
+      "checked_at": "2026-08-22"
+    },
+    {
+      "id": "sklearn",
+      "title": "scikit-learn User Guide",
+      "organization": "scikit-learn developers",
+      "url": "https://scikit-learn.org/stable/user_guide.html",
+      "type": "official-docs",
+      "authority": "Official maintained documentation for the referenced library",
+      "version_or_date": "Stable documentation checked 2026-08-22",
+      "license_reuse": "Link to canonical documentation; verify project BSD licensing and documentation terms before redistribution.",
+      "concepts": ["data-basics", "data-quality", "metrics-error-analysis", "linear-models", "trees-ensembles", "kernels-neighbors", "unsupervised-learning", "ml-pipelines"],
+      "known_gaps": "Library-specific guidance is not a substitute for statistical assumptions or deployment design.",
+      "checked_at": "2026-08-22"
+    },
+    {
+      "id": "pytorch",
+      "title": "PyTorch Tutorials",
+      "organization": "PyTorch Foundation and contributors",
+      "url": "https://pytorch.org/tutorials/",
+      "type": "official-docs",
+      "authority": "Official maintained framework tutorials",
+      "version_or_date": "Current tutorials checked 2026-08-22",
+      "license_reuse": "Link to canonical tutorials; verify current code and documentation licenses before redistribution.",
+      "concepts": ["python", "git-tests", "calculus-autodiff", "tensors-backprop", "neural-training", "convolution", "attention"],
+      "known_gaps": "Framework examples can hide conceptual prerequisites and do not establish model validity by themselves.",
+      "checked_at": "2026-08-22"
+    },
+    {
+      "id": "cs188",
+      "title": "UC Berkeley CS188: Introduction to Artificial Intelligence",
+      "organization": "University of California, Berkeley",
+      "url": "https://inst.eecs.berkeley.edu/~cs188/",
+      "type": "university-course",
+      "authority": "Maintained university course covering classical artificial intelligence",
+      "version_or_date": "Public course site checked 2026-08-22",
+      "license_reuse": "Link and paraphrase only unless a specific artifact states a reusable license.",
+      "concepts": ["state-space-search", "constraint-planning", "knowledge-representation", "sequential-decision-rl"],
+      "known_gaps": "Course editions differ and do not cover every modern deep-learning or production topic.",
+      "checked_at": "2026-08-22"
+    },
+    {
+      "id": "hf",
+      "title": "Hugging Face LLM Course",
+      "organization": "Hugging Face",
+      "url": "https://huggingface.co/learn/llm-course/",
+      "type": "open-course",
+      "authority": "Maintained course from a major open-source model tooling organization",
+      "version_or_date": "Current course checked 2026-08-22",
+      "license_reuse": "Link and paraphrase; verify the repository license for any copied code or media.",
+      "concepts": ["tokenization", "transformer", "decoding", "adaptation-alignment"],
+      "known_gaps": "Tooling-oriented examples may lag research and do not replace original papers or independent evaluation.",
+      "checked_at": "2026-08-22"
+    },
+    {
+      "id": "cs336",
+      "title": "Stanford CS336: Language Modeling from Scratch",
+      "organization": "Stanford University",
+      "url": "https://cs336.stanford.edu/",
+      "type": "university-course",
+      "authority": "Advanced university course grounded in implementation and research literature",
+      "version_or_date": "Spring 2026 edition checked 2026-08-22",
+      "license_reuse": "Link and paraphrase; course access does not grant blanket redistribution rights.",
+      "concepts": ["compute-systems", "tokenization", "transformer", "pretraining-scaling", "adaptation-alignment", "inference-systems", "research-reading", "replication-ablation", "integrated-capstone"],
+      "known_gaps": "Advanced and compute-intensive; it assumes substantial mathematics and systems preparation.",
+      "checked_at": "2026-08-22"
+    },
+    {
+      "id": "fsdl",
+      "title": "Full Stack Deep Learning",
+      "organization": "Full Stack Deep Learning",
+      "url": "https://fullstackdeeplearning.com/",
+      "type": "open-course",
+      "authority": "Maintained practitioner course on the deep-learning product lifecycle",
+      "version_or_date": "Current public course materials checked 2026-08-22",
+      "license_reuse": "Link and paraphrase; verify each course artifact's reuse terms before redistribution.",
+      "concepts": ["problem-framing", "data-quality", "experiment-design", "metrics-error-analysis", "ml-pipelines", "ml-production-ops", "inference-systems", "retrieval", "agents-memory", "evals", "llm-security", "responsible-ai", "production-ops", "replication-ablation", "integrated-capstone"],
+      "known_gaps": "Practice-oriented coverage is not a substitute for primary research evidence or organization-specific controls.",
+      "checked_at": "2026-08-22"
+    },
+    {
+      "id": "openai-docs",
+      "title": "OpenAI Developer Documentation",
+      "organization": "OpenAI",
+      "url": "https://developers.openai.com/",
+      "type": "official-docs",
+      "authority": "Primary documentation for OpenAI developer products",
+      "version_or_date": "Live documentation checked 2026-08-22",
+      "license_reuse": "Link to canonical pages and follow site terms; do not redistribute documentation wholesale.",
+      "concepts": ["structured-llm", "tools-workflows", "agents-memory", "multimodal-systems", "evals", "llm-security", "responsible-ai", "production-ops"],
+      "known_gaps": "Product-specific and fast-moving; re-check current APIs, model behavior, pricing, and limits before use.",
+      "checked_at": "2026-08-22"
+    },
+    {
+      "id": "openai-cookbook",
+      "title": "OpenAI Cookbook",
+      "organization": "OpenAI and cookbook contributors",
+      "url": "https://cookbook.openai.com/",
+      "type": "official-examples",
+      "authority": "Official example collection supporting OpenAI developer workflows",
+      "version_or_date": "Live cookbook checked 2026-08-22",
+      "license_reuse": "Link to canonical examples and verify the repository license and individual dependencies before reuse.",
+      "concepts": ["structured-llm", "retrieval", "tools-workflows", "evals"],
+      "known_gaps": "Examples illustrate patterns but are not guarantees of production fitness or comprehensive safety coverage.",
+      "checked_at": "2026-08-22"
+    }
+  ],
+  "concepts": [
+    {"id":"python","module":"computing","prerequisites":[],"outcome":"Write, trace, test, and debug small Python programs.","required_dimensions":["recall","application","debugging"],"sources":["pytorch"]},
+    {"id":"numpy","module":"computing","prerequisites":["python"],"outcome":"Use arrays, shapes, indexing, broadcasting, and vectorization safely.","required_dimensions":["conceptual","application","debugging"],"sources":["d2l"]},
+    {"id":"git-tests","module":"computing","prerequisites":["python"],"outcome":"Use version control and deterministic tests to run reproducible exercises.","required_dimensions":["application","debugging"],"sources":["pytorch"]},
+    {"id":"compute-systems","module":"computing","prerequisites":["python"],"outcome":"Reason about processes, memory, CPU/GPU execution, and bottlenecks.","required_dimensions":["conceptual","application"],"sources":["cs336"]},
+    {"id":"data-basics","module":"computing","prerequisites":["python"],"outcome":"Read, validate, transform, and query common data formats.","required_dimensions":["application","debugging"],"sources":["sklearn"]},
+
+    {"id":"linear-algebra","module":"math-core","prerequisites":["numpy"],"outcome":"Translate vector and matrix operations among geometry, algebra, and code.","required_dimensions":["conceptual","application","transfer"],"sources":["d2l"]},
+    {"id":"calculus-autodiff","module":"math-core","prerequisites":["linear-algebra"],"outcome":"Derive gradients with the chain rule and verify them numerically or with autodiff.","required_dimensions":["conceptual","application","debugging"],"sources":["d2l","pytorch"]},
+    {"id":"probability","module":"math-core","prerequisites":["numpy"],"outcome":"Model conditional uncertainty with random variables, expectation, and Bayes rule.","required_dimensions":["recall","conceptual","application"],"sources":["d2l","islp"]},
+    {"id":"statistics","module":"math-core","prerequisites":["probability","data-basics"],"outcome":"Reason about samples, estimators, uncertainty, bias, variance, and leakage.","required_dimensions":["conceptual","application","transfer"],"sources":["islp"]},
+    {"id":"optimization","module":"math-core","prerequisites":["calculus-autodiff","linear-algebra"],"outcome":"Explain and apply gradient optimization, regularization, and conditioning trade-offs.","required_dimensions":["conceptual","application","debugging"],"sources":["d2l"]},
+    {"id":"information-theory","module":"math-core","prerequisites":["probability"],"outcome":"Use entropy, cross-entropy, and KL divergence to interpret learning objectives.","required_dimensions":["conceptual","application"],"sources":["d2l"]},
+
+    {"id":"state-space-search","module":"ai-foundations","prerequisites":["python"],"outcome":"Implement and compare uninformed, heuristic, and adversarial search under explicit cost and correctness constraints.","required_dimensions":["conceptual","application","debugging"],"sources":["cs188"]},
+    {"id":"constraint-planning","module":"ai-foundations","prerequisites":["state-space-search"],"outcome":"Represent and solve constraint or planning problems while explaining heuristics, failure cases, and computational trade-offs.","required_dimensions":["conceptual","application","transfer"],"sources":["cs188"]},
+    {"id":"knowledge-representation","module":"ai-foundations","prerequisites":["probability","python"],"outcome":"Represent uncertain or symbolic knowledge and perform defensible inference while stating assumptions and limits.","required_dimensions":["conceptual","application","transfer"],"sources":["cs188"]},
+    {"id":"sequential-decision-rl","module":"ai-foundations","prerequisites":["probability","optimization","python"],"outcome":"Model a sequential decision problem and implement or evaluate value, policy, and learning methods without hiding reward or exploration assumptions.","required_dimensions":["conceptual","application","debugging","transfer"],"sources":["cs188","d2l"]},
+
+    {"id":"problem-framing","module":"data-evaluation","prerequisites":["statistics"],"outcome":"Translate a real goal into targets, constraints, baselines, and falsifiable success criteria.","required_dimensions":["conceptual","application","creation"],"sources":["fsdl"]},
+    {"id":"data-quality","module":"data-evaluation","prerequisites":["statistics","data-basics"],"outcome":"Audit provenance, licensing, missingness, sampling, imbalance, and leakage.","required_dimensions":["application","debugging","transfer"],"sources":["fsdl","sklearn"]},
+    {"id":"experiment-design","module":"data-evaluation","prerequisites":["statistics","problem-framing"],"outcome":"Design reproducible offline or online experiments with valid comparisons.","required_dimensions":["conceptual","application","creation"],"sources":["islp","fsdl"]},
+    {"id":"metrics-error-analysis","module":"data-evaluation","prerequisites":["problem-framing","statistics"],"outcome":"Choose metrics, quantify uncertainty, calibrate predictions, and analyze failure slices.","required_dimensions":["conceptual","application","transfer"],"sources":["sklearn","fsdl"]},
+
+    {"id":"linear-models","module":"classical-ml","prerequisites":["optimization","statistics","problem-framing"],"outcome":"Fit and interpret regularized linear and logistic models.","required_dimensions":["conceptual","application","debugging"],"sources":["islp","sklearn"]},
+    {"id":"trees-ensembles","module":"classical-ml","prerequisites":["statistics","problem-framing"],"outcome":"Choose and tune trees, random forests, and boosting while explaining bias and variance.","required_dimensions":["conceptual","application","transfer"],"sources":["islp","sklearn"]},
+    {"id":"kernels-neighbors","module":"classical-ml","prerequisites":["linear-algebra","statistics"],"outcome":"Explain similarity-based prediction and select kernels or neighborhoods under constraints.","required_dimensions":["conceptual","application"],"sources":["islp","sklearn"]},
+    {"id":"unsupervised-learning","module":"classical-ml","prerequisites":["linear-algebra","statistics"],"outcome":"Apply clustering, PCA, and anomaly detection without overstating conclusions.","required_dimensions":["conceptual","application","transfer"],"sources":["islp","sklearn"]},
+    {"id":"ml-pipelines","module":"classical-ml","prerequisites":["linear-models","trees-ensembles","data-quality","metrics-error-analysis"],"outcome":"Build a leakage-resistant preprocessing, validation, selection, and evaluation pipeline.","required_dimensions":["application","debugging","creation"],"sources":["sklearn","fsdl"]},
+    {"id":"ml-production-ops","module":"ml-production","prerequisites":["ml-pipelines","experiment-design","compute-systems"],"outcome":"Deploy and monitor a versioned machine-learning service with reproducible features, drift checks, rollback, and explicit cost and reliability limits.","required_dimensions":["conceptual","application","debugging","creation"],"sources":["fsdl"]},
+
+    {"id":"tensors-backprop","module":"deep-learning-core","prerequisites":["calculus-autodiff","optimization","numpy"],"outcome":"Trace tensors through forward and backward passes and diagnose gradient errors.","required_dimensions":["conceptual","application","debugging"],"sources":["d2l","pytorch"]},
+    {"id":"neural-training","module":"deep-learning-core","prerequisites":["tensors-backprop","statistics"],"outcome":"Train and stabilize MLPs using initialization, normalization, regularization, and optimizers.","required_dimensions":["conceptual","application","debugging"],"sources":["d2l","pytorch"]},
+    {"id":"convolution","module":"deep-learning-core","prerequisites":["neural-training"],"outcome":"Explain spatial inductive bias and implement a compact convolutional model.","required_dimensions":["conceptual","application"],"sources":["d2l","pytorch"]},
+    {"id":"sequence-models","module":"deep-learning-core","prerequisites":["neural-training"],"outcome":"Explain recurrence and sequence bottlenecks as context for attention.","required_dimensions":["conceptual","application"],"sources":["d2l"]},
+    {"id":"attention","module":"deep-learning-core","prerequisites":["linear-algebra","neural-training","sequence-models"],"outcome":"Compute and interpret attention, masking, heads, and tensor shapes.","required_dimensions":["conceptual","application","debugging"],"sources":["d2l","pytorch"]},
+
+    {"id":"tokenization","module":"llm-foundations","prerequisites":["data-quality"],"outcome":"Explain and test vocabulary, segmentation, normalization, and token-cost trade-offs.","required_dimensions":["conceptual","application","transfer"],"sources":["hf","cs336"]},
+    {"id":"transformer","module":"llm-foundations","prerequisites":["attention","tokenization","information-theory"],"outcome":"Trace a causal transformer block from token IDs to next-token logits.","required_dimensions":["conceptual","application","debugging"],"sources":["hf","cs336"]},
+    {"id":"pretraining-scaling","module":"llm-foundations","prerequisites":["transformer","experiment-design","compute-systems"],"outcome":"Reason about objectives, data, contamination, compute, scaling, and evidence limits.","required_dimensions":["conceptual","application","transfer"],"sources":["cs336"]},
+    {"id":"decoding","module":"llm-foundations","prerequisites":["transformer","probability"],"outcome":"Choose and evaluate decoding strategies under quality, diversity, and latency constraints.","required_dimensions":["conceptual","application","transfer"],"sources":["hf"]},
+    {"id":"adaptation-alignment","module":"llm-foundations","prerequisites":["transformer","experiment-design"],"outcome":"Compare fine-tuning, adapters, instruction tuning, and preference optimization with appropriate evaluation.","required_dimensions":["conceptual","application","transfer"],"sources":["hf","cs336"]},
+    {"id":"inference-systems","module":"llm-foundations","prerequisites":["transformer","compute-systems","decoding"],"outcome":"Reason about KV cache, quantization, batching, throughput, latency, and memory trade-offs.","required_dimensions":["conceptual","application","debugging"],"sources":["cs336","fsdl"]},
+
+    {"id":"structured-llm","module":"llm-applications","prerequisites":["decoding","python"],"outcome":"Design prompts and validate structured outputs against schemas and failure cases.","required_dimensions":["application","debugging","transfer"],"sources":["openai-docs","openai-cookbook"]},
+    {"id":"retrieval","module":"llm-applications","prerequisites":["structured-llm","metrics-error-analysis","data-quality"],"outcome":"Build and evaluate chunking, indexing, retrieval, reranking, grounding, and citations.","required_dimensions":["conceptual","application","debugging"],"sources":["fsdl","openai-cookbook"]},
+    {"id":"tools-workflows","module":"llm-applications","prerequisites":["structured-llm","git-tests"],"outcome":"Build deterministic tool-using workflows with typed boundaries and recovery paths.","required_dimensions":["application","debugging","creation"],"sources":["openai-docs","openai-cookbook"]},
+    {"id":"agents-memory","module":"llm-applications","prerequisites":["tools-workflows","retrieval"],"outcome":"Choose agentic versus fixed workflows and design state, memory, permissions, and human approval.","required_dimensions":["conceptual","application","transfer"],"sources":["openai-docs","fsdl"]},
+    {"id":"multimodal-systems","module":"llm-applications","prerequisites":["structured-llm","metrics-error-analysis"],"outcome":"Design and evaluate a multimodal pipeline when the target needs it.","required_dimensions":["conceptual","application"],"sources":["openai-docs"],"optional":true},
+
+    {"id":"evals","module":"production-safety","prerequisites":["metrics-error-analysis","structured-llm","experiment-design"],"outcome":"Create representative eval sets, rubrics, graders, confidence estimates, and release gates.","required_dimensions":["application","debugging","creation"],"sources":["openai-docs","openai-cookbook","fsdl"]},
+    {"id":"llm-security","module":"production-safety","prerequisites":["tools-workflows","retrieval"],"outcome":"Threat-model prompt injection, data exfiltration, unsafe execution, and authorization failures.","required_dimensions":["conceptual","debugging","transfer"],"sources":["openai-docs","fsdl"]},
+    {"id":"responsible-ai","module":"production-safety","prerequisites":["data-quality","evals"],"outcome":"Analyze fairness, privacy, consent, provenance, transparency, copyright, and misuse trade-offs.","required_dimensions":["conceptual","application","transfer"],"sources":["fsdl","openai-docs"]},
+    {"id":"production-ops","module":"production-safety","prerequisites":["inference-systems","evals","llm-security"],"outcome":"Operate a versioned service with cost, latency, observability, fallback, rollback, and incident constraints.","required_dimensions":["application","debugging","creation"],"sources":["fsdl","openai-docs"]},
+
+    {"id":"research-reading","module":"research-practice","prerequisites":["experiment-design","statistics"],"outcome":"Separate a paper's claims, assumptions, method, evidence, limitations, and speculation.","required_dimensions":["conceptual","application","transfer"],"sources":["cs336"]},
+    {"id":"replication-ablation","module":"research-practice","prerequisites":["research-reading","git-tests","metrics-error-analysis"],"outcome":"Reproduce a scoped result and design baselines, ablations, sensitivity tests, and negative controls.","required_dimensions":["application","debugging","creation"],"sources":["cs336","fsdl"]},
+    {"id":"integrated-capstone","module":"research-practice","prerequisites":["production-ops","responsible-ai","replication-ablation"],"outcome":"Build and defend an end-to-end system or research result, including limitations and next experiments.","required_dimensions":["conceptual","application","debugging","transfer","creation"],"sources":["fsdl","cs336"]}
+  ]
+}

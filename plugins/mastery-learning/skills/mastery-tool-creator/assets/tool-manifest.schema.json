@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Mastery Learning Teaching Tool",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "id", "version", "build_status", "type", "concept", "objective", "mode", "prerequisites", "interaction", "evidence", "entrypoint", "check_command", "check_expectation", "accessibility_fallback", "launch", "cleanup", "inspection", "sources", "created_at", "generator"],
+  "properties": {
+    "schema_version": {"const": 3},
+    "id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+    "version": {"type": "string", "minLength": 1},
+    "build_status": {"enum": ["scaffold", "complete"]},
+    "type": {"enum": ["code_lab", "visual_lab", "simulation_3d", "blackboard", "notebook", "quiz", "slide_deck", "document", "project_lab"]},
+    "concept": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+    "objective": {"type": "string", "minLength": 12},
+    "mode": {"enum": ["coach", "demonstration", "pair", "exam", "review"]},
+    "prerequisites": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"}},
+    "interaction": {
+      "type": "object",
+      "required": ["prediction", "learner_action", "feedback", "hints", "transfer"],
+      "properties": {
+        "prediction": {"type": "string", "minLength": 1},
+        "learner_action": {"type": "string", "minLength": 1},
+        "feedback": {"type": "string", "minLength": 1},
+        "hints": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "transfer": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["kind", "dimensions", "rubric"],
+      "properties": {
+        "kind": {"enum": ["diagnostic", "recall", "explain", "exercise", "debug", "transfer", "project", "review"]},
+        "dimensions": {"type": "array", "minItems": 1, "items": {"enum": ["recall", "conceptual", "application", "debugging", "transfer", "creation"]}},
+        "rubric": {"type": "string"}
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {"if": {"properties": {"kind": {"const": "diagnostic"}}}, "then": {"properties": {"dimensions": {"contains": {"const": "conceptual"}}}}},
+        {"if": {"properties": {"kind": {"const": "recall"}}}, "then": {"properties": {"dimensions": {"contains": {"const": "recall"}}}}},
+        {"if": {"properties": {"kind": {"const": "explain"}}}, "then": {"properties": {"dimensions": {"contains": {"const": "conceptual"}}}}},
+        {"if": {"properties": {"kind": {"const": "exercise"}}}, "then": {"properties": {"dimensions": {"contains": {"const": "application"}}}}},
+        {"if": {"properties": {"kind": {"const": "debug"}}}, "then": {"properties": {"dimensions": {"allOf": [{"contains": {"const": "debugging"}}, {"contains": {"const": "application"}}]}}}},
+        {"if": {"properties": {"kind": {"const": "transfer"}}}, "then": {"properties": {"dimensions": {"allOf": [{"contains": {"const": "transfer"}}, {"contains": {"const": "conceptual"}}]}}}},
+        {"if": {"properties": {"kind": {"const": "project"}}}, "then": {"properties": {"dimensions": {"allOf": [{"contains": {"const": "creation"}}, {"contains": {"const": "application"}}, {"contains": {"const": "transfer"}}]}}}},
+        {"if": {"properties": {"kind": {"const": "review"}}}, "then": {"properties": {"dimensions": {"contains": {"const": "recall"}}}}}
+      ]
+    },
+    "entrypoint": {"type": "string"},
+    "check_command": {"type": ["string", "null"]},
+    "check_expectation": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "required": ["exit_code", "output_contains"],
+          "properties": {
+            "exit_code": {"type": "integer"},
+            "output_contains": {"type": ["string", "null"]}
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "accessibility_fallback": {"type": "string"},
+    "launch": {"type": "string", "minLength": 1},
+    "cleanup": {"type": "string", "minLength": 1},
+    "inspection": {
+      "type": "object",
+      "required": ["required", "notes"],
+      "properties": {
+        "required": {"type": "boolean"},
+        "notes": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "sources": {"type": "array"},
+    "created_at": {"type": "string"},
+    "generator": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "version": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    }
+  }
+}

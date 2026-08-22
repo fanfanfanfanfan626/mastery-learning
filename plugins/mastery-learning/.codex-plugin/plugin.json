@@ -1,0 +1,24 @@
+{
+  "name": "mastery-learning",
+  "version": "0.4.1",
+  "description": "A local-first Codex tutor that diagnoses, teaches, tests, and tracks durable mastery.",
+  "author": {
+    "name": "Mastery Learning Contributors"
+  },
+  "license": "MIT",
+  "keywords": ["education", "learning", "tutoring", "mastery", "spaced-repetition", "codex"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Mastery Learning",
+    "shortDescription": "Learn anything through evidence, practice, and review.",
+    "longDescription": "Turns Codex into the learner's primary interface: it diagnoses prerequisites, creates an auditable curriculum, teaches interactively, coaches code and experiments, evaluates transfer, and keeps transparent local learning memory.",
+    "developerName": "Mastery Learning Contributors",
+    "category": "Education",
+    "capabilities": ["Interactive", "Local-first", "Write"],
+    "defaultPrompt": [
+      "Help me turn a vague learning goal into a tested, personalized plan.",
+      "Continue my learning session from local progress and due reviews.",
+      "Teach this concept interactively and verify that I can transfer it."
+    ]
+  }
+}

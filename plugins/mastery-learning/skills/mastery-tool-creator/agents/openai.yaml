@@ -1,0 +1,7 @@
+interface:
+  display_name: "Mastery Tool Creator"
+  short_description: "Build validated learning labs, exercises, and artifacts"
+  default_prompt: "Use $mastery-tool-creator to build a learning tool for this objective and rubric."
+
+policy:
+  allow_implicit_invocation: true

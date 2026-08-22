@@ -1,0 +1,7 @@
+interface:
+  display_name: "Mastery Coach"
+  short_description: "Adaptive diagnosis, practice, feedback, and durable mastery"
+  default_prompt: "Use $mastery-coach to diagnose my goal and start a mastery-based learning session."
+
+policy:
+  allow_implicit_invocation: true
