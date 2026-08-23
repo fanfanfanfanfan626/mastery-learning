@@ -1,6 +1,6 @@
 {
   "name": "mastery-learning",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "A local-first Codex tutor that diagnoses, teaches, tests, and tracks durable mastery.",
   "author": {
     "name": "Mastery Learning Contributors"

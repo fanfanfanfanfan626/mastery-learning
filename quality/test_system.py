@@ -266,6 +266,22 @@ class StateEngineTests(unittest.TestCase):
 
 
 class ToolCreatorTests(unittest.TestCase):
+    def test_scaffold_generator_version_matches_plugin(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            workspace = Path(temporary)
+            run(
+                SCAFFOLD,
+                "--workspace", workspace,
+                "--id", "version-check-lab",
+                "--type", "blackboard",
+                "--concept", "testing",
+                "--objective", "Explain a deterministic version contract",
+            )
+            tool = workspace / ".mastery" / "tools" / "version-check-lab" / "tool.json"
+            generator = json.loads(tool.read_text(encoding="utf-8"))["generator"]
+            plugin = json.loads((ROOT / "plugins" / "mastery-learning" / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))
+            self.assertEqual(generator["version"], plugin["version"])
+
     def customize_code_lab(self, tool: Path) -> None:
         manifest_path = tool / "tool.json"
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -347,7 +363,7 @@ class PackageTests(unittest.TestCase):
     def test_plugin_and_skill_structure(self) -> None:
         plugin = json.loads((ROOT / "plugins" / "mastery-learning" / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))
         self.assertEqual(plugin["name"], "mastery-learning")
-        self.assertEqual(plugin["version"], "0.4.1")
+        self.assertEqual(plugin["version"], "0.4.2")
         self.assertEqual(plugin["skills"], "./skills/")
         for skill in [COACH, CREATOR]:
             content = (skill / "SKILL.md").read_text(encoding="utf-8")

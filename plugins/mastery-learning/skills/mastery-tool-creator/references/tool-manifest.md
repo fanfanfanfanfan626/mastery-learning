@@ -37,7 +37,7 @@ Every generated tool directory contains `tool.json` with this shape:
   },
   "sources": [],
   "created_at": "2026-08-22T12:00:00+00:00",
-  "generator": {"name": "mastery-tool-creator", "version": "0.4.1"}
+  "generator": {"name": "mastery-tool-creator", "version": "0.4.2"}
 }
 ```
 

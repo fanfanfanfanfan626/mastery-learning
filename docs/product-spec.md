@@ -49,6 +49,8 @@ For ML/AI/LLM learning, the built-in pack covers computing, mathematics, classic
 - automatic claims of pedagogical effectiveness without learner-outcome evaluation;
 - silent self-modification.
 
+The research basis and product-specific claim boundary are documented in [pedagogy-evidence.md](pedagogy-evidence.md). Automated program tests establish engineering behavior, not learner benefit. Conversation evaluations and learner-outcome studies are separate evidence levels; see [evaluation.md](evaluation.md).
+
 ## Release acceptance criteria
 
 - both Skills pass Skill Creator validation;
@@ -58,3 +60,5 @@ For ML/AI/LLM learning, the built-in pack covers computing, mathematics, classic
 - unfinished generated tools and placeholder checks fail; static validation never executes generated code; only separately observed sandbox/render results can mark a tool verified;
 - README installation commands match the bundled Plugin Creator installation contract, and the exact release archive passes a fresh-clone smoke test before a separate Codex installation check;
 - at least one cold-start and one cross-task resume conversation are manually evaluated for triggering, answer leakage, overload, false mastery, and workspace selection.
+- a version-bound conversation-evaluation suite covers direct, indirect, follow-up, negative, and boundary requests; any published behavior claim links to a complete validated result and its synthetic transcript evidence;
+- release artifacts are built from canonical LF text, compare byte-for-byte across Windows and Linux, and match canonical bytes from the tagged Git tree.

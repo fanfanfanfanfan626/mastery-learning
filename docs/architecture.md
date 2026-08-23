@@ -53,3 +53,23 @@ No tool may award mastery directly.
 - Local servers bind to loopback unless the learner authorizes sharing.
 - Authentication remains in official GitHub/Codex flows.
 - Installed Skill changes require versioned review; session-level observations go to `improvement-proposals.md`.
+
+## Evidence architecture
+
+Package validation, engine tests, conversation behavior, usability, and learner outcomes are independent evidence levels. `quality/evals/plugin-evals.json` defines synthetic direct, indirect, follow-up, negative, and boundary conversations. `quality/eval_audit.py` binds run results to the suite hash, requires traceable criterion evidence, and rejects false passing labels. It intentionally does not infer educational effectiveness from program tests or self-scored mastery events. See [evaluation.md](evaluation.md) and [pedagogy-evidence.md](pedagogy-evidence.md).
+
+Release archives canonicalize text to LF and store entries without compressor-dependent output. CI builds on Windows and Linux, audits each archive against the checked-out Git tree, and compares the resulting bytes. Tagged builds may add GitHub provenance attestations; a checksum alone is an integrity check, not publisher identity.
+
+## State-engine modularity boundary
+
+`mastery.py` remains a single-file executable in 0.4.2 so an extracted plugin can run without package installation. That portability choice does not authorize indefinite growth. A maintainability test freezes the entrypoint below 2,350 physical lines and rejects any top-level function longer than 150 lines. New state-engine behavior that would exceed either budget must first extract one cohesive sibling module while preserving the CLI contract.
+
+The intended extraction order follows invariants rather than command names:
+
+1. document and event schema validation;
+2. registry discovery and OS locking;
+3. review and mastery derivation;
+4. migration adapters;
+5. CLI parsing and presentation.
+
+Transaction commit/recovery stays together until fault-injection tests prove an extracted boundary cannot expose mixed revisions. This avoids a cosmetic split that separates code while increasing semantic coupling.

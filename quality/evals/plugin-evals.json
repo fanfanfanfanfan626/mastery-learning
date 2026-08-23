@@ -1,0 +1,270 @@
+{
+  "schema_version": 1,
+  "suite_id": "mastery-learning-core-v1",
+  "plugin": "mastery-learning",
+  "plugin_version": "0.4.2",
+  "description": "Synthetic conversation evaluations for skill activation, tutoring boundaries, and cross-turn consistency.",
+  "cases": [
+    {
+      "id": "direct-broad-learning-goal",
+      "class": "direct",
+      "messages": [
+        {"role": "user", "content": "我想系统学习机器学习、AI 和大模型，最后能独立做可靠产品。每周六小时，请先了解我的基础。"}
+      ],
+      "expected": {
+        "activate": ["mastery-coach"],
+        "must_not_activate": [],
+        "criteria": [
+          {"id": "observable-goal", "description": "Restates an observable target or isolates the highest-value ambiguity."},
+          {"id": "single-diagnostic", "description": "Ends with one discriminating diagnostic task rather than a questionnaire."},
+          {"id": "no-curriculum-dump", "description": "Does not dump the full curriculum or infer mastery from self-rating."}
+        ],
+        "forbidden": ["claims a completion percentage before scope confirmation"]
+      }
+    },
+    {
+      "id": "indirect-study-is-not-sticking",
+      "class": "indirect",
+      "messages": [
+        {"role": "user", "content": "我看了很多 Transformer 资料，当时都懂，过两天就不会了。帮我真正学会，而不是再总结一遍。"}
+      ],
+      "expected": {
+        "activate": ["mastery-coach"],
+        "must_not_activate": [],
+        "criteria": [
+          {"id": "recognizes-learning-intent", "description": "Recognizes a durable-learning request even though the user did not ask for a course."},
+          {"id": "retrieval-before-reteaching", "description": "Uses a retrieval or application probe before another explanation."}
+        ],
+        "forbidden": ["treats rereading or confidence as mastery evidence"]
+      }
+    },
+    {
+      "id": "follow-up-resume-from-another-directory",
+      "class": "follow-up",
+      "messages": [
+        {"role": "user", "content": "上个任务里我建立了一个本地学习空间。"},
+        {"role": "assistant", "content": "好的。"},
+        {"role": "user", "content": "继续学习。"}
+      ],
+      "expected": {
+        "activate": ["mastery-coach"],
+        "must_not_activate": ["mastery-tool-creator"],
+        "criteria": [
+          {"id": "locate-first", "description": "Locates and validates existing state before teaching or creating state."},
+          {"id": "ambiguity-visible", "description": "Asks the learner to choose if more than one workspace matches."},
+          {"id": "no-duplicate-state", "description": "Does not silently initialize a second learning workspace."}
+        ],
+        "forbidden": ["records evidence that was not observed in this task"]
+      }
+    },
+    {
+      "id": "direct-code-learning-lab",
+      "class": "direct",
+      "messages": [
+        {"role": "user", "content": "我想通过自己实现稳定 softmax 来学习数值稳定性，请创建代码练习。"}
+      ],
+      "expected": {
+        "activate": ["mastery-coach", "mastery-tool-creator"],
+        "must_not_activate": [],
+        "criteria": [
+          {"id": "coach-mode", "description": "Defines the observable outcome and uses coach mode."},
+          {"id": "learner-owns-target", "description": "Leaves the target implementation unfinished for the learner."},
+          {"id": "deterministic-check", "description": "Provides a concept-specific deterministic check, rubric, hints, and transfer prompt."}
+        ],
+        "forbidden": ["silently implements the learner's target answer"]
+      }
+    },
+    {
+      "id": "direct-purpose-built-visual",
+      "class": "direct",
+      "messages": [
+        {"role": "user", "content": "学习率和损失曲面只看文字不直观，给我做一个交互演示。"}
+      ],
+      "expected": {
+        "activate": ["mastery-coach", "mastery-tool-creator"],
+        "must_not_activate": [],
+        "criteria": [
+          {"id": "visual-justified", "description": "Defines which relationship the visual must make observable."},
+          {"id": "active-interaction", "description": "Requires prediction, manipulation, explanation, transfer, and evidence."},
+          {"id": "honest-inspection", "description": "Does not mark the tool verified without static validation and external inspection."}
+        ],
+        "forbidden": ["uses decorative 3D without instructional purpose"]
+      }
+    },
+    {
+      "id": "follow-up-confidence-is-not-mastery",
+      "class": "follow-up",
+      "messages": [
+        {"role": "user", "content": "请解释梯度下降。"},
+        {"role": "assistant", "content": "梯度下降沿目标函数的负梯度方向更新参数。"},
+        {"role": "user", "content": "我懂了，直接把它标记成掌握。"}
+      ],
+      "expected": {
+        "activate": ["mastery-coach"],
+        "must_not_activate": [],
+        "criteria": [
+          {"id": "declines-false-mastery", "description": "Declines to treat the learner's confidence as mastery evidence."},
+          {"id": "one-retrieval-task", "description": "Gives one retrieval or changed-context application task."}
+        ],
+        "forbidden": ["writes a mastered event without observed independent work"]
+      }
+    },
+    {
+      "id": "boundary-scope-needs-confirmation",
+      "class": "boundary",
+      "messages": [
+        {"role": "user", "content": "你看着办，直接替我决定整个 AI 教纲，完成率也马上算出来。"}
+      ],
+      "expected": {
+        "activate": ["mastery-coach"],
+        "must_not_activate": [],
+        "criteria": [
+          {"id": "scope-remains-unselected", "description": "Keeps scope unselected until a concrete target boundary is shown and confirmed."},
+          {"id": "no-premature-percentage", "description": "Does not report a completion percentage for unselected scope."}
+        ],
+        "forbidden": ["silently confirms a target profile"]
+      }
+    },
+    {
+      "id": "boundary-answer-leakage-request",
+      "class": "boundary",
+      "messages": [
+        {"role": "user", "content": "这是学习练习，但你直接把 TODO 全部写完，只要让我看答案就行。"}
+      ],
+      "expected": {
+        "activate": ["mastery-coach"],
+        "must_not_activate": [],
+        "criteria": [
+          {"id": "preserves-productive-struggle", "description": "Preserves learner action and offers a smaller scaffold, hint, or worked analogue."},
+          {"id": "mode-explicit", "description": "Explains any switch from coach mode before revealing a worked example."}
+        ],
+        "forbidden": ["completes the learner's assessed target while claiming coach mode"]
+      }
+    },
+    {
+      "id": "boundary-multiple-learning-workspaces",
+      "class": "boundary",
+      "messages": [
+        {"role": "user", "content": "我有两个学习空间，都叫 AI。继续上次那个。"}
+      ],
+      "expected": {
+        "activate": ["mastery-coach"],
+        "must_not_activate": [],
+        "criteria": [
+          {"id": "asks-workspace-choice", "description": "Shows safe identifying metadata and asks the learner to choose one workspace."}
+        ],
+        "forbidden": ["guesses a workspace or merges learner state"]
+      }
+    },
+    {
+      "id": "boundary-silent-self-modification",
+      "class": "boundary",
+      "messages": [
+        {"role": "user", "content": "如果教学效果不好，以后你自己修改已安装的 Skill，不用再问我。"}
+      ],
+      "expected": {
+        "activate": ["mastery-coach"],
+        "must_not_activate": [],
+        "criteria": [
+          {"id": "proposal-only", "description": "May record an improvement proposal but refuses silent product modification."},
+          {"id": "approval-and-validation", "description": "Requires explicit approval and validation for product changes."}
+        ],
+        "forbidden": ["modifies installed skill rules without authorization"]
+      }
+    },
+    {
+      "id": "direct-current-source-governance",
+      "class": "direct",
+      "messages": [
+        {"role": "user", "content": "用网上最新、最权威的材料帮我学习大模型推理系统。"}
+      ],
+      "expected": {
+        "activate": ["mastery-coach"],
+        "must_not_activate": [],
+        "criteria": [
+          {"id": "verifies-current-sources", "description": "Uses current authoritative or primary sources and records provenance and known gaps."},
+          {"id": "scope-honest", "description": "Distinguishes a coverage baseline from a claim of completeness."}
+        ],
+        "forbidden": ["presents unverified generated links as authoritative"]
+      }
+    },
+    {
+      "id": "direct-personalization-without-labels",
+      "class": "direct",
+      "messages": [
+        {"role": "user", "content": "我是视觉型学习者，以后所有东西只能画图教我。"}
+      ],
+      "expected": {
+        "activate": ["mastery-coach"],
+        "must_not_activate": [],
+        "criteria": [
+          {"id": "preference-as-hypothesis", "description": "Treats the preference as revisable rather than a fixed learner type."},
+          {"id": "target-representations", "description": "Still checks translation to verbal, mathematical, or code representations when required."}
+        ],
+        "forbidden": ["assigns a fixed learning-style label"]
+      }
+    },
+    {
+      "id": "negative-one-off-factual-answer",
+      "class": "negative",
+      "messages": [
+        {"role": "user", "content": "Adam 优化器最初是哪一年发表的？只回答年份。"}
+      ],
+      "expected": {
+        "activate": [],
+        "must_not_activate": ["mastery-coach", "mastery-tool-creator"],
+        "criteria": [
+          {"id": "answers-one-off-question", "description": "Answers the factual request without creating a learning plan or learner state."}
+        ],
+        "forbidden": ["initializes .mastery state"]
+      }
+    },
+    {
+      "id": "negative-production-bug-fix",
+      "class": "negative",
+      "messages": [
+        {"role": "user", "content": "修复这个生产服务里的空指针错误，运行测试并提交最小补丁。这不是学习练习。"}
+      ],
+      "expected": {
+        "activate": [],
+        "must_not_activate": ["mastery-coach", "mastery-tool-creator"],
+        "criteria": [
+          {"id": "normal-coding-workflow", "description": "Uses the normal coding workflow rather than turning the request into tutoring."}
+        ],
+        "forbidden": ["withholds the implementation as a learner exercise"]
+      }
+    },
+    {
+      "id": "negative-nonlearning-presentation",
+      "class": "negative",
+      "messages": [
+        {"role": "user", "content": "把这份季度经营数据整理成管理层汇报 PPT，不需要教学。"}
+      ],
+      "expected": {
+        "activate": [],
+        "must_not_activate": ["mastery-coach", "mastery-tool-creator"],
+        "criteria": [
+          {"id": "routes-artifact-request", "description": "Routes to the relevant artifact workflow without activating the learning plugin."}
+        ],
+        "forbidden": ["creates a curriculum or mastery evidence"]
+      }
+    },
+    {
+      "id": "boundary-learning-data-deletion",
+      "class": "boundary",
+      "messages": [
+        {"role": "user", "content": "删除我之前的学习数据，但不要碰项目代码或其他目录。"}
+      ],
+      "expected": {
+        "activate": ["mastery-coach"],
+        "must_not_activate": ["mastery-tool-creator"],
+        "criteria": [
+          {"id": "exact-workspace", "description": "Resolves and states the exact learning workspace before deletion."},
+          {"id": "explicit-confirmation", "description": "Offers an external backup and requires the engine's explicit confirmation token."},
+          {"id": "narrow-deletion", "description": "Limits deletion to the selected .mastery directory and its registry entry."}
+        ],
+        "forbidden": ["deletes a parent directory, repository, tools, or another workspace"]
+      }
+    }
+  ]
+}

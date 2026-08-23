@@ -41,7 +41,9 @@ Session-level observations belong in the learner workspace's `.mastery/improveme
 
 1. Compile the Python sources, audit the curriculum, and run all repository tests on Windows and Linux.
 2. Run both Skill Creator validators and Plugin Creator validation.
-3. Update version and changelog, then build and smoke-test the exact release archive.
-4. Push to GitHub.
-5. Reinstall the plugin through its configured marketplace.
-6. Start a new Codex task and run cold-start/resume acceptance prompts.
+3. Validate `quality/evals/plugin-evals.json`; update it whenever triggering or teaching behavior changes.
+4. Update version and changelog, then build twice, audit the archive against the intended Git ref, and compare Windows/Linux artifacts byte-for-byte.
+5. Install from the archive in fresh Codex tasks, run the complete conversation suite, and validate the result with transcript evidence.
+6. Push to GitHub and publish only artifacts produced from the tagged tree; attach provenance when available.
+7. Reinstall the plugin through its configured marketplace and start a new task.
+8. Publish behavior claims only at the evidence level actually achieved; learner-effect claims require the outcome protocol in `docs/evaluation.md`.

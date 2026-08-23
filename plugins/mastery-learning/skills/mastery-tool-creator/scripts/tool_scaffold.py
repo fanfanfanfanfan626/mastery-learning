@@ -203,7 +203,7 @@ def main() -> None:
         },
         "sources": [],
         "created_at": timestamp(),
-        "generator": {"name": "mastery-tool-creator", "version": "0.4.1"},
+        "generator": {"name": "mastery-tool-creator", "version": "0.4.2"},
     }
     rubric = {
         "schema_version": 1,

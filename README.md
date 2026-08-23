@@ -32,15 +32,15 @@ macOS/Linux 把第三条改为 `codex plugin marketplace add "$(pwd)"`。
 
 ## 从发布 ZIP 安装
 
-不需要 GitHub 地址。下载 `mastery-learning-0.4.1.zip`，完整解压后，把解压根目录注册为显式本地插件目录：
+不需要 GitHub 地址。下载 `mastery-learning-0.4.2.zip`，完整解压后，把解压根目录注册为显式本地插件目录：
 
 ```powershell
-Expand-Archive .\mastery-learning-0.4.1.zip -DestinationPath .\mastery-learning-0.4.1
-codex plugin marketplace add (Resolve-Path .\mastery-learning-0.4.1)
+Expand-Archive .\mastery-learning-0.4.2.zip -DestinationPath .\mastery-learning-0.4.2
+codex plugin marketplace add (Resolve-Path .\mastery-learning-0.4.2)
 codex plugin add mastery-learning@mastery-learning
 ```
 
-macOS/Linux 可改用 `unzip mastery-learning-0.4.1.zip -d mastery-learning-0.4.1`，其余两条命令相同，并传入解压根目录的绝对路径。不要把 ZIP 内的 `plugins/mastery-learning` 子目录误当成 marketplace 根目录；需要注册的是同时包含 `.agents/`、`plugins/` 的那一层。
+macOS/Linux 可改用 `unzip mastery-learning-0.4.2.zip -d mastery-learning-0.4.2`，其余两条命令相同，并传入解压根目录的绝对路径。不要把 ZIP 内的 `plugins/mastery-learning` 子目录误当成 marketplace 根目录；需要注册的是同时包含 `.agents/`、`plugins/` 的那一层。
 
 安装或更新后开启一个新的 Codex 任务，使 Skill 被重新加载；在桌面版中也可从 Plugins Directory 安装已添加目录中的 `mastery-learning`。不要把 GitHub 密码或令牌粘贴进对话；如需推送仓库，请使用 Codex 内置浏览器或 GitHub CLI 的官方登录流程。
 
@@ -86,16 +86,23 @@ plugins/mastery-learning/
         └── scripts/                     # 脚手架、静态校验与外部观察归档
 ```
 
-更多说明见 [架构](docs/architecture.md)、[产品规则](docs/product-spec.md) 和 [扩展指南](docs/authoring.md)。
+更多说明见 [架构](docs/architecture.md)、[产品规则](docs/product-spec.md)、[教学法证据与声明边界](docs/pedagogy-evidence.md)、[评测与学习效果计划](docs/evaluation.md) 和 [扩展指南](docs/authoring.md)。
 
 ## 验证
 
 ```bash
 python plugins/mastery-learning/skills/mastery-coach/scripts/curriculum_audit.py
+python quality/eval_audit.py suite quality/evals/plugin-evals.json
 python -m unittest discover -s quality -p "test_*.py"
+python quality/build_release.py --output work/mastery-learning.zip --checksum-output work/mastery-learning.zip.sha256
+python quality/release_audit.py archive work/mastery-learning.zip --expected-version 0.4.2
 ```
 
-发布前还应使用 Codex 自带的 `skill-creator/quick_validate.py` 和 `plugin-creator/validate_plugin.py` 校验，构建后从 ZIP 解压目录复跑，并从一个全新 Codex 任务完成冷启动与恢复验收。CI 在 Windows 和 Linux 上执行不依赖 Codex 安装环境的故障与反例测试。
+发布前还应使用 Codex 自带的 `skill-creator/quick_validate.py` 和 `plugin-creator/validate_plugin.py` 校验，构建后从 ZIP 解压目录复跑，并从全新 Codex 任务完成对话评测。CI 在 Windows 和 Linux 上执行故障与反例测试，分别构建发布包、对照 Git 树审计，并比较两个平台的 ZIP 是否字节一致。标签构建会生成 GitHub provenance attestation。
+
+自动化程序测试证明工程约束被实现，不证明真实学习效果。只有在提交与场景哈希绑定的完整评测结果后，才能声明对应的 Codex 对话行为已经验证；“提高学习效果”还需要真实学习者的延迟检索和迁移结果。参见 [评测分级](docs/evaluation.md) 与 [教学法证据边界](docs/pedagogy-evidence.md)。
+
+`v0.4.2` 标签发布门禁要求至少一份完整、可审查的合成对话评测结果；它允许如实保留失败，但拒绝没有运行记录的“已验证”声明。
 
 ## 隐私与安全
 

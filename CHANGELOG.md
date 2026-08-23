@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.2 — 2026-08-23
+
+- Made release archives checkout-independent by canonicalizing text to LF, using compressor-independent stored ZIP entries, and adding repository-wide `.gitattributes` rules.
+- Added a release auditor that compares archive bytes with either the working tree or a Git ref, plus CI builds on Windows and Linux whose artifacts must be byte-for-byte identical.
+- Added a 16-case synthetic Codex conversation suite covering direct, indirect, follow-up, negative, and boundary requests, with a hash-bound result contract that rejects untraceable or falsely passing runs.
+- Documented separate package, engine, conversation, usability, and learner-outcome evidence levels, including a conservative pilot and comparison-study plan.
+- Added a primary-source pedagogy evidence map and explicit claim boundaries: research-informed rules are not presented as proof that this plugin improves learning.
+- Prepared tagged builds for GitHub provenance attestation while retaining SHA-256 as an integrity check rather than publisher identity proof.
+- Added a state-entrypoint growth budget and invariant-based extraction order so future work must modularize before extending the 2,300-line engine.
+
 ## 0.4.1 — 2026-08-22
 
 - Replaced narrow remote-resource regexes with file-type-aware Python, JavaScript, CSS, notebook, and HTML checks that reject network, process-launch, dynamic-code, remote-module, and dynamic-resource paths without executing generated code.

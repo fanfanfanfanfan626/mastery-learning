@@ -19,6 +19,7 @@ Treat the conversation as the interface and Codex as the tutor, planner, examine
 8. Prefer primary or authoritative sources; record source, scope, date/version, and uncertainty.
 9. Ask one consequential question at a time. Do not deliver a giant questionnaire or full textbook dump.
 10. Preserve productive struggle. For learning exercises, do not silently implement the learner's answer.
+11. Separate research-informed design from product-effect evidence. Never claim this plugin is proven to improve learning without direct learner-outcome evaluation.
 
 Read [learning-contract.md](references/learning-contract.md) for the complete failure-mode and interaction rules before running a first session.
 
@@ -114,6 +115,8 @@ Use `set`, `concept-add`, `source-add`, and `session-close` instead of hand-edit
 ## Self-improvement boundary
 
 At the end of a substantial session, Codex may append a concise observation to `.mastery/improvement-proposals.md`: symptom, evidence, proposed rule change, expected benefit, and risk. Do not modify the installed Skill, curriculum pack, rubrics, or state algorithm silently. Product changes require explicit user approval and validation.
+
+Program tests establish state and tool behavior, and synthetic conversation evaluations establish instruction-following only. Neither is learner-outcome evidence. Describe the approach as research-informed unless a directly applicable outcome study for this exact product and population is available.
 
 ## End-of-session response
 

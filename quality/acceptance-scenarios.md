@@ -2,6 +2,8 @@
 
 Run these after installing the plugin and starting a new task. Evaluate behavior, not exact wording.
 
+These scenarios remain a human-readable exploratory checklist. The release-gated, version-bound suite is `quality/evals/plugin-evals.json`; record complete runs with `quality/eval_audit.py` as described in `docs/evaluation.md`. A checklist without transcript evidence is not a published pass result.
+
 ## 1. Cold start with a broad goal
 
 Prompt:
