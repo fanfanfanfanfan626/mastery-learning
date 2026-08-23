@@ -20,13 +20,14 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
 TOOL_TYPES = {
-    "code_lab", "visual_lab", "simulation_3d", "blackboard", "notebook",
+    "code_lab", "visual_lab", "lesson_lab", "simulation_3d", "blackboard", "notebook",
     "quiz", "slide_deck", "document", "project_lab",
 }
 MODES = {"coach", "demonstration", "pair", "exam", "review"}
 ENTRYPOINTS = {
     "code_lab": "exercise.py",
     "visual_lab": "index.html",
+    "lesson_lab": "index.html",
     "simulation_3d": "index.html",
     "blackboard": "blackboard.md",
     "notebook": "lab.ipynb",
@@ -38,6 +39,7 @@ ENTRYPOINTS = {
 EVIDENCE = {
     "code_lab": ("exercise", ["application", "debugging"]),
     "visual_lab": ("transfer", ["conceptual", "application", "transfer"]),
+    "lesson_lab": ("exercise", ["conceptual", "application"]),
     "simulation_3d": ("transfer", ["conceptual", "application", "transfer"]),
     "blackboard": ("explain", ["recall", "conceptual"]),
     "notebook": ("exercise", ["application", "debugging"]),
@@ -47,7 +49,7 @@ EVIDENCE = {
     "project_lab": ("project", ["application", "debugging", "transfer", "creation"]),
 }
 SCHEMA_VERSION = 3
-RENDER_TYPES = {"visual_lab", "simulation_3d", "slide_deck", "document"}
+RENDER_TYPES = {"visual_lab", "lesson_lab", "simulation_3d", "slide_deck", "document"}
 CONTENT_SECURITY_POLICY = (
     "default-src 'self'; connect-src 'none'; img-src 'self' data:; media-src 'self'; "
     "font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; "
@@ -55,8 +57,9 @@ CONTENT_SECURITY_POLICY = (
 )
 LAUNCH = {
     "code_lab": "Run the deterministic check command from this tool directory, then edit exercise.py.",
-    "visual_lab": "From this tool directory run `python -m http.server 8000 --bind 127.0.0.1`, inspect `http://127.0.0.1:8000/index.html` in the Codex browser, then stop the server with Ctrl+C.",
-    "simulation_3d": "From this tool directory run `python -m http.server 8000 --bind 127.0.0.1`, inspect `http://127.0.0.1:8000/index.html` in the Codex browser, then stop the server with Ctrl+C.",
+    "visual_lab": "From this tool directory run `<python> -m http.server 8000 --bind 127.0.0.1`, using Python from PATH or the Codex workspace-dependency loader; inspect `http://127.0.0.1:8000/index.html` in the Codex browser, then stop the server with Ctrl+C.",
+    "lesson_lab": "From this tool directory run `<python> -m http.server 8000 --bind 127.0.0.1`, using Python from PATH or the Codex workspace-dependency loader; inspect `http://127.0.0.1:8000/index.html` in the Codex browser, then stop the server with Ctrl+C.",
+    "simulation_3d": "From this tool directory run `<python> -m http.server 8000 --bind 127.0.0.1`, using Python from PATH or the Codex workspace-dependency loader; inspect `http://127.0.0.1:8000/index.html` in the Codex browser, then stop the server with Ctrl+C.",
     "blackboard": "Open blackboard.md and reveal one step at a time.",
     "notebook": "Open lab.ipynb in an available local notebook runtime.",
     "quiz": "Open quiz.md and keep any answer material separate until submission.",
@@ -64,6 +67,7 @@ LAUNCH = {
     "document": "Open the completed local .docx or .pdf entrypoint after rendering and inspection.",
     "project_lab": "Read README.md, then run the manifest check command from this tool directory.",
 }
+LESSON_TEMPLATE_ROOT = Path(__file__).resolve().parents[1] / "assets" / "lesson-lab-template"
 
 
 def timestamp() -> str:
@@ -92,6 +96,18 @@ def write_new(path: Path, text: str) -> None:
     path.write_text(text, encoding="utf-8", newline="\n")
 
 
+def lesson_template_text(name: str, objective: str, mode: str) -> str:
+    path = LESSON_TEMPLATE_ROOT / name
+    if not path.is_file():
+        raise SystemExit(f"Missing bundled lesson template: {path}")
+    return (
+        path.read_text(encoding="utf-8")
+        .replace("{{CSP}}", CONTENT_SECURITY_POLICY)
+        .replace("{{OBJECTIVE}}", objective)
+        .replace("{{MODE}}", mode)
+    )
+
+
 def artifact_text(tool_type: str, objective: str, mode: str) -> str:
     if tool_type == "code_lab":
         return (
@@ -102,6 +118,8 @@ def artifact_text(tool_type: str, objective: str, mode: str) -> str:
             '    # LEARNER TODO: replace this line using the stated objective.\n'
             '    raise NotImplementedError("Complete the learner task")\n'
         )
+    if tool_type == "lesson_lab":
+        return lesson_template_text("index.html", objective, mode)
     if tool_type in {"visual_lab", "simulation_3d"}:
         dimension = "3D" if tool_type == "simulation_3d" else "2D"
         return f"""<!doctype html>
@@ -170,7 +188,7 @@ def main() -> None:
     catalog_path = workspace / ".mastery" / "tool-catalog.json"
     temporary_dir = Path(tempfile.mkdtemp(prefix=f".{args.id}.", dir=str(tools_root)))
     entrypoint = ENTRYPOINTS[args.type]
-    fallback = "accessibility-fallback.html" if args.type in {"visual_lab", "simulation_3d"} else "accessibility-fallback.md"
+    fallback = "accessibility-fallback.html" if args.type in {"visual_lab", "lesson_lab", "simulation_3d"} else "accessibility-fallback.md"
     kind, dimensions = EVIDENCE[args.type]
     hints = [] if args.mode == "exam" else ["Restate the target observation.", "Name the governing principle.", "Show one analogous case."]
     manifest = {
@@ -217,7 +235,11 @@ def main() -> None:
         atomic_json(temporary_dir / "tool.json", manifest)
         atomic_json(temporary_dir / "rubric.json", rubric)
         write_new(temporary_dir / entrypoint, artifact_text(args.type, args.objective.strip(), args.mode))
-        if fallback.endswith(".html"):
+        if args.type == "lesson_lab":
+            write_new(temporary_dir / "styles.css", lesson_template_text("styles.css", args.objective.strip(), args.mode))
+            write_new(temporary_dir / "app.js", lesson_template_text("app.js", args.objective.strip(), args.mode))
+            fallback_text = lesson_template_text("accessibility-fallback.html", args.objective.strip(), args.mode)
+        elif fallback.endswith(".html"):
             fallback_text = (
                 '<!doctype html><html lang="en"><head><meta charset="utf-8">'
                 f'<meta http-equiv="Content-Security-Policy" content="{CONTENT_SECURITY_POLICY}">'

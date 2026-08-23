@@ -12,7 +12,7 @@ flowchart LR
     C --> S["Curriculum and source packs"]
     C --> E["Terminal / tests / source inspection"]
     C -->|"artifact needed"| T["mastery-tool-creator"]
-    T --> A["Code lab / visual lab / 3D / blackboard / notebook / deck"]
+    T --> A["Lesson lab / code lab / visual lab / 3D / blackboard / notebook / deck"]
     A --> U
     U -->|"attempt"| C
     C -->|"verified evidence only"| M

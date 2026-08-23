@@ -36,6 +36,21 @@ Use the conversation-native visualization capability when available. Otherwise c
 
 Do not create decorative animation and call it a lab. Keep variables, units, scales, and assumptions visible. For 3D, use it only when the extra spatial dimension encodes a real relationship.
 
+## Guided lesson lab
+
+Use [lesson-delivery.md](lesson-delivery.md) and invoke `$mastery-tool-creator` with type
+`lesson_lab` when one substantial concept encounter needs explanation, a complete worked example,
+annotated code, synchronized visualization, guided practice, and transfer in one reusable page.
+This is especially appropriate for an explicit interactive-HTML preference or a dynamic causal
+relationship such as parameter-to-output, algorithm state, tensor shape, probability, optimization,
+or attention.
+
+Reuse an exact verified lesson that samples the same target and assumptions. Do not create a lesson
+lab for a one-off fact, one local correction, tiny review, or decorative polish. If generation or
+inspection fails, preserve the teaching sequence with Markdown, a table, or a blackboard rather
+than blocking the learner. Page interaction is not evidence until the tutor observes attributable
+learner reasoning or production.
+
 ## Blackboard
 
 Use a persistent Markdown block for derivations, traces, or evolving system state. Preserve earlier lines, highlight the current step, define symbols, and ask the learner to supply the next step. For algorithms, a table of iteration/state is often clearer than prose.

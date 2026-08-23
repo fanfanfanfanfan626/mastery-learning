@@ -1,5 +1,22 @@
 # Changelog
 
+## Unreleased
+
+- Added a guided lesson-delivery contract that starts from an explicit zero-baseline ladder,
+  separates the current evidence target from motivating previews, and sizes a complete worked
+  micro-lesson to the learner's available session instead of jumping from a short explanation to
+  a worksheet.
+- Added the `lesson_lab` tool type with a reusable local-only HTML/CSS/JavaScript template for
+  annotated code, prediction-gated visual state, guided practice, transfer, progressive hints,
+  responsive layout, reduced motion, visible focus, and an equivalent text/table fallback.
+- Extended static tool validation, adversarial tests, and synthetic conversation evals so incomplete
+  lesson structure, hidden prerequisites, decorative tool use, or post-verification edits cannot be
+  presented as a verified lesson.
+- Made both Skills resolve Codex's bundled Python through the workspace-dependency loader before
+  considering dependencies, preventing fresh tasks from downloading a redundant runtime merely to
+  run bundled state or tool scripts; expanded trigger metadata to cover the learning-record
+  inspect/export/migrate/delete lifecycle.
+
 ## 0.4.2 — 2026-08-23
 
 - Made the repository self-identify as a two-Skill Codex plugin marketplace before installation,

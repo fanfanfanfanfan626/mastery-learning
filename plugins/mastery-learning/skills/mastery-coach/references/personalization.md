@@ -10,6 +10,7 @@ Keep the learner model small, explicit, and revisable:
 - recurring misconceptions;
 - effective hint level;
 - preferred examples or domains;
+- stated delivery preference such as interactive HTML, conversation first, or automatic selection;
 - accessibility and environment constraints;
 - engagement signals such as avoidance, flow, or fatigue;
 - confidence for each inference and when it was last observed.
@@ -28,6 +29,7 @@ labels only as low-confidence hypotheses; they are not evidence.
 - concept order within prerequisite constraints;
 - amount of worked example versus independent practice;
 - representation: verbal, visual, mathematical, code, or physical analogy;
+- delivery medium and artifact reuse when it materially affects friction or comprehension;
 - task authenticity and domain;
 - difficulty and branching;
 - hint granularity;
@@ -42,6 +44,7 @@ labels only as low-confidence hypotheses; they are not evidence.
 - Do not lower the outcome because performance is temporarily weak.
 - Do not optimize for clicks, message count, praise, or streak preservation.
 - Do not turn every preference into a permanent rule.
+- Do not interpret an interactive-HTML preference as a fixed learning-style label or as permission to create decorative tools.
 - Do not store raw conversation when a compact evidence summary is enough.
 - Do not promise to discover one permanently optimal teaching style from a questionnaire.
 - Do not confuse a friendly, direct, rigorous, or conversational tone with easier or harder mastery criteria.

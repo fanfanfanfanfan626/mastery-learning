@@ -9,7 +9,9 @@ The final outcome of learning is an independently usable capability. Therefore t
 1. Translate a vague aspiration into an observable capability and proof artifact.
 2. Estimate the smallest set of prerequisites that changes the near-term plan from background and skippable self-positioning, then refine it through guided work rather than an entrance exam.
 3. Maintain a complete, versioned, sourced coverage graph, a learner-confirmed prerequisite-closed scope, and a short adaptive active path.
-4. Teach through active, turn-based interaction rather than monologue.
+4. Teach through active, turn-based interaction rather than monologue; for a substantial new
+   concept, preserve one complete causal spine from orientation and modeling through guided action
+   and close, while keeping future ideas labeled as previews.
 5. Generate tools only where they make a relationship or performance observable.
 6. Give feedback at the earliest causal error and allow retries.
 7. Require independent and durable evidence before mastery.
@@ -37,7 +39,8 @@ For ML/AI/LLM learning, the built-in pack covers computing, mathematics, classic
 2. Codex presents one compact, skippable launch packet covering the missing goal, time, relevant background, self-positioning, teaching experience, and local-persistence choices.
 3. After one reply, Codex initializes `.mastery/`, stores preferences and self-positioning without calling them evidence, shows the provisional short path and coverage boundary, and begins a guided micro-lesson without another setup round.
 4. Each session retrieves prior or due learning when relevant, models genuinely new material before demanding performance, teaches one frontier capability, and ends with one clear next action.
-5. Code or interactive tools are generated only when justified.
+5. Code or interactive tools are generated only when justified; a reusable guided lesson may use
+   a verified `lesson_lab`, while simple explanations and small corrections stay in conversation.
 6. Evidence updates mastery and review dates.
 7. A capstone and defense verify integrated capability.
 
@@ -57,7 +60,7 @@ The research basis and product-specific claim boundary are documented in [pedago
 - the plugin passes Plugin Creator validation;
 - curriculum identity, target closure, source provenance, scope, and DAG audit have no errors;
 - state initialization, explicit scope closure, cross-task discovery, serialized writes, interrupted-transaction recovery, derived-state recovery, conservative migration, strict durability transition, failure transition, due-review query, export, and confirmed deletion pass automated tests;
-- unfinished generated tools and placeholder checks fail; static validation never executes generated code; only separately observed sandbox/render results can mark a tool verified;
+- unfinished generated tools, incomplete lesson sequences, and placeholder checks fail; static validation never executes generated code; only separately observed sandbox/render results can mark a tool verified;
 - README and `INSTALL.md` classify the distribution as one two-Skill plugin before any command runs;
   platform installers validate both marketplace and plugin identities, never fall back to a partial
   standalone-Skill install, and the exact release archive passes a fresh-clone smoke test before a

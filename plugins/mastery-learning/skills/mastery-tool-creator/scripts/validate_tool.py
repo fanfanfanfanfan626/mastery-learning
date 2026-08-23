@@ -26,7 +26,7 @@ if hasattr(sys.stderr, "reconfigure"):
     sys.stderr.reconfigure(encoding="utf-8")
 
 SCHEMA_VERSION = 3
-TYPES = {"code_lab", "visual_lab", "simulation_3d", "blackboard", "notebook", "quiz", "slide_deck", "document", "project_lab"}
+TYPES = {"code_lab", "visual_lab", "lesson_lab", "simulation_3d", "blackboard", "notebook", "quiz", "slide_deck", "document", "project_lab"}
 MODES = {"coach", "demonstration", "pair", "exam", "review"}
 DIMENSIONS = {"recall", "conceptual", "application", "debugging", "transfer", "creation"}
 KINDS = {"diagnostic", "recall", "explain", "exercise", "debug", "transfer", "project", "review"}
@@ -41,7 +41,7 @@ TEXT_SUFFIXES = {
     ".md", ".html", ".htm", ".py", ".json", ".ipynb", ".js", ".mjs",
     ".jsx", ".ts", ".tsx", ".css", ".txt",
 }
-RENDER_TYPES = {"visual_lab", "simulation_3d", "slide_deck", "document"}
+RENDER_TYPES = {"visual_lab", "lesson_lab", "simulation_3d", "slide_deck", "document"}
 JAVASCRIPT_SUFFIXES = {".js", ".mjs", ".jsx", ".ts", ".tsx"}
 FORBIDDEN_PYTHON_IMPORTS = {
     "aiohttp", "ctypes", "ftplib", "http", "httpx", "importlib", "paramiko",
@@ -176,6 +176,34 @@ class HTMLSecurityParser(HTMLParser):
         (self.inline_scripts if self._capture == "script" else self.inline_styles).append(content)
         self._capture = None
         self._buffer = []
+
+
+class LessonStructureParser(HTMLParser):
+    """Collect real lesson elements so comments and script strings cannot satisfy the contract."""
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.tags: set[str] = set()
+        self.sections: set[str] = set()
+        self.roles: set[str] = set()
+        self.session_minutes: list[str] = []
+        self.progressive_disclosure = False
+        self.code_note = False
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        self.tags.add(tag.lower())
+        values = {key.lower(): value for key, value in attrs}
+        section = values.get("data-lesson-section")
+        if isinstance(section, str):
+            self.sections.add(section.strip().lower())
+        role = values.get("data-role")
+        if isinstance(role, str):
+            self.roles.add(role.strip().lower())
+        duration = values.get("data-session-minutes")
+        if isinstance(duration, str):
+            self.session_minutes.append(duration.strip())
+        self.progressive_disclosure |= "data-progressive-disclosure" in values
+        self.code_note |= "data-code-note" in values
 
 
 def _call_name(node: ast.Call) -> str:
@@ -541,7 +569,7 @@ def validate_artifacts(root: Path, manifest: dict[str, Any], errors: list[str], 
     entry_relative = manifest.get("entrypoint")
     entry = inside(root, entry_relative) if isinstance(entry_relative, str) else None
     fallback_path = inside(root, fallback) if isinstance(fallback, str) else None
-    requires_link = manifest.get("type") in {"visual_lab", "simulation_3d"}
+    requires_link = manifest.get("type") in {"visual_lab", "lesson_lab", "simulation_3d"}
     for relative, content in texts.items():
         if Path(relative).suffix.lower() not in {".html", ".htm"}:
             continue
@@ -575,7 +603,7 @@ def validate_type(root: Path, manifest: dict[str, Any], texts: dict[str, str], e
                 errors.append("code_lab test has no deterministic assertion")
         if mode in {"coach", "exam"} and "LEARNER TODO" not in entry_text:
             errors.append("coach/exam code_lab must preserve a visible LEARNER TODO")
-    elif tool_type in {"visual_lab", "simulation_3d"}:
+    elif tool_type in {"visual_lab", "lesson_lab", "simulation_3d"}:
         if not entry or entry.suffix.lower() not in {".html", ".htm"}:
             errors.append(f"{tool_type} entrypoint must be local HTML")
         executable_text = "\n".join(
@@ -587,6 +615,40 @@ def validate_type(root: Path, manifest: dict[str, Any], texts: dict[str, str], e
         for token, message in [("prediction", "a prediction control"), ("explanation", "an explanation control")]:
             if token not in entry_text.lower():
                 errors.append(f"{tool_type} is missing {message}")
+        if tool_type == "lesson_lab":
+            required_sections = [
+                "orientation", "mental-model", "worked-example", "interactive-model",
+                "guided-practice", "transfer", "summary",
+            ]
+            structure = LessonStructureParser()
+            structure.feed(entry_text)
+            for section in required_sections:
+                if section not in structure.sections:
+                    errors.append(f"lesson_lab is missing required lesson section: {section}")
+            if structure.tags.intersection({"pre", "code"}):
+                if "annotated-code" not in structure.sections:
+                    errors.append("lesson_lab containing code is missing the annotated-code section")
+                if not structure.code_note:
+                    errors.append("lesson_lab containing code needs visible data-code-note annotations")
+            for role in ["current-target", "preview"]:
+                if role not in structure.roles:
+                    errors.append(f"lesson_lab must label the {role} learning boundary")
+            durations = [int(value) for value in structure.session_minutes if value.isdigit()]
+            if not durations or not any(10 <= value <= 90 for value in durations):
+                errors.append("lesson_lab must declare data-session-minutes between 10 and 90")
+            if not structure.progressive_disclosure:
+                errors.append("lesson_lab needs progressive disclosure for optional depth or hints")
+            for asset in ["styles.css", "app.js"]:
+                if not (root / asset).is_file():
+                    errors.append(f"lesson_lab requires the reusable local asset: {asset}")
+            styles = texts.get("styles.css", "").lower()
+            for token, message in [
+                ("@media (max-width", "a responsive small-screen layout"),
+                ("prefers-reduced-motion", "reduced-motion support"),
+                (":focus-visible", "visible keyboard focus styles"),
+            ]:
+                if token not in styles:
+                    errors.append(f"lesson_lab styles are missing {message}")
         if tool_type == "simulation_3d" and not any(token in entry_text.lower() for token in ["webgl", "perspective", "z-axis", "z axis"]):
             errors.append("simulation_3d does not encode an inspectable depth variable")
         launch = manifest.get("launch", "")

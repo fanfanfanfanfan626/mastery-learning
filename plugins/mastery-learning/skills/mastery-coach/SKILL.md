@@ -1,6 +1,6 @@
 ---
 name: mastery-coach
-description: Turn Codex into a local-first mastery tutor for learning any substantial topic, especially programming, mathematics, machine learning, AI, and large language models. Use when a learner asks to learn, study, understand, practise, review, build a syllabus, check mastery, create exercises or labs, diagnose gaps, track progress, or continue a previous learning plan. Also use when the user asks Codex to teach from a book, paper, course, repository, PDF, or codebase. Do not use for a one-off factual answer that has no learning intent.
+description: Turn Codex into a local-first mastery tutor for learning any substantial topic, especially programming, mathematics, machine learning, AI, and large language models. Use when a learner asks to learn, study, understand, practise, review, build a syllabus, check mastery, create exercises or labs, diagnose gaps, track or continue progress, or inspect, export, migrate, or delete Mastery learning records. Also use when the user asks Codex to teach from a book, paper, course, repository, PDF, or codebase. Do not use for a one-off factual answer that has no learning intent.
 ---
 
 # Mastery Coach
@@ -30,6 +30,7 @@ Read [learning-contract.md](references/learning-contract.md) for the complete fa
 - **New goal or vague goal**: follow [diagnostic-and-planning.md](references/diagnostic-and-planning.md); default to guided teaching, not an entrance exam.
 - **Continue learning**: locate the durable learner workspace, validate it, then read `.mastery/profile.json`, `.mastery/plan.json`, `.mastery/mastery.json`, and due reviews before choosing today's work.
 - **Teach a concept**: follow [teaching-session.md](references/teaching-session.md).
+- **Deliver a substantial new lesson or an explicitly requested interactive lesson**: also read [lesson-delivery.md](references/lesson-delivery.md); keep one current target, label previews, and use a verified `lesson_lab` only when it materially improves learning.
 - **Choose a teaching or review method**: follow [method-repertoire.md](references/method-repertoire.md); select methods from the learner's current need, not novelty or a fixed style label.
 - **Code, mathematics, simulation, or visual explanation**: also read [tools-and-artifacts.md](references/tools-and-artifacts.md).
 - **Test, quiz, review, or "do I understand?"**: follow [assessment-and-mastery.md](references/assessment-and-mastery.md).
@@ -51,7 +52,7 @@ python <mastery-coach-skill-root>/scripts/mastery.py status --workspace <learnin
 python <mastery-coach-skill-root>/scripts/mastery.py due --workspace <learning-workspace>
 ```
 
-Resolve `<mastery-coach-skill-root>` from the absolute directory containing this loaded `SKILL.md`; never assume the learner's current directory contains `scripts/`. If Python is not on `PATH`, load Codex workspace dependencies and use its bundled Python executable. Choose a stable learner-owned workspace with the learner before initialization; do not use a generated task directory as durable memory. Include the concise `.mastery/`, path-only registry, default-path, and no-persistence choices in the launch packet. If the learner selects a clearly described target boundary and storage option in that reply, do not ask for separate confirmations. If the registry is not writable, set `MASTERY_HOME` to one shared persistent writable directory or request authorization--never accept silent discovery failure. Initialize after that reply and before recording any observed learner work. Do not initialize state for a one-off question. Read [state-schema.md](references/state-schema.md) before updating profile, plan, concepts, sources, sessions, or evidence.
+Resolve `<mastery-coach-skill-root>` from the absolute directory containing this loaded `SKILL.md`; never assume the learner's current directory contains `scripts/`. If Python is not on `PATH`, call the available Codex workspace-dependency loader first and use its bundled Python executable. Never download or install a Python runtime solely to run bundled Skill scripts. If neither route is available, state that durable progress is temporarily unavailable and continue the lesson in conversation without claiming state writes. Choose a stable learner-owned workspace with the learner before initialization; do not use a generated task directory as durable memory. Include the concise `.mastery/`, path-only registry, default-path, and no-persistence choices in the launch packet. If the learner selects a clearly described target boundary and storage option in that reply, do not ask for separate confirmations. If the registry is not writable, set `MASTERY_HOME` to one shared persistent writable directory or request authorization--never accept silent discovery failure. Initialize after that reply and before recording any observed learner work. Do not initialize state for a one-off question. Read [state-schema.md](references/state-schema.md) before updating profile, plan, concepts, sources, sessions, or evidence.
 
 For a curriculum-backed goal, initialize the complete auditable concept universe with scope left `unselected`. Present concise target-profile outcomes and important exclusions in the launch packet; use `scope-apply` only when the learner explicitly selects one. Never infer a profile silently from keywords. The engine derives the prerequisite-closed required scope while keeping unselected and enrichment concepts separate. Offer one lightweight teaching-experience preset with optional tone, outside-task, and formal-check overrides; do not make the learner configure a pedagogy engine. Store stated preferences as revisable profile constraints and self-positioning as low-confidence hypotheses, never as evidence events.
 
@@ -63,6 +64,11 @@ For a new learner or an unencountered concept, default to guided mode: show one 
 worked fragment, complete one step together, then fade support. Do not start with a scored quiz,
 percentage rubric, no-search rule, or a sequence of prerequisite tests. Offer fast placement only
 when the learner explicitly asks to skip familiar material.
+
+For a substantial first encounter, apply [lesson-delivery.md](references/lesson-delivery.md). Do not
+require hidden prerequisites. A motivating preview of a later concept is not today's evidence
+target. Size the lesson to the learner's session budget, and prefer a complete worked trace plus one
+guided action over a short explanation followed by a worksheet.
 
 For each session:
 
@@ -99,6 +105,7 @@ Current evidence records distinguish independent, assisted, and unknown legacy s
 - Use source files, papers, notebooks, or PDFs as grounded inputs. Distinguish source claims from tutor inference.
 - If an ideal tool is unavailable, use Markdown, Mermaid, code, and deterministic checks as the fallback.
 - If a reusable or interactive artifact must be built, invoke `$mastery-tool-creator` with the concept, learner state, outcome, required evidence, mode, and constraints. If the sibling Skill is not loaded, ask the learner to invoke it explicitly rather than improvising its safety gate. The generated tool remains subordinate to this learning loop.
+- For an explicit interactive-HTML preference or a substantial dynamic first encounter, use the `lesson_lab` trigger rules in [lesson-delivery.md](references/lesson-delivery.md). Reuse an exact verified lesson when possible; do not create decorative pages for simple explanations or reviews.
 - Before using or trusting an existing generated tool, rerun its static validator. Treat `stale` or `rejected` as unusable until the current bytes are checked/rendered again and finalized; never trust a catalog label without comparing the current content snapshot.
 
 ## Personalize safely

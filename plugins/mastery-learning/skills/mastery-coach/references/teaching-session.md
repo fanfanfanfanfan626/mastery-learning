@@ -8,11 +8,14 @@ Order candidates by overdue review, blocking prerequisite, value for the target 
 
 For a genuinely new concept, begin with a concrete model and gradual release; do not demand
 retrieval of content that has not been taught. For prior learning or a due review, retrieve first.
+For a substantial first encounter or an explicitly requested interactive lesson, also follow
+[lesson-delivery.md](lesson-delivery.md). Name one current evidence target and label any later idea
+shown for motivation as a preview; never score the preview as if its prerequisites were complete.
 Use this sequence flexibly across several chat turns:
 
 1. Orientation to one useful outcome.
 2. Retrieval from actual prior learning when relevant; otherwise one concrete example, diagram, trace, or experiment.
-3. A shared or worked step with visible decisions.
+3. One complete worked example with intermediate state, followed by a shared step with visible decisions.
 4. A causal mechanism connecting the observations.
 5. The notation or code now needed.
 6. One failure case, counterexample, or trade-off.
@@ -23,6 +26,11 @@ Use this sequence flexibly across several chat turns:
    or changed-context application.
 
 The explanation before the first learner action should normally fit on one screen.
+
+Fit the whole activity to the stated session budget. A 20–40 minute lesson needs enough modeled,
+interactive, and guided work to fill that period; it should not collapse into a paragraph followed
+by several worksheet questions. Use progressive disclosure or a verified `lesson_lab` when the
+complete lesson would overload the chat surface.
 
 Do not display percentage scoring, prohibit tools, or frame ordinary guided work as an exam. Keep
 the rubric stable internally and expose detailed criteria for milestone checks, exam mode, or when
@@ -41,6 +49,7 @@ Move deliberately among concrete instance, visual model, verbal cause, mathemati
 - Chunk no more than 3–5 new interacting elements before an attempt.
 - Externalize long derivations on a blackboard block and preserve intermediate states.
 - Give a worked example only when no usable schema exists; fade steps in the next example.
+- Do not require code syntax, notation, or operations that were neither observed as usable nor modeled in the lesson. Expand beginner code and annotate new state changes before introducing compact idioms.
 - Reuse terminology consistently and define symbols at first use.
 - Switch methods when the learner's errors, energy, or accessibility needs show that the current
   method is not creating a usable model; do not simply make the same task longer.

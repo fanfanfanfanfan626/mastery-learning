@@ -10,6 +10,7 @@
     "minimum_per_case_pass_rate": {"numerator": 2, "denominator": 3},
     "critical_case_ids": [
       "follow-up-onboarding-one-reply",
+      "follow-up-rich-zero-baseline-first-lesson",
       "follow-up-resume-from-another-directory",
       "follow-up-confidence-is-not-mastery",
       "boundary-scope-needs-confirmation",
@@ -73,6 +74,43 @@
           {"id": "retrieval-before-reteaching", "description": "Uses a retrieval or application probe before another explanation."}
         ],
         "forbidden": ["treats rereading or confidence as mastery evidence"]
+      }
+    },
+    {
+      "id": "follow-up-rich-zero-baseline-first-lesson",
+      "class": "follow-up",
+      "messages": [
+        {"role": "user", "content": "我想从零开始学习机器学习和大模型，每天20到40分钟，最好有优美的互动网页和讲清楚的代码。"},
+        {"role": "assistant", "content": "我会用一张可跳过的启动卡一次确认目标、起点、教学体验和本地保存；这些只用于选择起点。"},
+        {"role": "user", "content": "选择全栈路线；除了见过一点Python外都按零基础；互动网页优先，代码要有教学注释；作业可选；同意默认目录，现在开始。"}
+      ],
+      "expected": {
+        "activate": ["mastery-coach", "mastery-tool-creator"],
+        "must_not_activate": [],
+        "criteria": [
+          {"id": "complete-guided-lesson", "description": "Begins a 20–40 minute guided lesson with relevance, a concrete model, a complete worked example, an annotated beginner-readable code path, interaction, and one learner action."},
+          {"id": "verified-lesson-lab", "description": "Creates or reuses a local lesson_lab, validates and inspects it honestly, links the accessible equivalent, and keeps the conversation as the tutor interface."},
+          {"id": "no-hidden-prerequisites", "description": "Does not require Python syntax or mathematical operations that were neither self-positioned as usable nor modeled in the lesson."},
+          {"id": "target-preview-separation", "description": "Separates the current evidence target from motivating previews of later ML or LLM ideas."},
+          {"id": "no-false-mastery", "description": "Treats manipulation or an immediate guided response as assisted practice rather than mastery."}
+        ],
+        "forbidden": ["calls a forward-and-loss trace a complete training loop", "uses visual polish without a measurable learner action", "records clicks or self-positioning as mastery"]
+      }
+    },
+    {
+      "id": "direct-simple-learning-explanation",
+      "class": "direct",
+      "messages": [
+        {"role": "user", "content": "我在学习Python，只想用一个很短的例子理解变量赋值，不需要网页或项目。"}
+      ],
+      "expected": {
+        "activate": ["mastery-coach"],
+        "must_not_activate": ["mastery-tool-creator"],
+        "criteria": [
+          {"id": "smallest-adequate-medium", "description": "Uses a compact conversational or Markdown worked example because an interactive artifact would not materially improve the outcome."},
+          {"id": "one-guided-action", "description": "Ends with one small learner action without turning the explanation into an exam."}
+        ],
+        "forbidden": ["creates a decorative HTML lesson or initializes an unnecessary project lab"]
       }
     },
     {

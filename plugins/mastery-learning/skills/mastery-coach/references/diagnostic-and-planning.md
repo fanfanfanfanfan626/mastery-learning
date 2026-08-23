@@ -16,6 +16,8 @@ learner already supplied. Include at most these six groups:
    harder attempts). Allow optional overrides for tone (`patient`, `direct`, `rigorous`, or
    `conversational`), outside tasks (`none`, `optional`, or `regular`), and formal checks
    (`milestones`, `mini-checks`, `exam practice`, or `none for now`).
+   Accept an optional delivery preference such as `interactive HTML when useful`, `conversation
+   first`, or `automatic`; do not add another setup round when it is omitted.
 6. **Persistence** -- proposed stable path, custom path, or no local memory, plus a one-sentence explanation of `.mastery/` and the path-only registry.
 
 Allow `start now` or all fields skipped. In that case use conservative beginner defaults and refine
@@ -45,6 +47,11 @@ Never write an evidence event from the launch packet.
 After the state operations, summarize the provisional starting point in at most four short lines and
 begin the first guided micro-lesson in the same response. Do not ask another setup question, repeat
 workspace consent, or administer an entrance test.
+
+If the learner explicitly selected interactive HTML and the first target meets the trigger in
+[lesson-delivery.md](lesson-delivery.md), invoke `$mastery-tool-creator` for a `lesson_lab` as part of
+that start. Otherwise begin with the smallest adequate medium. Do not make the learner restate the
+preference in a separate turn.
 
 ## 3. Diagnose dynamically while teaching
 

@@ -1,6 +1,6 @@
 ---
 name: mastery-tool-creator
-description: "Create a purpose-built teaching tool under the Mastery Coach learning contract: code exercise, test harness, interactive visualization, 2D/3D simulation, blackboard, notebook, quiz, slide deck, or project lab. Use explicitly when the learner or $mastery-coach needs a reusable or interactive artifact that existing conversation tools cannot provide. Do not use for ordinary explanations, generic websites, decorative visuals, or tools without a measurable learning objective."
+description: "Create a purpose-built teaching tool under the Mastery Coach learning contract: guided HTML lesson, code exercise, test harness, interactive visualization, 2D/3D simulation, blackboard, notebook, quiz, slide deck, or project lab. Use explicitly when the learner or $mastery-coach needs a reusable or interactive artifact that existing conversation tools cannot provide. Do not use for ordinary explanations, generic websites, decorative visuals, or tools without a measurable learning objective."
 ---
 
 # Mastery Tool Creator
@@ -14,6 +14,7 @@ Before building, read the sibling files:
 - `../mastery-coach/references/learning-contract.md`
 - `../mastery-coach/references/tools-and-artifacts.md`
 - `../mastery-coach/references/assessment-and-mastery.md`
+- `../mastery-coach/references/lesson-delivery.md` when building a `lesson_lab`
 
 If the caller did not supply an observable outcome and evidence criterion, ask for or derive them before touching files. Do not start from a visual style request alone.
 
@@ -25,10 +26,11 @@ Prefer the smallest adequate instrument:
 2. Mermaid/blackboard trace;
 3. runnable code plus tests;
 4. notebook or chart;
-5. interactive 2D simulator;
-6. 3D simulator only when depth encodes a real variable or spatial relation;
-7. slide deck/document for reuse or presentation;
-8. multi-file project lab only when system behavior is the outcome.
+5. guided `lesson_lab` when explanation, annotated code, and interaction must remain together;
+6. interactive 2D simulator;
+7. 3D simulator only when depth encodes a real variable or spatial relation;
+8. slide deck/document for reuse or presentation;
+9. multi-file project lab only when system behavior is the outcome.
 
 Reuse an existing tool when it already samples the same outcome and constraints. Do not build a UI to make a simple question look impressive.
 
@@ -59,9 +61,23 @@ Create tools under `<learning-workspace>/.mastery/tools/<tool-id>/`, never insid
 python <mastery-tool-creator-skill-root>/scripts/tool_scaffold.py --workspace <learning-workspace> --id <tool-id> --type <type> --concept <concept-id> --objective "<observable outcome>" --mode coach
 ```
 
-Resolve `<mastery-tool-creator-skill-root>` from the absolute directory containing this loaded `SKILL.md`; never assume the learner workspace contains the Skill's scripts. The scaffold is transactional and may safely run before the main state engine is initialized. Then replace the scaffold's generic activity with concept-specific content and set `build_status` to `complete`. Keep learner TODOs unsolved in coach or exam mode. Do not copy copyrighted course content; link and paraphrase within reuse rights.
+Resolve `<mastery-tool-creator-skill-root>` from the absolute directory containing this loaded `SKILL.md`; never assume the learner workspace contains the Skill's scripts. If Python is not on `PATH`, call the available Codex workspace-dependency loader first and use its bundled Python executable. Never download or install a Python runtime solely to run the bundled scaffold, validator, or finalizer. If neither route is available, report the tool limitation and return to the Coach's equivalent Markdown/table lesson instead of producing an unverified artifact. The scaffold is transactional and may safely run before the main state engine is initialized. Then replace the scaffold's generic activity with concept-specific content and set `build_status` to `complete`. Keep learner TODOs unsolved in coach or exam mode. Do not copy copyrighted course content; link and paraphrase within reuse rights.
 
 ## Build by tool type
+
+### Guided lesson lab
+
+Use `lesson_lab` for one substantial 20–40 minute concept encounter, not an entire generated
+course. Start from the bundled lesson template and keep the semantic sections for orientation,
+mental model, worked example, interactive model, guided practice, transfer, and summary. Include
+the annotated-code section whenever code appears. Name one current evidence target and label later
+ideas as previews. Customize every scaffold marker, keep the complete intermediate trace visible,
+and use progressive disclosure for optional depth and hints.
+
+Require a prediction before reveal, synchronize the visual with text/table state, and leave one
+meaningful learner explanation or production action for the tutor to inspect. Provide the linked
+HTML fallback with equivalent definitions, state, practice, hints, and transfer. Do not infer
+mastery from page views, control changes, or copied code.
 
 ### Code lab
 
@@ -70,7 +86,7 @@ Create a minimal project, fixtures, tests, rubric, and one deterministic check c
 ### Visual or 3D lab
 
 Use the conversation visualization capability when it can hold the complete interaction. Otherwise build a dependency-light HTML/SVG/canvas artifact. Show variables, units, scale, assumptions, and current state. Require prediction, manipulation, explanation, and a changed-condition challenge. Provide a browser-renderable local HTML text/table fallback linked from the lab.
-Serve generated HTML from its tool directory with `python -m http.server <port> --bind 127.0.0.1`, inspect the printed `http://127.0.0.1:<port>/...` URL in the Codex browser, and stop the server after inspection. Do not use `file://` or bind to all interfaces.
+Serve generated HTML from its tool directory with `<python> -m http.server <port> --bind 127.0.0.1`, where `<python>` is the executable resolved above. Inspect the printed `http://127.0.0.1:<port>/...` URL in the Codex browser, and stop the server after inspection. Do not use `file://` or bind to all interfaces.
 
 ### Blackboard
 

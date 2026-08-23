@@ -21,6 +21,7 @@ MINIMUM_OVERALL_PASS_RATE = Fraction(9, 10)
 MINIMUM_PER_CASE_PASS_RATE = Fraction(2, 3)
 REQUIRED_CRITICAL_CASE_IDS = {
     "follow-up-onboarding-one-reply",
+    "follow-up-rich-zero-baseline-first-lesson",
     "follow-up-resume-from-another-directory",
     "follow-up-confidence-is-not-mastery",
     "boundary-scope-needs-confirmation",

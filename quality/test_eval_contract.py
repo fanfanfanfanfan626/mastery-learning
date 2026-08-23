@@ -92,6 +92,7 @@ class ConversationEvalContractTests(unittest.TestCase):
             set(policy["critical_case_ids"]),
             {
                 "follow-up-onboarding-one-reply",
+                "follow-up-rich-zero-baseline-first-lesson",
                 "follow-up-resume-from-another-directory",
                 "follow-up-confidence-is-not-mastery",
                 "boundary-scope-needs-confirmation",
@@ -237,10 +238,13 @@ class ConversationEvalContractTests(unittest.TestCase):
     def test_release_evidence_uses_exact_nine_tenths_boundary(self) -> None:
         critical = set(self.suite["release_policy"]["critical_case_ids"])
         ordinary = [case["id"] for case in self.suite["cases"] if case["id"] not in critical]
-        self.assertEqual(len(ordinary), 9)
+        run_count = 10
+        total_observations = len(self.suite["cases"]) * run_count
+        self.assertEqual(total_observations % 10, 0)
+        exact_failure_count = total_observations // 10
 
         def report_with_failures(root: Path, failure_count: int) -> dict[str, object]:
-            assignments = [set() for _ in range(10)]
+            assignments = [set() for _ in range(run_count)]
             for slot in range(failure_count):
                 assignments[slot // len(ordinary)].add(ordinary[slot % len(ordinary)])
             for index, assigned in enumerate(assignments):
@@ -253,9 +257,9 @@ class ConversationEvalContractTests(unittest.TestCase):
             return audit_release_evidence(self.suite, root)
 
         with tempfile.TemporaryDirectory() as exact_temporary:
-            exact = report_with_failures(Path(exact_temporary), 17)
+            exact = report_with_failures(Path(exact_temporary), exact_failure_count)
         with tempfile.TemporaryDirectory() as below_temporary:
-            below = report_with_failures(Path(below_temporary), 18)
+            below = report_with_failures(Path(below_temporary), exact_failure_count + 1)
         self.assertTrue(exact["ok"], exact)
         self.assertEqual(exact["overall_pass_rate"], 0.9)
         self.assertFalse(below["ok"])
