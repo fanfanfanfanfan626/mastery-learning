@@ -23,6 +23,12 @@ class ReleaseContractTests(unittest.TestCase):
         binary = b"PNG\r\n\x00payload\r"
         self.assertEqual(canonical_release_bytes(Path("image.png"), binary), binary)
 
+    def test_extensionless_license_is_checkout_independent(self) -> None:
+        self.assertEqual(
+            canonical_release_bytes(Path("LICENSE"), b"MIT License\r\n\r\nCopyright\r\n"),
+            b"MIT License\n\nCopyright\n",
+        )
+
     def test_two_builds_are_identical_and_auditable(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             first = Path(temporary) / "first.zip"

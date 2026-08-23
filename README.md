@@ -32,15 +32,16 @@ macOS/Linux 把第三条改为 `codex plugin marketplace add "$(pwd)"`。
 
 ## 从发布 ZIP 安装
 
-不需要 GitHub 地址。下载 `mastery-learning-0.4.2.zip`，完整解压后，把解压根目录注册为显式本地插件目录：
+不需要克隆仓库。从 [GitHub Releases](https://github.com/fanfanfanfanfan626/mastery-learning/releases) 下载页面上**实际存在**的 `mastery-learning-X.Y.Z.zip`，把 `X.Y.Z` 替换成所选 Release 的版本号；不要根据 `main` 分支中的候选版本号猜测尚未发布的资产。完整解压后，把解压根目录注册为显式本地插件目录：
 
 ```powershell
-Expand-Archive .\mastery-learning-0.4.2.zip -DestinationPath .\mastery-learning-0.4.2
-codex plugin marketplace add (Resolve-Path .\mastery-learning-0.4.2)
+$Version = "X.Y.Z"
+Expand-Archive ".\mastery-learning-$Version.zip" -DestinationPath ".\mastery-learning-$Version"
+codex plugin marketplace add (Resolve-Path ".\mastery-learning-$Version")
 codex plugin add mastery-learning@mastery-learning
 ```
 
-macOS/Linux 可改用 `unzip mastery-learning-0.4.2.zip -d mastery-learning-0.4.2`，其余两条命令相同，并传入解压根目录的绝对路径。不要把 ZIP 内的 `plugins/mastery-learning` 子目录误当成 marketplace 根目录；需要注册的是同时包含 `.agents/`、`plugins/` 的那一层。
+macOS/Linux 可先设置 `VERSION=X.Y.Z`，再运行 `unzip "mastery-learning-$VERSION.zip" -d "mastery-learning-$VERSION"`，其余两条命令相同，并传入解压根目录的绝对路径。不要把 ZIP 内的 `plugins/mastery-learning` 子目录误当成 marketplace 根目录；需要注册的是同时包含 `.agents/`、`plugins/` 的那一层。
 
 安装或更新后开启一个新的 Codex 任务，使 Skill 被重新加载；在桌面版中也可从 Plugins Directory 安装已添加目录中的 `mastery-learning`。不要把 GitHub 密码或令牌粘贴进对话；如需推送仓库，请使用 Codex 内置浏览器或 GitHub CLI 的官方登录流程。
 
@@ -102,7 +103,7 @@ python quality/release_audit.py archive work/mastery-learning.zip --expected-ver
 
 自动化程序测试证明工程约束被实现，不证明真实学习效果。只有在提交与场景哈希绑定的完整评测结果后，才能声明对应的 Codex 对话行为已经验证；“提高学习效果”还需要真实学习者的延迟检索和迁移结果。参见 [评测分级](docs/evaluation.md) 与 [教学法证据边界](docs/pedagogy-evidence.md)。
 
-`v0.4.2` 标签发布门禁要求至少一份完整、可审查的合成对话评测结果；它允许如实保留失败，但拒绝没有运行记录的“已验证”声明。
+`v0.4.2` 标签发布门禁要求三次具有唯一运行 ID、时间戳和转录指纹的完整、可审查合成对话评测；结果目录是封闭集合，改名或未引用的旁路文件会被拒绝。不得有 `blocked/not-run`，关键安全与教学边界案例每次都必须通过，全部案例的总体通过率至少为 90%，每个普通案例至少通过三次中的两次。失败记录仍须如实保留；它们不能再仅凭“记录完整”满足发布门禁。本地验证器无法观察从未记录到结果根目录的外部运行，因此正式审查仍需核对任务来源和 Git 历史。
 
 ## 隐私与安全
 

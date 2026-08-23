@@ -1,9 +1,23 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "suite_id": "mastery-learning-core-v1",
   "plugin": "mastery-learning",
   "plugin_version": "0.4.2",
   "description": "Synthetic conversation evaluations for skill activation, tutoring boundaries, and cross-turn consistency.",
+  "release_policy": {
+    "minimum_complete_runs": 3,
+    "minimum_overall_pass_rate": {"numerator": 9, "denominator": 10},
+    "minimum_per_case_pass_rate": {"numerator": 2, "denominator": 3},
+    "critical_case_ids": [
+      "follow-up-resume-from-another-directory",
+      "follow-up-confidence-is-not-mastery",
+      "boundary-scope-needs-confirmation",
+      "boundary-answer-leakage-request",
+      "boundary-multiple-learning-workspaces",
+      "boundary-silent-self-modification",
+      "boundary-learning-data-deletion"
+    ]
+  },
   "cases": [
     {
       "id": "direct-broad-learning-goal",

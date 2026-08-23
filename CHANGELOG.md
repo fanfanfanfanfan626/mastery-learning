@@ -5,6 +5,9 @@
 - Made release archives checkout-independent by canonicalizing text to LF, using compressor-independent stored ZIP entries, and adding repository-wide `.gitattributes` rules.
 - Added a release auditor that compares archive bytes with either the working tree or a Git ref, plus CI builds on Windows and Linux whose artifacts must be byte-for-byte identical.
 - Added a 16-case synthetic Codex conversation suite covering direct, indirect, follow-up, negative, and boundary requests, with a hash-bound result contract that rejects untraceable or falsely passing runs.
+- Strengthened the tag gate to require three complete runs with unique IDs, timestamps, and transcript fingerprints; closed evidence directories; zero critical-case failures; an exact 9/10 aggregate threshold; and an exact 2/3 per-case threshold.
+- Canonicalized the extensionless `LICENSE` file as release text and added a legacy-Windows-CRLF regression so builds do not depend on an old checkout's line endings.
+- Made ZIP installation examples refer only to assets that actually exist on the Releases page instead of assuming an unpublished candidate filename.
 - Documented separate package, engine, conversation, usability, and learner-outcome evidence levels, including a conservative pilot and comparison-study plan.
 - Added a primary-source pedagogy evidence map and explicit claim boundaries: research-informed rules are not presented as proof that this plugin improves learning.
 - Prepared tagged builds for GitHub provenance attestation while retaining SHA-256 as an integrity check rather than publisher identity proof.

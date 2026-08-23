@@ -28,7 +28,7 @@ TEXT_SUFFIXES = {
     ".css", ".csv", ".html", ".js", ".json", ".jsonl", ".md", ".mjs",
     ".py", ".svg", ".toml", ".ts", ".txt", ".yaml", ".yml",
 }
-TEXT_FILENAMES = {".gitattributes", ".gitignore"}
+TEXT_FILENAMES = {".gitattributes", ".gitignore", "LICENSE"}
 
 
 def release_files() -> list[Path]:

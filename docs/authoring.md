@@ -43,7 +43,7 @@ Session-level observations belong in the learner workspace's `.mastery/improveme
 2. Run both Skill Creator validators and Plugin Creator validation.
 3. Validate `quality/evals/plugin-evals.json`; update it whenever triggering or teaching behavior changes.
 4. Update version and changelog, then build twice, audit the archive against the intended Git ref, and compare Windows/Linux artifacts byte-for-byte.
-5. Install from the archive in fresh Codex tasks, run the complete conversation suite, and validate the result with transcript evidence.
+5. Install from the archive in fresh Codex tasks and run the complete conversation suite three times with unique run IDs. Critical cases must pass every run, aggregate case pass rate must be at least 90%, every non-critical case must pass at least two of three runs, and no case may be blocked or omitted.
 6. Push to GitHub and publish only artifacts produced from the tagged tree; attach provenance when available.
 7. Reinstall the plugin through its configured marketplace and start a new task.
 8. Publish behavior claims only at the evidence level actually achieved; learner-effect claims require the outcome protocol in `docs/evaluation.md`.

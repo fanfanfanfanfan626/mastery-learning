@@ -49,24 +49,34 @@ Validate a completed result:
 ```bash
 python quality/eval_audit.py result \
   quality/evals/plugin-evals.json \
-  quality/evals/results/0.4.2/run-001/result.json \
-  --require-complete
+  quality/evals/results/0.4.2/run-001/result.json
 ```
 
-The validator binds a result to the canonical suite hash, requires every case and criterion, rejects unsafe or missing transcript paths, and prevents an activation mismatch or observed forbidden behavior from being labeled `pass`. It does not grade prose automatically; the evidence still needs review.
+The validator requires a complete result by default. Use `--allow-incomplete` only while checking a work-in-progress template. It binds a result to the canonical suite hash, requires every case and criterion, rejects unsafe, repeated, or missing transcript paths, and prevents an activation mismatch or observed forbidden behavior from being labeled `pass`. It does not grade prose automatically; the evidence still needs review.
 
-Version tags are gated on at least one committed, complete run:
+Version tags are gated by the `release_policy` embedded in the hash-bound suite. For 0.4.2, collect three independent complete runs with unique run IDs:
 
 ```bash
 python quality/eval_audit.py release-evidence \
   quality/evals/plugin-evals.json \
-  quality/evals/results/0.4.2 \
-  --minimum-complete-runs 1
+  quality/evals/results/0.4.2
 ```
 
-This gate proves that the declared conversation evaluation was actually recorded and structurally reviewable. It does not require every case to pass, and it does not turn the run into learner-outcome evidence; failures must remain visible in the result.
+The release gate requires all of the following:
 
-For stability claims, run the complete suite more than once and report each run rather than selecting only the best. Useful aggregate measures include expected-activation recall, negative-case precision, required-criterion pass rate, forbidden-behavior rate, and cross-run disagreement. Report the model, Codex surface/version, plugin version, date, evaluator, failures, and blocked cases.
+- at least three structurally valid runs, each with a unique `run.id`;
+- every case recorded as `pass` or evidence-backed `fail`, with no `blocked` or `not-run` result;
+- every case listed in `critical_case_ids` passing in every complete run;
+- at least a 90% pass rate across all case/run observations;
+- every non-critical case passing in at least two thirds of complete runs.
+
+`--minimum-complete-runs` may strengthen the suite policy but cannot lower it. The result root is a closed structure: every direct child must be a non-linked run directory whose name equals its `run.id`, each directory must contain exactly one `result.json` plus the referenced `.md`, `.txt`, `.json`, or `.jsonl` files under `transcripts/`, and unreferenced or renamed files are rejected. Run IDs, timestamps, transcript paths, and whole-run transcript fingerprints must be distinct.
+
+Run each suite instance from fresh tasks and retain failures. These structural checks catch accidental duplication and simple evidence copying, but a repository-local validator cannot observe a run that was never recorded or prove that lightly edited transcripts came from independent execution. Release review must therefore inspect Git history and raw task provenance; stronger publisher claims require externally attested execution.
+
+This gate establishes release-quality E2 evidence, not learner outcomes. A failed case may remain in an otherwise passing aggregate only when it is non-critical and the declared stability thresholds still hold; all failures remain visible in the committed results.
+
+For stability claims beyond the release minimum, add runs rather than selecting only the best. The same policy is evaluated across all complete runs found. Useful aggregate measures include expected-activation recall, negative-case precision, required-criterion pass rate, forbidden-behavior rate, and cross-run disagreement. Report the model, Codex surface/version, plugin version, date, evaluator, failures, and blocked cases.
 
 ## Learner pilot
 
