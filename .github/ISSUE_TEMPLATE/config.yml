@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Installation guide
+    url: https://github.com/fanfanfanfanfan626/mastery-learning/blob/main/INSTALL.md
+    about: Read the supported complete-plugin installation flow before reporting an installation problem.

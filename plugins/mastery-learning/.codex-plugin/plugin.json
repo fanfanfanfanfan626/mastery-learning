@@ -1,24 +1,32 @@
 {
   "name": "mastery-learning",
   "version": "0.4.2",
-  "description": "A local-first Codex tutor that diagnoses, teaches, tests, and tracks durable mastery.",
+  "description": "A local-first AI tutor for Codex with adaptive lessons, interactive labs, mastery checks, and spaced review.",
   "author": {
     "name": "Mastery Learning Contributors"
   },
+  "homepage": "https://github.com/fanfanfanfanfan626/mastery-learning",
+  "repository": "https://github.com/fanfanfanfanfan626/mastery-learning",
   "license": "MIT",
-  "keywords": ["education", "learning", "tutoring", "mastery", "spaced-repetition", "codex"],
+  "keywords": ["ai-tutor", "codex", "education", "learning", "mastery-learning", "spaced-repetition", "machine-learning", "llm", "programming"],
   "skills": "./skills/",
   "interface": {
-    "displayName": "Mastery Learning",
-    "shortDescription": "Learn anything through evidence, practice, and review.",
-    "longDescription": "Turns Codex into the learner's primary interface: it diagnoses prerequisites, creates an auditable curriculum, teaches interactively, coaches code and experiments, evaluates transfer, and keeps transparent local learning memory.",
+    "displayName": "Mastery Learning for Codex",
+    "shortDescription": "An evidence-based AI tutor with lessons, labs, and durable progress.",
+    "longDescription": "Turn Codex into a local-first AI tutor for programming, mathematics, machine learning, AI, and LLMs. It plans adaptive lessons, builds interactive labs, coaches code, verifies transfer and delayed recall, schedules review, and keeps transparent learner-owned progress.",
     "developerName": "Mastery Learning Contributors",
     "category": "Education",
     "capabilities": ["Interactive", "Local-first", "Write"],
+    "websiteURL": "https://github.com/fanfanfanfanfan626/mastery-learning",
+    "brandColor": "#6D5EF8",
+    "composerIcon": "./assets/logo.png",
+    "logo": "./assets/logo.png",
+    "logoDark": "./assets/logo-dark.png",
+    "screenshots": ["./assets/screenshot1.png"],
     "defaultPrompt": [
-      "Help me turn a vague learning goal into a tested, personalized plan.",
-      "Continue my learning session from local progress and due reviews.",
-      "Teach this concept interactively and verify that I can transfer it."
+      "Turn my learning goal into a compact plan and begin teaching me.",
+      "Continue from my local progress and handle due reviews first.",
+      "Teach this concept with an interactive lab and check transfer."
     ]
   }
 }

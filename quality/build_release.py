@@ -18,9 +18,11 @@ ROOT_FILES = [
     Path(".gitignore"),
     Path("AGENTS.md"),
     Path("CHANGELOG.md"),
+    Path("CONTRIBUTING.md"),
     Path("INSTALL.md"),
     Path("LICENSE"),
     Path("README.md"),
+    Path("ROADMAP.md"),
     Path("install.ps1"),
     Path("install.sh"),
 ]

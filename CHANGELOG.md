@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Reworked the repository first impression around a clear learner outcome, one-copy install path,
+  animated product walkthrough, comparison table, discoverable English summary, contribution guide,
+  public roadmap, and structured issue templates.
+- Expanded Codex plugin discovery metadata with AI-tutor, machine-learning, LLM, local-first, visual
+  identity, website, repository, and screenshot fields while preserving the stable plugin ID.
 - Added a guided lesson-delivery contract that starts from an explicit zero-baseline ladder,
   separates the current evidence target from motivating previews, and sizes a complete worked
   micro-lesson to the learner's available session instead of jumping from a short explanation to

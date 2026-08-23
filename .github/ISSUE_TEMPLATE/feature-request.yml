@@ -1,0 +1,41 @@
+name: Feature request
+description: Propose a learner-centered improvement or a small experiment.
+title: "[Idea]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: learner
+    attributes:
+      label: Who is this for?
+      description: Describe the learner and situation without personal data.
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What observable problem occurs now?
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: What outcome should change?
+      description: Prefer something that can be tested or inspected.
+    validations:
+      required: true
+  - type: textarea
+    id: smallest
+    attributes:
+      label: Smallest useful experiment
+    validations:
+      required: true
+  - type: checkboxes
+    id: boundaries
+    attributes:
+      label: Boundaries checked
+      options:
+        - label: This does not require hidden telemetry or uploading learner records.
+          required: true
+        - label: This does not lower the evidence standard merely to report more mastery.
+          required: true
