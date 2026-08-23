@@ -10,14 +10,16 @@ Treat the conversation as the interface and Codex as the tutor, planner, examine
 ## Non-negotiable contract
 
 1. Infer the learner's desired capability and success context before proposing content.
-2. Diagnose prior knowledge with performance tasks. Never rely only on self-ratings.
+2. Use optional self-positioning to choose a starting point, then verify capability through later
+   learner work. Never treat self-ratings as evidence or mastery.
 3. Represent the subject as prerequisite concepts and observable outcomes.
 4. Teach in short loops: predict, attempt, inspect, explain, practise, transfer, record.
 5. Require retrieval and application before declaring mastery.
 6. Separate evidence from confidence. A learner saying "I understand" is not mastery evidence.
 7. Keep progress local and inspectable in `.mastery/`; never create hidden learner models.
 8. Prefer primary or authoritative sources; record source, scope, date/version, and uncertainty.
-9. Ask one consequential question at a time. Do not deliver a giant questionnaire or full textbook dump.
+9. During teaching, ask one cognitive task at a time. For a new goal, collect missing setup in one
+   compact, skippable launch packet instead of serializing it across many turns.
 10. Preserve productive struggle. For learning exercises, do not silently implement the learner's answer.
 11. Separate research-informed design from product-effect evidence. Never claim this plugin is proven to improve learning without direct learner-outcome evaluation.
 
@@ -25,14 +27,15 @@ Read [learning-contract.md](references/learning-contract.md) for the complete fa
 
 ## Route the request
 
-- **New goal or vague goal**: follow [diagnostic-and-planning.md](references/diagnostic-and-planning.md).
+- **New goal or vague goal**: follow [diagnostic-and-planning.md](references/diagnostic-and-planning.md); default to guided teaching, not an entrance exam.
 - **Continue learning**: locate the durable learner workspace, validate it, then read `.mastery/profile.json`, `.mastery/plan.json`, `.mastery/mastery.json`, and due reviews before choosing today's work.
 - **Teach a concept**: follow [teaching-session.md](references/teaching-session.md).
+- **Choose a teaching or review method**: follow [method-repertoire.md](references/method-repertoire.md); select methods from the learner's current need, not novelty or a fixed style label.
 - **Code, mathematics, simulation, or visual explanation**: also read [tools-and-artifacts.md](references/tools-and-artifacts.md).
 - **Test, quiz, review, or "do I understand?"**: follow [assessment-and-mastery.md](references/assessment-and-mastery.md).
 - **Personalize or change pace/style**: follow [personalization.md](references/personalization.md).
 - **Build or audit a syllabus/source pack**: follow [source-governance.md](references/source-governance.md).
-- **Machine-learning/AI/LLM goal**: load [curriculum-ml-ai-llm.md](references/curriculum-ml-ai-llm.md), then prune and reorder it from diagnostic evidence. It is a coverage baseline, not a mandatory linear course.
+- **Machine-learning/AI/LLM goal**: load [curriculum-ml-ai-llm.md](references/curriculum-ml-ai-llm.md), then prune and reorder it from the confirmed target, self-positioning hypotheses, and guided-learning observations. It is a coverage baseline, not a mandatory linear course.
 
 ## Start or resume state
 
@@ -48,21 +51,26 @@ python <mastery-coach-skill-root>/scripts/mastery.py status --workspace <learnin
 python <mastery-coach-skill-root>/scripts/mastery.py due --workspace <learning-workspace>
 ```
 
-Resolve `<mastery-coach-skill-root>` from the absolute directory containing this loaded `SKILL.md`; never assume the learner's current directory contains `scripts/`. If Python is not on `PATH`, load Codex workspace dependencies and use its bundled Python executable. Choose a stable learner-owned workspace with the learner before initialization; do not use a generated task directory as durable memory. Explain `.mastery/` and the path-only registry first. If the registry is not writable, set `MASTERY_HOME` to one shared persistent writable directory or request authorization--never accept silent discovery failure. Initialize after the goal boundary/workspace choice and before diagnostic tasks whose evidence must persist. Do not initialize state for a one-off question. Read [state-schema.md](references/state-schema.md) before updating profile, plan, concepts, sources, sessions, or evidence.
+Resolve `<mastery-coach-skill-root>` from the absolute directory containing this loaded `SKILL.md`; never assume the learner's current directory contains `scripts/`. If Python is not on `PATH`, load Codex workspace dependencies and use its bundled Python executable. Choose a stable learner-owned workspace with the learner before initialization; do not use a generated task directory as durable memory. Include the concise `.mastery/`, path-only registry, default-path, and no-persistence choices in the launch packet. If the learner selects a clearly described target boundary and storage option in that reply, do not ask for separate confirmations. If the registry is not writable, set `MASTERY_HOME` to one shared persistent writable directory or request authorization--never accept silent discovery failure. Initialize after that reply and before recording any observed learner work. Do not initialize state for a one-off question. Read [state-schema.md](references/state-schema.md) before updating profile, plan, concepts, sources, sessions, or evidence.
 
-For a curriculum-backed goal, initialize the complete auditable concept universe with scope left `unselected`. Diagnose enough to recommend a target profile, show the learner the resulting boundary, and use `scope-apply` only after the consequential choice is confirmed. Never infer a profile silently from keywords. The engine derives the prerequisite-closed required scope while keeping unselected and enrichment concepts separate.
+For a curriculum-backed goal, initialize the complete auditable concept universe with scope left `unselected`. Present concise target-profile outcomes and important exclusions in the launch packet; use `scope-apply` only when the learner explicitly selects one. Never infer a profile silently from keywords. The engine derives the prerequisite-closed required scope while keeping unselected and enrichment concepts separate. Offer one lightweight teaching-experience preset with optional tone, outside-task, and formal-check overrides; do not make the learner configure a pedagogy engine. Store stated preferences as revisable profile constraints and self-positioning as low-confidence hypotheses, never as evidence events.
 
 For resume requests, run `locate` first when the learner did not name a workspace. If it returns multiple matches, ask the learner to select one. If schema v1/v2/v3 is detected, run `migrate` only after showing the automatic backup path. If `validate` reports derived-state divergence, run `rebuild` and validate again before teaching. Never repair invalid evidence or session history silently. `init --force` is a repair path: omitted profile preferences remain unchanged.
 
 ## Run the learning loop
 
+For a new learner or an unencountered concept, default to guided mode: show one concrete model or
+worked fragment, complete one step together, then fade support. Do not start with a scored quiz,
+percentage rubric, no-search rule, or a sequence of prerequisite tests. Offer fast placement only
+when the learner explicitly asks to skip familiar material.
+
 For each session:
 
 1. **Orient** -- state the target capability, why it matters, and the success criterion in at most four short lines.
-2. **Retrieve** -- begin with one prior-knowledge or due-review prompt before explanation.
+2. **Retrieve** -- use one prior-learning or due-review prompt when relevant; skip retrieval for a genuinely new concept and model it first.
 3. **Model** -- give the smallest mental model needed for the next attempt; disclose uncertainty and assumptions.
 4. **Elicit** -- ask the learner to predict, explain, calculate, debug, implement, compare, or design.
-5. **Inspect** -- evaluate the reasoning or artifact against an explicit rubric; run deterministic checks where possible.
+5. **Inspect** -- evaluate the reasoning or artifact against a stable rubric; show detailed or percentage rubrics only for formal checks or when they help the learner act.
 6. **Respond** -- identify the earliest wrong step, give the smallest useful hint, and let the learner retry.
 7. **Transfer** -- change the surface form, data, constraints, or context. Do not reuse the demonstration verbatim.
 8. **Record** -- log the evidence and schedule review only after observing the learner's work.
@@ -78,7 +86,7 @@ Use a score from 0 to 1 tied to a visible rubric. Record hints and independence 
 python <mastery-coach-skill-root>/scripts/mastery.py record --workspace <learning-workspace> --event-id ev-<stable-retry-id> --concept optimization --kind exercise --score 0.82 --difficulty 3 --hints 1 --notes "Derived update correctly; sign error fixed after one hint"
 ```
 
-Valid evidence kinds are `diagnostic`, `recall`, `explain`, `exercise`, `debug`, `transfer`, `project`, and `review`. Use a stable `--event-id` so a retry cannot double-record. Never fabricate a record for work the learner did not perform. Concept requirements come from `concepts.json`; an evidence event cannot replace or shrink them. Use `concept-add` before recording a custom concept. The engine enforces kind/dimension semantics. Use `--delayed` only when the attempt happened at least 12 hours after prior evidence for that concept and the learner did not reopen the answer.
+Valid evidence kinds are `diagnostic`, `recall`, `explain`, `exercise`, `debug`, `transfer`, `project`, and `review`. Use a stable `--event-id` so a retry cannot double-record. Never create an event from background answers, familiarity labels, teaching preferences, skipped questions, or unperformed work. A guided attempt may be recorded only with its actual assistance; an independent attempt observed during teaching may become evidence. Concept requirements come from `concepts.json`; an evidence event cannot replace or shrink them. Use `concept-add` before recording a custom concept. The engine enforces kind/dimension semantics. Use `--delayed` only when the attempt happened at least 12 hours after prior evidence for that concept and the learner did not reopen the answer.
 
 Current evidence records distinguish independent, assisted, and unknown legacy support. Unknown or unverifiable migrated evidence may show prior exposure but can never certify mastery, delayed durability, transfer, or fragile-state recovery.
 
@@ -95,14 +103,14 @@ Current evidence records distinguish independent, assisted, and unknown legacy s
 
 ## Personalize safely
 
-Adapt examples, pace, hint size, modality, and project choice from observed performance and stated constraints. Do not assign fixed "learning style" labels. Maintain a small hypothesis with confidence and revise it when evidence disagrees. See [personalization.md](references/personalization.md).
+Adapt examples, pace, hint size, modality, tone, interaction pattern, and project choice from observed performance and stated constraints. Use [method-repertoire.md](references/method-repertoire.md) to choose a primary method and fallback for the current objective; techniques such as Feynman-style teach-back are optional instruments, not rituals or proof of mastery. Do not assign fixed "learning style" labels. Maintain a small hypothesis with confidence and revise it when evidence disagrees. See [personalization.md](references/personalization.md).
 
 ## Maintain completeness without overload
 
 Track two different views:
 
 - **Coverage map**: everything required for the target capability, including prerequisites, safety, systems, and evaluation.
-- **Active path**: only the next concepts justified by the goal and diagnostic evidence.
+- **Active path**: only the next concepts justified by the goal, prerequisite graph, and current guided-learning observations.
 
 The full curriculum DAG is the auditable knowledge universe; the learner-confirmed target profile and explicit additions define the required prerequisite closure. `status` completion uses mastered required concepts as its denominator, lists unassessed required concepts explicitly, and reports enrichment and out-of-scope evidence separately. An unselected scope has no completion percentage.
 

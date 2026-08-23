@@ -3,7 +3,7 @@
   "id": "ml-ai-llm",
   "version": "2026.08",
   "title": "Machine Learning, AI, and LLM Capability Map",
-  "description": "A coverage baseline to prune and reorder after diagnostic evidence; not a fixed linear course.",
+  "description": "A coverage baseline to prune and reorder from learner-confirmed scope and guided-learning observations; not a fixed linear course.",
   "scope": {
     "included": [
       "software and mathematical prerequisites",

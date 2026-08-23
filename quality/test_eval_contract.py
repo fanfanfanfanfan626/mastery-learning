@@ -91,6 +91,7 @@ class ConversationEvalContractTests(unittest.TestCase):
         self.assertEqual(
             set(policy["critical_case_ids"]),
             {
+                "follow-up-onboarding-one-reply",
                 "follow-up-resume-from-another-directory",
                 "follow-up-confidence-is-not-mastery",
                 "boundary-scope-needs-confirmation",
@@ -239,9 +240,10 @@ class ConversationEvalContractTests(unittest.TestCase):
         self.assertEqual(len(ordinary), 9)
 
         def report_with_failures(root: Path, failure_count: int) -> dict[str, object]:
-            failures = ordinary[:failure_count]
-            for index in range(5):
-                assigned = set(failures[index * 2 : index * 2 + 2])
+            assignments = [set() for _ in range(10)]
+            for slot in range(failure_count):
+                assignments[slot // len(ordinary)].add(ordinary[slot % len(ordinary)])
+            for index, assigned in enumerate(assignments):
                 self.write_run(
                     root,
                     f"run-{index + 1:03d}",
@@ -251,9 +253,9 @@ class ConversationEvalContractTests(unittest.TestCase):
             return audit_release_evidence(self.suite, root)
 
         with tempfile.TemporaryDirectory() as exact_temporary:
-            exact = report_with_failures(Path(exact_temporary), 8)
+            exact = report_with_failures(Path(exact_temporary), 17)
         with tempfile.TemporaryDirectory() as below_temporary:
-            below = report_with_failures(Path(below_temporary), 9)
+            below = report_with_failures(Path(below_temporary), 18)
         self.assertTrue(exact["ok"], exact)
         self.assertEqual(exact["overall_pass_rate"], 0.9)
         self.assertFalse(below["ok"])

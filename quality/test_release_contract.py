@@ -29,6 +29,16 @@ class ReleaseContractTests(unittest.TestCase):
             b"MIT License\n\nCopyright\n",
         )
 
+    def test_platform_installers_are_checkout_independent(self) -> None:
+        self.assertEqual(
+            canonical_release_bytes(Path("install.ps1"), b"Write-Output ok\r\n"),
+            b"Write-Output ok\n",
+        )
+        self.assertEqual(
+            canonical_release_bytes(Path("install.sh"), b"#!/bin/sh\r\necho ok\r\n"),
+            b"#!/bin/sh\necho ok\n",
+        )
+
     def test_two_builds_are_identical_and_auditable(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             first = Path(temporary) / "first.zip"

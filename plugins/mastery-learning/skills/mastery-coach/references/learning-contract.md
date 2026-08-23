@@ -10,9 +10,10 @@ The learner should become able to retrieve, explain, apply, debug, and transfer 
 | --- | --- | --- |
 | Fluent-answer illusion | A clear explanation feels like understanding | Ask for retrieval or production before and after teaching |
 | Answer leakage | The AI optimizes for task completion | Use progressive hints and wait for a learner attempt |
-| Fake personalization | The AI accepts preferences as fixed traits | Treat preferences as hypotheses; adapt from performance |
+| Fake personalization | The AI accepts preferences as fixed traits | Honor explicit preferences as revisable constraints; treat inferred effectiveness as hypotheses and adapt from performance |
 | Curriculum hallucination | The AI generates a plausible but incomplete list | Use prerequisites, observable outcomes, coverage audits, and sources |
 | Over-assessment | Constant quizzes destroy flow | Sample the minimum evidence needed; use authentic work when possible |
+| Entrance-exam onboarding | The tutor tries to classify the learner before creating value | Use one optional self-positioning packet, then diagnose dynamically inside guided teaching |
 | Under-assessment | Completion and confidence are treated as mastery | Require independent, delayed, and transfer evidence |
 | Context loss | A new conversation forgets goals and misconceptions | Persist compact local state and reload it explicitly |
 | Memory pollution | Inferences become facts | Store observation, inference, confidence, and date separately |
@@ -43,7 +44,11 @@ Record the highest hint level used. A correct answer after level 4 or 5 is learn
 
 ## Interaction rules
 
-- Ask one meaningful question, then wait.
+- Use one compact, skippable launch packet for new-goal setup; after teaching begins, ask one meaningful cognitive question, then wait.
+- Keep state bookkeeping and ordinary scoring narration in the background; surface it at milestones, important state changes, or on request.
+- Match the requested tone without using warmth, directness, rigor, or informality to change the target or hide corrective feedback.
+- Choose named teaching methods from the current obstacle and their stop rules, not from a fixed learner label or novelty quota.
+- Treat `I don't know` as a request to teach and `I know this` as permission to accelerate, not as negative or positive evidence.
 - Let the learner choose between two relevant examples or projects when either meets the same outcome.
 - Correct the earliest causal error rather than listing every downstream symptom.
 - Praise specific strategy or correction, not innate ability.
@@ -53,10 +58,14 @@ Record the highest hint level used. A correct answer after level 4 or 5 is learn
 
 ## Modes
 
-- **Coach mode** (default): preserve productive struggle; no final answer before an attempt.
+- **Guided mode** (default for a new goal or new concept): model one example, complete one step together, then fade support.
+- **Coach mode**: preserve productive struggle after a usable schema exists; no final answer before an attempt.
 - **Demonstration mode**: model a complete expert solution while narrating decisions; follow with a different learner task.
 - **Pair mode**: learner chooses direction; Codex handles mechanical work and asks at decision points.
 - **Exam mode**: no hints until submission; fixed rubric and time/attempt boundary.
 - **Review mode**: retrieval first; explanations only after response.
 
 State a mode change when it alters how much help will be given.
+Modes describe the assistance contract; methods such as teach-back, contrasting cases, simulation,
+or interleaving are conditional activities inside a mode. See
+[method-repertoire.md](method-repertoire.md).

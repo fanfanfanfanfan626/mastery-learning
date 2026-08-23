@@ -16,9 +16,13 @@ ROOT_FILES = [
     Path(".github/workflows/verify.yml"),
     Path(".gitattributes"),
     Path(".gitignore"),
+    Path("AGENTS.md"),
     Path("CHANGELOG.md"),
+    Path("INSTALL.md"),
     Path("LICENSE"),
     Path("README.md"),
+    Path("install.ps1"),
+    Path("install.sh"),
 ]
 TREES = [Path("docs"), Path("plugins/mastery-learning"), Path("quality")]
 EXCLUDED_PARTS = {"__pycache__", ".pytest_cache", ".mypy_cache"}
@@ -26,7 +30,7 @@ EXCLUDED_SUFFIXES = {".pyc", ".pyo", ".zip"}
 FIXED_TIMESTAMP = (1980, 1, 1, 0, 0, 0)
 TEXT_SUFFIXES = {
     ".css", ".csv", ".html", ".js", ".json", ".jsonl", ".md", ".mjs",
-    ".py", ".svg", ".toml", ".ts", ".txt", ".yaml", ".yml",
+    ".ps1", ".py", ".sh", ".svg", ".toml", ".ts", ".txt", ".yaml", ".yml",
 }
 TEXT_FILENAMES = {".gitattributes", ".gitignore", "LICENSE"}
 
@@ -150,6 +154,10 @@ def verify_archive(path: Path, version: str) -> None:
             raise SystemExit("Archived plugin version does not match source manifest")
         required = {safe_archive_name(path) for path in ROOT_FILES}
         required.update({
+            "AGENTS.md",
+            "INSTALL.md",
+            "install.ps1",
+            "install.sh",
             "plugins/mastery-learning/skills/mastery-coach/SKILL.md",
             "plugins/mastery-learning/skills/mastery-tool-creator/SKILL.md",
             "quality/test_state_regressions_v4.py",

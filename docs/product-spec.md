@@ -7,7 +7,7 @@ The final outcome of learning is an independently usable capability. Therefore t
 ## Required product behavior
 
 1. Translate a vague aspiration into an observable capability and proof artifact.
-2. Diagnose the smallest set of prerequisites that changes the near-term plan.
+2. Estimate the smallest set of prerequisites that changes the near-term plan from background and skippable self-positioning, then refine it through guided work rather than an entrance exam.
 3. Maintain a complete, versioned, sourced coverage graph, a learner-confirmed prerequisite-closed scope, and a short adaptive active path.
 4. Teach through active, turn-based interaction rather than monologue.
 5. Generate tools only where they make a relationship or performance observable.
@@ -19,7 +19,7 @@ The final outcome of learning is an independently usable capability. Therefore t
 
 ## Personalization
 
-Personalization changes sequence, examples, representations, hint size, difficulty, session length, review load, and capstone choice. It is based on observed performance plus user constraints. The system does not assign fixed learning-style labels or infer unrelated sensitive traits.
+Personalization starts with one lightweight, revisable experience preset plus optional tone, outside-task, and formal-check overrides. It changes sequence, examples, representations, hint size, difficulty, interaction method, response density, session length, review load, and capstone choice. The AI selects techniques such as worked-example fading, Feynman-style teach-back, contrasting cases, interleaving, or productive failure only when their trigger conditions fit, and keeps a fallback. It is based on observed performance plus user constraints. The system does not assign fixed learning-style labels, make tone change the mastery standard, or infer unrelated sensitive traits.
 
 ## Interest and motivation
 
@@ -34,9 +34,9 @@ For ML/AI/LLM learning, the built-in pack covers computing, mathematics, classic
 ## Minimum viable user journey
 
 1. Learner states a target in Codex.
-2. Codex resolves the goal boundary, explains local persistence, and agrees on a stable learner-owned workspace.
-3. Codex initializes `.mastery/`, then asks and records diagnostic tasks before showing the short path plus coverage boundary.
-4. Each session starts with retrieval, teaches one frontier capability, and ends with an exit task.
+2. Codex presents one compact, skippable launch packet covering the missing goal, time, relevant background, self-positioning, teaching experience, and local-persistence choices.
+3. After one reply, Codex initializes `.mastery/`, stores preferences and self-positioning without calling them evidence, shows the provisional short path and coverage boundary, and begins a guided micro-lesson without another setup round.
+4. Each session retrieves prior or due learning when relevant, models genuinely new material before demanding performance, teaches one frontier capability, and ends with one clear next action.
 5. Code or interactive tools are generated only when justified.
 6. Evidence updates mastery and review dates.
 7. A capstone and defense verify integrated capability.
@@ -58,8 +58,11 @@ The research basis and product-specific claim boundary are documented in [pedago
 - curriculum identity, target closure, source provenance, scope, and DAG audit have no errors;
 - state initialization, explicit scope closure, cross-task discovery, serialized writes, interrupted-transaction recovery, derived-state recovery, conservative migration, strict durability transition, failure transition, due-review query, export, and confirmed deletion pass automated tests;
 - unfinished generated tools and placeholder checks fail; static validation never executes generated code; only separately observed sandbox/render results can mark a tool verified;
-- README installation commands match the bundled Plugin Creator installation contract, and the exact release archive passes a fresh-clone smoke test before a separate Codex installation check;
-- at least one cold-start and one cross-task resume conversation are manually evaluated for triggering, answer leakage, overload, false mastery, and workspace selection;
+- README and `INSTALL.md` classify the distribution as one two-Skill plugin before any command runs;
+  platform installers validate both marketplace and plugin identities, never fall back to a partial
+  standalone-Skill install, and the exact release archive passes a fresh-clone smoke test before a
+  separate Codex installation check;
+- at least one cold-start, one single-reply personalized onboarding, and one cross-task resume conversation are manually evaluated for triggering, setup latency, answer leakage, overload, false mastery, preference boundaries, and workspace selection;
 - a version-bound conversation-evaluation suite covers direct, indirect, follow-up, negative, and boundary requests; release evidence contains three uniquely identified complete runs, all declared critical cases pass every run, aggregate case pass rate is at least 90%, and each non-critical case passes at least two of three runs;
 - any published behavior claim links to the validated release-evidence report and its synthetic transcript evidence; blocked, omitted, duplicate, or below-threshold runs cannot satisfy the tag gate;
 - release artifacts are built from canonical LF text, compare byte-for-byte across Windows and Linux, and match canonical bytes from the tagged Git tree.

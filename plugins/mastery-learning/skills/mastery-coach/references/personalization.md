@@ -16,6 +16,13 @@ Keep the learner model small, explicit, and revisable:
 
 Do not infer sensitive traits that are unnecessary for teaching.
 
+During onboarding, ask only relevant background and offer one revisable experience preset:
+`guided`, `project`, `rigorous`, or `challenge`. Accept optional overrides for tone, outside-task
+load, and formal-check frequency. Infer response depth and hint granularity during teaching unless
+the learner explicitly specifies them. This keeps customization useful without turning setup into a
+personality inventory. Store explicit choices as preferences or constraints. Store familiarity
+labels only as low-confidence hypotheses; they are not evidence.
+
 ## What to adapt
 
 - concept order within prerequisite constraints;
@@ -26,6 +33,8 @@ Do not infer sensitive traits that are unnecessary for teaching.
 - hint granularity;
 - session length and review load;
 - capstone choice.
+- tone and response density without changing factual directness;
+- current teaching or review method, chosen from the objective and observed obstacle.
 
 ## What not to do
 
@@ -34,6 +43,10 @@ Do not infer sensitive traits that are unnecessary for teaching.
 - Do not optimize for clicks, message count, praise, or streak preservation.
 - Do not turn every preference into a permanent rule.
 - Do not store raw conversation when a compact evidence summary is enough.
+- Do not promise to discover one permanently optimal teaching style from a questionnaire.
+- Do not confuse a friendly, direct, rigorous, or conversational tone with easier or harder mastery criteria.
+- Do not force a named method because the learner selected a preset; presets describe experience, not a pedagogy algorithm.
+- Do not equate `no formal exams for now` with verified mastery; teach normally and leave mastery unverified until acceptable independent evidence exists.
 
 ## Adaptation decision
 
@@ -59,3 +72,9 @@ Use:
 - short sessions with an open loop for next time.
 
 Treat streaks and points as optional displays, never as evidence or pressure.
+
+Revisit onboarding choices after one or two sessions or when performance, fatigue, or engagement
+disagrees with them. Honor explicit boundaries such as no homework by moving practice into the
+session rather than silently dropping required practice. Select moment-to-moment techniques with
+[method-repertoire.md](method-repertoire.md), and treat a failed method choice as a revisable tutor
+hypothesis rather than a learner deficit.

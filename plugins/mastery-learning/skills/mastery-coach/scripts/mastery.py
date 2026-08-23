@@ -1288,7 +1288,7 @@ def cmd_init(args: argparse.Namespace) -> None:
             created = iso()
             profile = {
                 "schema_version": SCHEMA_VERSION, "workspace_id": f"ws-{uuid.uuid4().hex}", "created_at": created,
-                "updated_at": created, "goal": args.goal.strip(), "proof_of_completion": args.proof or "To be agreed after diagnostic evidence",
+                "updated_at": created, "goal": args.goal.strip(), "proof_of_completion": args.proof or "To be agreed after guided learning observations",
                 "hours_per_week": args.hours_per_week if args.hours_per_week is not None else 5,
                 "session_minutes": args.session_minutes if args.session_minutes is not None else 45,
                 "deadline": args.deadline,
@@ -1303,7 +1303,7 @@ def cmd_init(args: argparse.Namespace) -> None:
             plan = {
                 "schema_version": SCHEMA_VERSION, "updated_at": created, "status": "diagnostic", "coverage_pack": pack,
                 "target_artifact": args.proof, "active_path": [], "excluded_scope": [],
-                "open_questions": ["Diagnostic evidence has not been collected."], "scope_selection": selection,
+                "open_questions": ["Starting level will be refined through guided learning."], "scope_selection": selection,
             }
             events, sessions = [], []
         issues = (
@@ -1582,7 +1582,7 @@ def cmd_status(args: argparse.Namespace) -> None:
         coverage_line = f"Scope unselected; {result['coverage']['assessed']}/{result['coverage']['defined']} concepts assessed"
     print(f"Goal: {result['goal']}\nWorkspace: {workspace}\nCoverage: {coverage_line}")
     if not rows:
-        print("No evidence recorded yet. Start with a diagnostic performance task.")
+        print("No evidence recorded yet. Start with a guided lesson and record only observed learner work.")
         return
     print(f"{'Concept':28} {'State':12} {'Score':7} {'Evidence':8} Due")
     for row in rows:

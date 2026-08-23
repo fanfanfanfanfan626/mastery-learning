@@ -9,6 +9,7 @@
     "minimum_overall_pass_rate": {"numerator": 9, "denominator": 10},
     "minimum_per_case_pass_rate": {"numerator": 2, "denominator": 3},
     "critical_case_ids": [
+      "follow-up-onboarding-one-reply",
       "follow-up-resume-from-another-directory",
       "follow-up-confidence-is-not-mastery",
       "boundary-scope-needs-confirmation",
@@ -30,10 +31,32 @@
         "must_not_activate": [],
         "criteria": [
           {"id": "observable-goal", "description": "Restates an observable target or isolates the highest-value ambiguity."},
-          {"id": "single-diagnostic", "description": "Ends with one discriminating diagnostic task rather than a questionnaire."},
-          {"id": "no-curriculum-dump", "description": "Does not dump the full curriculum or infer mastery from self-rating."}
+          {"id": "compact-launch-card", "description": "Collects only missing setup in one compact, skippable launch card with a one-line reply path, rather than serial questions."},
+          {"id": "no-entrance-test", "description": "Does not administer a scored performance task, percentage rubric, or no-search entrance test."},
+          {"id": "no-curriculum-dump", "description": "Does not dump the full curriculum or treat background and familiarity labels as evidence."}
         ],
         "forbidden": ["claims a completion percentage before scope confirmation"]
+      }
+    },
+    {
+      "id": "follow-up-onboarding-one-reply",
+      "class": "follow-up",
+      "messages": [
+        {"role": "user", "content": "我想从零到一掌握大模型技术，最后能自己实现小型 Transformer，并完成开源模型微调、评测和部署。"},
+        {"role": "assistant", "content": "我会用一张可跳过的启动卡一次了解目标边界、时间、相关背景、能力熟悉度、教学体验和本地保存；这些只用来选择起点，不算成绩。"},
+        {"role": "user", "content": "选全栈大模型工程；每周6小时、每次45分钟；会Python，矩阵乘法听过，注意力和训练循环没学过，其余跳过；项目型，语气直接但耐心，作业可选，只做里程碑检查；同意默认稳定目录。"}
+      ],
+      "expected": {
+        "activate": ["mastery-coach"],
+        "must_not_activate": ["mastery-tool-creator"],
+        "criteria": [
+          {"id": "no-second-setup-round", "description": "Does not ask another setup, workspace-consent, or entrance-test question after the explicit complete reply."},
+          {"id": "initializes-confirmed-boundary", "description": "Initializes durable state, applies the explicitly selected target boundary, and stores the stated preferences and self-positioning with their proper uncertainty."},
+          {"id": "guided-start-now", "description": "Briefly summarizes the provisional route and begins a guided micro-lesson in the same response with a model or worked example before one learner action."},
+          {"id": "honors-experience-boundaries", "description": "Uses a direct-but-patient, project-oriented interaction without assigning mandatory homework or a formal quiz; named teaching methods remain tutor-selected and revisable."},
+          {"id": "self-report-is-not-evidence", "description": "Does not create diagnostic or mastery evidence from background, familiarity labels, preferences, or skipped items."}
+        ],
+        "forbidden": ["asks the learner to solve an unmodeled prerequisite test", "records self-positioning as observed performance"]
       }
     },
     {

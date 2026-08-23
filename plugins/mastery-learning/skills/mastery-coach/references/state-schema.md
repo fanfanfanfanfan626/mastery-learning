@@ -6,7 +6,7 @@ The engine also keeps one atomic entry per workspace under `$MASTERY_HOME/worksp
 
 ## Files
 
-- `profile.json`: explicit goal, constraints, and revisable personalization hypotheses.
+- `profile.json`: explicit goal, stated experience/tone/assignment/assessment constraints, and revisable personalization or method-effectiveness hypotheses. Launch-packet familiarity labels remain hypotheses, never evidence.
 - `plan.json`: target artifact, learner-confirmed scope selection/exclusions, and short active path. Curriculum-pack coverage exclusions remain in `concepts.json` and are never copied here as if the learner chose them.
 - `concepts.json`: the complete versioned concept universe, prerequisites, outcomes, target profiles, modules, source IDs, and mastery dimensions.
 - `mastery.json`: per-concept dimension estimates, evidence counts, and state.
@@ -50,6 +50,7 @@ The engine also keeps one atomic entry per workspace under `$MASTERY_HOME/worksp
 - Treat `request_fingerprint` as the complete idempotency boundary. The same event ID with changed time, delay request, dimensions, assistance, score, notes, or custom-concept declaration is a conflict.
 - Store concise observations, not private chain-of-thought or full chat transcripts.
 - Mark inference and confidence when recording personalization.
+- Keep explicit onboarding preferences in `constraints` and self-positioning or inferred method effectiveness in `hypotheses`; neither can certify a concept or create a review obligation.
 - A missing score means unassessed, not zero.
 - Keep schema version in every JSON root.
 - Hold the persistent OS byte lock under the registry lock directory while reading or changing aggregate state. The operating system releases it if a process dies; never delete a live lock file.

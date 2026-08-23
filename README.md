@@ -1,5 +1,10 @@
 # Mastery Learning for Codex
 
+> [!IMPORTANT]
+> **安装类型：Codex 插件市场（Codex plugin marketplace），不是根目录独立 Skill。不要使用 `skill-installer`。**
+> 本仓库把 `mastery-coach` 与 `mastery-tool-creator` 作为一个插件共同安装；只复制其中一个
+> `SKILL.md` 会得到不完整且不受支持的安装。完整说明见 [INSTALL.md](INSTALL.md)。
+
 Mastery Learning 是一个以 Codex 为核心交互界面的开源学习系统。它不是独立学习网站：用户在 Codex 中说出目标，Codex 负责诊断、规划、教学、出题、检查代码、生成实验工具、记录证据并安排复习。
 
 产品核心是 `mastery-coach` Skill。GitHub 插件只是安装、发现和版本管理外壳；`mastery-tool-creator` 是被主 Skill 显式调用的教学工具工厂。
@@ -8,7 +13,7 @@ Mastery Learning 是一个以 Codex 为核心交互界面的开源学习系统�
 
 普通 AI 教学容易把“解释得顺”误当成“学生学会了”。本系统要求：
 
-- 先用任务诊断，而不是只问“你会多少”；
+- 开始时用一张可跳过的简短启动卡了解相关背景、熟悉度和教学偏好，不先用考试拦住学习；
 - 同时维护完整覆盖图和当前学习路径；
 - 完整课程图始终保留；用户确认的目标画像和显式目标决定必修先修闭包，未选择内容不会污染完成率；
 - 每次教学都经过预测、尝试、反馈、迁移和记录；
@@ -17,40 +22,26 @@ Mastery Learning 是一个以 Codex 为核心交互界面的开源学习系统�
 - 学习记忆保存在本地 `.mastery/`，用户可读、可迁移、可导出、可删除；概念要求不能被单条证据缩减；
 - 可视化、3D、黑板、Notebook、PPT 和测验按需生成，不是固定 UI。
 
-## 从 GitHub 安装
+## 安装（推荐：让 Codex 完成）
 
-克隆仓库，再把包含 `.agents/plugins/marketplace.json` 的仓库根目录注册为显式本地插件目录：
+最简单只需把下面一句交给 Codex；详细路由和校验规则由仓库自己提供，不需要用户背安装步骤：
 
-```powershell
-git clone https://github.com/fanfanfanfanfan626/mastery-learning.git
-Set-Location .\mastery-learning
-codex plugin marketplace add (Resolve-Path .)
-codex plugin add mastery-learning@mastery-learning
+```text
+请把这个仓库作为 Codex 插件（不是独立 Skill）安装：https://github.com/fanfanfanfanfan626/mastery-learning 。按根目录 INSTALL.md 完成并验证。
 ```
 
-macOS/Linux 把第三条改为 `codex plugin marketplace add "$(pwd)"`。
+手动安装也只需在完整 Git clone 或完整 Release ZIP 的根目录运行一条命令：Windows 使用
+`powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1`，macOS/Linux 使用
+`sh ./install.sh`。脚本会先验证 marketplace 与 plugin 两层身份，再通过 Codex CLI 安装；不会回退成单 Skill 安装。下载、校验、稳定目录要求和故障处理见 [INSTALL.md](INSTALL.md)。
 
-## 从发布 ZIP 安装
-
-不需要克隆仓库。从 [GitHub Releases](https://github.com/fanfanfanfanfan626/mastery-learning/releases) 下载页面上**实际存在**的 `mastery-learning-X.Y.Z.zip`，把 `X.Y.Z` 替换成所选 Release 的版本号；不要根据 `main` 分支中的候选版本号猜测尚未发布的资产。完整解压后，把解压根目录注册为显式本地插件目录：
-
-```powershell
-$Version = "X.Y.Z"
-Expand-Archive ".\mastery-learning-$Version.zip" -DestinationPath ".\mastery-learning-$Version"
-codex plugin marketplace add (Resolve-Path ".\mastery-learning-$Version")
-codex plugin add mastery-learning@mastery-learning
-```
-
-macOS/Linux 可先设置 `VERSION=X.Y.Z`，再运行 `unzip "mastery-learning-$VERSION.zip" -d "mastery-learning-$VERSION"`，其余两条命令相同，并传入解压根目录的绝对路径。不要把 ZIP 内的 `plugins/mastery-learning` 子目录误当成 marketplace 根目录；需要注册的是同时包含 `.agents/`、`plugins/` 的那一层。
-
-安装或更新后开启一个新的 Codex 任务，使 Skill 被重新加载；在桌面版中也可从 Plugins Directory 安装已添加目录中的 `mastery-learning`。不要把 GitHub 密码或令牌粘贴进对话；如需推送仓库，请使用 Codex 内置浏览器或 GitHub CLI 的官方登录流程。
+安装或更新后开启一个新的 Codex 任务，使两个 Skill 被重新加载。不要把 GitHub 密码或令牌粘贴进对话；如需推送仓库，请使用 Codex 内置浏览器或 GitHub CLI 的官方登录流程。
 
 ## 开始使用
 
 可以直接对 Codex 说：
 
 ```text
-我想系统学习机器学习、AI 和大模型，目标是能独立构建并评估可靠的 LLM 应用。每周 6 小时，请先诊断，不要直接给我完整课程。
+我想系统学习机器学习、AI 和大模型，目标是能独立构建并评估可靠的 LLM 应用。每周 6 小时。请用一张简短启动卡一次了解我的基础和教学偏好，然后直接开始引导学习，不要先考试或给我完整课程。
 ```
 
 继续学习：
@@ -59,7 +50,7 @@ macOS/Linux 可先设置 `VERSION=X.Y.Z`，再运行 `unzip "mastery-learning-$V
 读取我的本地学习进度，先处理到期复习，再决定今天学什么。
 ```
 
-主 Skill 会先从持久工作区注册表中定位过去的学习目录；注册表采用每工作区一个原子条目，存在多个目标时会让用户选择。首次学习会先与用户确定稳定目录、解释本地数据，再初始化完整课程图并记录诊断；提出目标画像和先修闭包后，只有经用户确认才写入必修范围。不会把生成型 Codex 任务目录误当作永久学习空间。旧 schema v1/v2/v3 会先生成外部 ZIP，再保守迁移到 v4。
+主 Skill 会先从持久工作区注册表中定位过去的学习目录；注册表采用每工作区一个原子条目，存在多个目标时会让用户选择。首次学习会把目标、时间、相关背景、6–8 个“会用/听过/没学过/跳过”的能力定位、教学体验和本地保存放进同一张可跳过的启动卡。用户一次回复后才初始化完整课程图；自述只作为待验证假设，不写成学习证据，并在同一回复里开始第一个引导式微课。目标画像和先修闭包只有经用户明确选择才写入必修范围。不会把生成型 Codex 任务目录误当作永久学习空间。旧 schema v1/v2/v3 会先生成外部 ZIP，再保守迁移到 v4。
 
 创建工具：
 
@@ -67,7 +58,7 @@ macOS/Linux 可先设置 `VERSION=X.Y.Z`，再运行 `unzip "mastery-learning-$V
 这部分仅靠文字不好理解。请让工具生成器制作一个需要我先预测、再操作、最后解释迁移的可视化实验。
 ```
 
-主 Skill 默认使用教练模式，一次提出一个有意义的学习动作。可以明确切换演示、结对、考试或复习模式。
+新目标和新概念默认使用引导模式：先给一个具体模型或样例、共同完成一步，再逐渐减少帮助；已有可用基础后才进入强调独立尝试的教练模式。启动时只需选择一个可随时修改的体验预设（引导、项目、严谨或挑战），也可覆盖语气、课外作业和正式检查偏好。费曼式讲回、样例渐隐、交错练习、对比案例、生产性失败等方法由 AI 按当前知识和错误选择，不要求用户配置，也不会改变掌握标准。
 
 ## 仓库结构
 

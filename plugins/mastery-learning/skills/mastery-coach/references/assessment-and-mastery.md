@@ -23,6 +23,9 @@ Recognition and cued recall are weak evidence. Free recall, independent applicat
 - Let the AI judge reasoning only against an explicit rubric and cite the learner's evidence.
 - If deterministic checks and AI judgment disagree, report it and do not silently pass.
 - Keep confidence separate from score.
+- Honor a `no formal checks for now` preference by gathering independent work through natural
+  explanations, code reviews, projects, debugging, or teach-backs. If the learner declines all
+  independent checks, continue teaching but leave mastery unverified.
 
 ## Mastery states
 
@@ -41,4 +44,17 @@ Check that every question maps to an outcome, does not leak the answer, cannot p
 
 ## Review scheduling
 
-Schedule the first review near one day after initial meaningful evidence. Advance through intervals near 1, 3, 7, 14, 30, and 60 days only after independent `recall` or `review` evidence performed on or after the current due time. Same-session explanations, exercises, diagnostics, and early reviews do not advance the interval. Reset or shorten after failure or assisted retrieval. Interleave related concepts and include cumulative tasks. The bundled engine is deliberately conservative and simpler than a personalized FSRS optimizer until enough review data exists.
+Schedule the first review near one day after initial meaningful evidence. Advance through intervals near 1, 3, 7, 14, 30, and 60 days only after independent `recall` or `review` evidence performed on or after the current due time. Same-session explanations, exercises, diagnostics, and early reviews do not advance the interval. Reset or shorten after failure or assisted retrieval.
+
+Choose the review form from the knowledge and error:
+
+- use uncued reconstruction and successive relearning for durable availability;
+- use Feynman-style teach-back for a causal explanation, then separately test changed-context use;
+- use contrasting cases or interleaving only after the component concepts are individually usable;
+- use debugging, design defense, or project review when authentic selection and integration matter;
+- vary surface cues without changing the declared concept requirement.
+
+A teach-back can support the `conceptual` or `explain` dimension when it is the learner's own work,
+but it cannot by itself satisfy delayed retrieval, transfer, or creation. The bundled engine is
+deliberately conservative and simpler than a personalized FSRS optimizer until enough review data
+exists. See [method-repertoire.md](method-repertoire.md) for method triggers and stop rules.

@@ -32,7 +32,9 @@ The scheduler creates an initial one-day review and advances expanding intervals
 
 ## Curriculum
 
-Curriculum packs are prerequisite DAGs. `concepts.json` stores the complete pack snapshot and hash; learner scope does not delete definitions. Target profiles name final capability nodes, and a confirmed selection derives the required prerequisite closure plus a separate enrichment closure. Unselected concepts remain auditable without inflating the completion denominator. Each concept has an observable outcome, evidence dimensions, module, and source IDs. Each source records organization, authority, version/date, reuse boundary, concept coverage, known gaps, and check date. The complete map prevents omissions; the active path is validated against the confirmed scope and generated from diagnostic evidence to avoid overload.
+Curriculum packs are prerequisite DAGs. `concepts.json` stores the complete pack snapshot and hash; learner scope does not delete definitions. Target profiles name final capability nodes, and a confirmed selection derives the required prerequisite closure plus a separate enrichment closure. Unselected concepts remain auditable without inflating the completion denominator. Each concept has an observable outcome, evidence dimensions, module, and source IDs. Each source records organization, authority, version/date, reuse boundary, concept coverage, known gaps, and check date. The complete map prevents omissions; the active path is validated against the confirmed scope and provisionally ordered from relevant background, self-positioning hypotheses, and later guided-learning observations.
+
+The conversation layer owns adaptive pedagogy. A compact launch packet stores a revisable experience preset and optional tone, outside-task, and check boundaries. The Skill then selects one method and fallback for the current obstacle from a governed repertoire. Method choice affects interaction and practice, never concept definitions, evidence independence, review chronology, or mastery thresholds.
 
 ## Tool lifecycle
 

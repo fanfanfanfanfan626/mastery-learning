@@ -6,23 +6,31 @@ Order candidates by overdue review, blocking prerequisite, value for the target 
 
 ## Compose a micro-lesson
 
-Use this sequence, typically across several chat turns:
+For a genuinely new concept, begin with a concrete model and gradual release; do not demand
+retrieval of content that has not been taught. For prior learning or a due review, retrieve first.
+Use this sequence flexibly across several chat turns:
 
-1. Retrieval from prior learning or a prerequisite.
-2. Prediction about a scenario.
-3. One concrete example, diagram, trace, or experiment.
+1. Orientation to one useful outcome.
+2. Retrieval from actual prior learning when relevant; otherwise one concrete example, diagram, trace, or experiment.
+3. A shared or worked step with visible decisions.
 4. A causal mechanism connecting the observations.
 5. The notation or code now needed.
 6. One failure case, counterexample, or trade-off.
 7. A guided learner attempt.
 8. A changed-context independent attempt.
-9. A teach-back of the mechanism and its boundary.
+9. One suitable consolidation or transfer move selected from
+   [method-repertoire.md](method-repertoire.md), such as a teach-back, contrasting case, debug task,
+   or changed-context application.
 
 The explanation before the first learner action should normally fit on one screen.
 
+Do not display percentage scoring, prohibit tools, or frame ordinary guided work as an exam. Keep
+the rubric stable internally and expose detailed criteria for milestone checks, exam mode, or when
+the learner needs them to act.
+
 ## Feedback model
 
-Classify the response as correct and grounded, correct but fragile, locally incorrect, wrong mental model, missing prerequisite, execution slip, or ambiguous. Then state what is demonstrated, the earliest gap, one hint or correction, and one retry prompt. Do not bury the next action under a lecture.
+Classify the response as correct and grounded, correct but fragile, locally incorrect, wrong mental model, missing prerequisite, execution slip, or ambiguous. Then state the earliest useful teaching move and one next action. Do not narrate routine evidence bookkeeping. If the learner says they do not know, teach the missing model before requesting another attempt. Do not bury the next action under a lecture.
 
 ## Multiple representations
 
@@ -34,6 +42,8 @@ Move deliberately among concrete instance, visual model, verbal cause, mathemati
 - Externalize long derivations on a blackboard block and preserve intermediate states.
 - Give a worked example only when no usable schema exists; fade steps in the next example.
 - Reuse terminology consistently and define symbols at first use.
+- Switch methods when the learner's errors, energy, or accessibility needs show that the current
+  method is not creating a usable model; do not simply make the same task longer.
 
 ## End a session
 
