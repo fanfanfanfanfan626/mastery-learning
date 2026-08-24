@@ -11,7 +11,7 @@ retrieval of content that has not been taught. For prior learning or a due revie
 For a substantial first encounter or an explicitly requested interactive lesson, also follow
 [lesson-delivery.md](lesson-delivery.md). Name one current evidence target and label any later idea
 shown for motivation as a preview; never score the preview as if its prerequisites were complete.
-Use this sequence flexibly across several chat turns:
+Use this sequence flexibly across several HTML classroom turns:
 
 1. Orientation to one useful outcome.
 2. Retrieval from actual prior learning when relevant; otherwise one concrete example, diagram, trace, or experiment.
@@ -29,8 +29,8 @@ The explanation before the first learner action should normally fit on one scree
 
 Fit the whole activity to the stated session budget. A 20–40 minute lesson needs enough modeled,
 interactive, and guided work to fill that period; it should not collapse into a paragraph followed
-by several worksheet questions. Use progressive disclosure or a verified `lesson_lab` when the
-complete lesson would overload the chat surface.
+by several worksheet questions. Use progressive disclosure in the classroom or a verified
+`lesson_lab` component when dynamic interaction reduces hidden mental work.
 
 Do not display percentage scoring, prohibit tools, or frame ordinary guided work as an exam. Keep
 the rubric stable internally and expose detailed criteria for milestone checks, exam mode, or when
@@ -38,7 +38,7 @@ the learner needs them to act.
 
 ## Feedback model
 
-Classify the response as correct and grounded, correct but fragile, locally incorrect, wrong mental model, missing prerequisite, execution slip, or ambiguous. Then state the earliest useful teaching move and one next action. Do not narrate routine evidence bookkeeping. If the learner says they do not know, teach the missing model before requesting another attempt. Do not bury the next action under a lecture.
+Classify the response as correct and grounded, correct but fragile, locally incorrect, wrong mental model, missing prerequisite, execution slip, or ambiguous. Then render the earliest useful teaching move and one next action in the updated classroom. Do not narrate routine evidence bookkeeping. If the learner says they do not know, teach the missing model before requesting another attempt. Do not bury the next action under a lecture.
 
 ## Multiple representations
 

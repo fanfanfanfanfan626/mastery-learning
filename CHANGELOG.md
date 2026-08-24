@@ -2,6 +2,29 @@
 
 ## Unreleased
 
+- Replaced optional HTML lesson delivery with a mandatory learner-facing HTML classroom for every
+  onboarding, explanation, feedback, review, and close turn; chat now carries only the minimal
+  classroom handoff and learner reply.
+- Added a deterministic no-script classroom renderer and shared visual system with structured
+  prose, callout, process, comparison, annotated-code, concept-map, artifact, and single-action
+  blocks; content is escaped, local-only, responsive, dark-mode aware, printable, and not archived
+  as a raw learner transcript.
+- Added a dedicated no-cache, allowlisted classroom server rooted only at `.mastery/classroom`, so
+  profile, plan, evidence, review, registry, and tool files cannot be exposed by the teaching URL.
+- Made local servers use OS-assigned loopback ports with exact-process cleanup and closed-port
+  verification; fixed-port launches and deceptive launch/cleanup prose now fail validation.
+- Hardened generated-tool boundaries: escape objectives, require credential-free HTTPS sources and
+  passive links, constrain checks to regular files inside the tool snapshot, and reject traversal,
+  symbolic links, Windows junctions, and other reparse points.
+- Separated the mutable classroom display layer from verified executable teaching tools, and made
+  the Coach internally choose an available loopback port, open the browser, and own server cleanup
+  instead of assigning paths, commands, internal Skills, or result-copy chores to learners.
+- Added `ai-landscape` to every built-in target profile and made domain orientation the mandatory
+  start for new ML/AI/LLM learners, preventing loss, gradients, tensor shapes, attention, or a
+  convenient Python worksheet from becoming an unexplained first lesson.
+- Repositioned the project as an **AI Teaching Skill** with a Codex-tested reference adapter,
+  expanded teaching/agent/HTML discovery metadata, and kept unverified cross-platform compatibility
+  out of the claims.
 - Reworked the repository first impression around a clear learner outcome, one-copy install path,
   animated product walkthrough, comparison table, discoverable English summary, contribution guide,
   public roadmap, and structured issue templates.

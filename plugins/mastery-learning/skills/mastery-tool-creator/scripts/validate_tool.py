@@ -8,6 +8,7 @@ import ast
 import json
 import re
 import shlex
+import stat
 import sys
 import zipfile
 from html.parser import HTMLParser
@@ -16,7 +17,7 @@ from typing import Any
 from urllib.parse import unquote, urlsplit
 
 from tool_common import (
-    IGNORED_SNAPSHOT_FILES, IGNORED_SNAPSHOT_PARTS, tool_snapshot,
+    IGNORED_SNAPSHOT_FILES, IGNORED_SNAPSHOT_PARTS, safe_tool_root, tool_snapshot,
     update_catalog_rejection, update_catalog_validation,
 )
 
@@ -42,6 +43,16 @@ TEXT_SUFFIXES = {
     ".jsx", ".ts", ".tsx", ".css", ".txt",
 }
 RENDER_TYPES = {"visual_lab", "lesson_lab", "simulation_3d", "slide_deck", "document"}
+HTML_TOOL_TYPES = {"visual_lab", "lesson_lab", "simulation_3d"}
+CANONICAL_HTML_LAUNCH = (
+    "Coach-internal: from this tool directory run `<python> -m http.server 0 --bind 127.0.0.1`, "
+    "parse the assigned loopback port, open `/index.html`, and stop the exact server session after use; "
+    "never hand these steps to the learner."
+)
+CANONICAL_RENDER_CLEANUP = (
+    "Stop the exact loopback server process/session, verify its assigned port is closed, then export learner work if needed; "
+    "delete only this tool directory after learner confirmation."
+)
 JAVASCRIPT_SUFFIXES = {".js", ".mjs", ".jsx", ".ts", ".tsx"}
 FORBIDDEN_PYTHON_IMPORTS = {
     "aiohttp", "ctypes", "ftplib", "http", "httpx", "importlib", "paramiko",
@@ -217,6 +228,14 @@ def _call_name(node: ast.Call) -> str:
     return ".".join(reversed(parts))
 
 
+def is_reparse_point(path: Path) -> bool:
+    try:
+        attributes = getattr(path.lstat(), "st_file_attributes", 0)
+    except OSError:
+        return False
+    return path.is_symlink() or bool(attributes & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0))
+
+
 def validate_python(content: str, relative: str, errors: list[str]) -> None:
     try:
         tree = ast.parse(content, filename=relative)
@@ -351,7 +370,14 @@ def validate_local_html_references(root: Path, entry: Path, content: str, fallba
             errors.append(f"invalid HTML reference in {entry.name}: {reference}")
             continue
         if parsed.scheme or parsed.netloc:
-            if tag == "a" and attribute == "href" and parsed.scheme in {"http", "https"}:
+            if (
+                tag == "a"
+                and attribute == "href"
+                and parsed.scheme == "https"
+                and bool(parsed.netloc)
+                and parsed.username is None
+                and parsed.password is None
+            ):
                 relation_tokens = set(relation.lower().split())
                 if not {"noopener", "noreferrer"}.issubset(relation_tokens):
                     errors.append(f"passive external source link must use rel=\"noopener noreferrer\" in {entry.name}: {reference}")
@@ -377,7 +403,14 @@ def validate_local_html_references(root: Path, entry: Path, content: str, fallba
 
 def inside(root: Path, relative: str) -> Path | None:
     try:
-        path = (root / relative).resolve()
+        lexical = root / relative
+        cursor = root
+        for part in Path(relative).parts:
+            cursor = cursor / part
+            if cursor.exists():
+                if is_reparse_point(cursor):
+                    return None
+        path = lexical.resolve()
         tracked = path.relative_to(root.resolve())
         if any(part in IGNORED_SNAPSHOT_PARTS for part in tracked.parts) or path.name in IGNORED_SNAPSHOT_FILES:
             return None
@@ -435,7 +468,14 @@ def validate_manifest(manifest: Any, errors: list[str]) -> None:
         errors.append("invalid tool type")
     if not isinstance(manifest.get("concept"), str) or not ID_PATTERN.fullmatch(manifest.get("concept", "")):
         errors.append("concept must be a registered lowercase hyphen-case concept ID")
-    if not isinstance(manifest.get("objective"), str) or len(manifest.get("objective", "").strip()) < 12:
+    objective = manifest.get("objective")
+    if (
+        not isinstance(objective, str)
+        or not 12 <= len(objective.strip()) <= 500
+        or "\n" in objective
+        or "\r" in objective
+        or any(ord(character) < 32 for character in objective)
+    ):
         errors.append("objective must be an observable outcome of at least 12 characters")
     if manifest.get("mode") not in MODES:
         errors.append("invalid mode")
@@ -444,8 +484,33 @@ def validate_manifest(manifest: Any, errors: list[str]) -> None:
         errors.append("prerequisites must be an array of lowercase hyphen-case concept IDs")
     elif len(prerequisites) != len(set(prerequisites)) or manifest.get("concept") in prerequisites:
         errors.append("prerequisites must be unique and cannot include the target concept")
-    if not isinstance(manifest.get("sources"), list):
+    sources = manifest.get("sources")
+    if not isinstance(sources, list):
         errors.append("sources must be an array")
+    else:
+        for index, source in enumerate(sources):
+            if not isinstance(source, dict) or not isinstance(source.get("title"), str) or not source["title"].strip():
+                errors.append(f"sources[{index}] must contain a non-empty title")
+                continue
+            unknown_source_fields = set(source) - {"title", "url", "checked_at", "license_reuse"}
+            if unknown_source_fields:
+                errors.append(f"sources[{index}] contains unknown fields: {sorted(unknown_source_fields)}")
+            url = source.get("url")
+            try:
+                parsed_source = urlsplit(url) if isinstance(url, str) else None
+            except ValueError:
+                parsed_source = None
+            if (
+                parsed_source is None
+                or parsed_source.scheme != "https"
+                or not parsed_source.netloc
+                or parsed_source.username is not None
+                or parsed_source.password is not None
+            ):
+                errors.append(f"sources[{index}].url must be HTTPS without embedded credentials")
+            for optional in ["checked_at", "license_reuse"]:
+                if optional in source and (not isinstance(source[optional], str) or not source[optional].strip()):
+                    errors.append(f"sources[{index}].{optional} must be non-empty text when present")
     if not isinstance(manifest.get("created_at"), str) or not manifest.get("created_at", "").strip():
         errors.append("created_at must be non-empty text")
     if not isinstance(manifest.get("launch"), str) or not manifest.get("launch", "").strip():
@@ -513,8 +578,8 @@ def validate_artifacts(root: Path, manifest: dict[str, Any], errors: list[str], 
             errors.append(f"missing artifact: {relative}")
 
     for path in root.rglob("*"):
-        if path.is_symlink():
-            errors.append(f"symbolic links are not allowed in generated tools: {path.relative_to(root)}")
+        if is_reparse_point(path):
+            errors.append(f"symbolic links, junctions, and reparse points are not allowed in generated tools: {path.relative_to(root)}")
             continue
         if path.is_file() and path.suffix.lower() in TEXT_SUFFIXES:
             relative = str(path.relative_to(root)).replace("\\", "/")
@@ -652,10 +717,14 @@ def validate_type(root: Path, manifest: dict[str, Any], texts: dict[str, str], e
         if tool_type == "simulation_3d" and not any(token in entry_text.lower() for token in ["webgl", "perspective", "z-axis", "z axis"]):
             errors.append("simulation_3d does not encode an inspectable depth variable")
         launch = manifest.get("launch", "")
-        if not all(token in launch for token in ["http.server", "--bind 127.0.0.1", "http://127.0.0.1:"]):
-            errors.append(f"{tool_type} launch must use a loopback HTTP server bound to 127.0.0.1 and provide its http://127.0.0.1 URL")
-        if any(token in launch for token in ["0.0.0.0", "--bind ::", "--bind *"]):
-            errors.append(f"{tool_type} launch must not expose the preview server beyond loopback")
+        if launch != CANONICAL_HTML_LAUNCH:
+            errors.append(
+                f"{tool_type} launch must equal the canonical coach-internal dynamic-loopback instruction"
+            )
+        if manifest.get("cleanup") != CANONICAL_RENDER_CLEANUP:
+            errors.append(
+                f"{tool_type} cleanup must stop the exact server process/session and verify the assigned port is closed"
+            )
     elif tool_type == "notebook":
         if not entry or entry.suffix.lower() != ".ipynb":
             errors.append("notebook entrypoint must be .ipynb")
@@ -706,6 +775,18 @@ def validate_type(root: Path, manifest: dict[str, Any], texts: dict[str, str], e
         errors.append(f"{tool_type} requires a deterministic check_command")
 
 
+def _local_check_target(root: Path, value: str, *, allow_module: bool = False) -> bool:
+    if not value or value.startswith("-") or ".." in Path(value).parts or Path(value).is_absolute():
+        return False
+    file_target = value.split("::", 1)[0]
+    if Path(file_target).suffix:
+        return inside(root, file_target) is not None
+    if allow_module and re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)*", value):
+        candidate = root.joinpath(*value.split(".")).with_suffix(".py")
+        return candidate.is_file() and inside(root, str(candidate.relative_to(root))) is not None
+    return False
+
+
 def command_args(root: Path, command: str) -> list[str] | None:
     try:
         parts = shlex.split(command, posix=True)
@@ -715,13 +796,30 @@ def command_args(root: Path, command: str) -> list[str] | None:
         return None
     executable = Path(parts[0]).name.lower()
     if executable in {"python", "python3", "python.exe"}:
-        if len(parts) >= 3 and parts[1:3] in [["-m", "unittest"], ["-m", "pytest"]]:
-            return [sys.executable, *parts[1:]]
-        if len(parts) >= 2 and parts[1].endswith(".py") and inside(root, parts[1]):
+        if len(parts) >= 4 and parts[1:3] == ["-m", "unittest"]:
+            allowed_flags = {"-v", "--verbose", "-q", "--quiet", "-f", "--failfast"}
+            targets = [part for part in parts[3:] if part not in allowed_flags]
+            if targets and len(targets) + sum(part in allowed_flags for part in parts[3:]) == len(parts[3:]) and all(
+                _local_check_target(root, target, allow_module=True) for target in targets
+            ):
+                return [sys.executable, *parts[1:]]
+            return None
+        if len(parts) >= 4 and parts[1:3] == ["-m", "pytest"]:
+            allowed_flags = {"-q", "--quiet", "-v", "--verbose", "-x"}
+            targets = [part for part in parts[3:] if part not in allowed_flags]
+            if targets and len(targets) + sum(part in allowed_flags for part in parts[3:]) == len(parts[3:]) and all(
+                _local_check_target(root, target) for target in targets
+            ):
+                return [sys.executable, *parts[1:]]
+            return None
+        if len(parts) == 2 and parts[1].endswith(".py") and _local_check_target(root, parts[1]):
             return [sys.executable, *parts[1:]]
         return None
-    if executable in {"node", "node.exe"} and len(parts) >= 2 and (parts[1] == "--test" or inside(root, parts[1])):
-        return parts
+    if executable in {"node", "node.exe"}:
+        if len(parts) == 2 and _local_check_target(root, parts[1]):
+            return parts
+        if len(parts) >= 3 and parts[1] == "--test" and all(_local_check_target(root, part) for part in parts[2:]):
+            return parts
     return None
 
 
@@ -803,9 +901,13 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Statically validate a Mastery Learning teaching tool without executing it")
     parser.add_argument("tool_dir", type=Path)
     args = parser.parse_args()
-    root = args.tool_dir.expanduser().resolve()
     errors: list[str] = []
     warnings: list[str] = []
+    try:
+        root = safe_tool_root(args.tool_dir)
+    except SystemExit as error:
+        print(json.dumps({"ok": False, "errors": [str(error)]}, ensure_ascii=False, indent=2))
+        raise SystemExit(1) from error
     manifest_path = root / "tool.json"
     if not manifest_path.exists():
         print(json.dumps({"ok": False, "errors": ["missing tool.json"]}, indent=2))

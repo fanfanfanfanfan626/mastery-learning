@@ -6,6 +6,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import stat
 import tempfile
 import time
 from contextlib import contextmanager
@@ -17,6 +18,25 @@ from typing import Any, Iterator
 SNAPSHOT_ALGORITHM = "sha256-tree-v1"
 IGNORED_SNAPSHOT_PARTS = {"__pycache__", ".pytest_cache", ".mypy_cache"}
 IGNORED_SNAPSHOT_FILES = {".coverage", ".DS_Store", "Thumbs.db"}
+
+
+def is_reparse_point(path: Path) -> bool:
+    try:
+        attributes = getattr(path.lstat(), "st_file_attributes", 0)
+    except OSError:
+        return False
+    return path.is_symlink() or bool(attributes & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0))
+
+
+def safe_tool_root(value: Path) -> Path:
+    """Resolve a canonical tool root only after rejecting linked lifecycle boundaries."""
+    requested = value.expanduser().absolute()
+    if requested.parent.name != "tools" or requested.parent.parent.name != ".mastery":
+        raise SystemExit("tool directory must be <workspace>/.mastery/tools/<tool-id>")
+    for boundary in [requested.parent.parent, requested.parent, requested]:
+        if boundary.exists() and is_reparse_point(boundary):
+            raise SystemExit(f"tool path must not traverse a symbolic link, junction, or reparse point: {boundary}")
+    return requested.resolve()
 
 
 def timestamp() -> str:
@@ -44,13 +64,19 @@ def tool_snapshot(root: Path) -> dict[str, Any]:
     records: list[dict[str, Any]] = []
     for path in sorted(root.rglob("*"), key=lambda item: item.relative_to(root).as_posix()):
         relative = path.relative_to(root)
+        try:
+            is_reparse = is_reparse_point(path)
+            resolved = path.resolve()
+            resolved.relative_to(root)
+        except (OSError, ValueError) as error:
+            raise SystemExit(f"Cannot snapshot escaping or unreadable path: {relative.as_posix()}: {error}") from error
+        if is_reparse:
+            raise SystemExit(f"Cannot snapshot symbolic link, junction, or reparse point: {relative.as_posix()}")
         if any(part in IGNORED_SNAPSHOT_PARTS for part in relative.parts) or path.name in IGNORED_SNAPSHOT_FILES:
             raise SystemExit(
                 f"Untracked runtime/cache content is forbidden in a verifiable tool: {relative.as_posix()}. "
                 "Remove it and run checks with bytecode/cache creation disabled."
             )
-        if path.is_symlink():
-            raise SystemExit(f"Cannot snapshot symbolic link: {relative.as_posix()}")
         if not path.is_file():
             continue
         data = path.read_bytes()

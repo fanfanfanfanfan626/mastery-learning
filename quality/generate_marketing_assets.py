@@ -135,16 +135,16 @@ def social_preview() -> Image.Image:
     mark = logo_mark(172, dark=True)
     image.paste(mark, (76, 76), mark)
     draw.text((284, 84), "Mastery Learning", font=font(68, bold=True), fill=INK)
-    draw.text((286, 168), "for Codex", font=font(40, bold=True), fill=PURPLE)
+    draw.text((286, 168), "AI Teaching Skill", font=font(40, bold=True), fill=PURPLE)
     draw.text(
         (78, 286),
-        "Turn explanations into durable mastery.",
+        "Beautiful HTML teaching. Durable mastery.",
         font=font(38, bold=True),
         fill=INK,
     )
     draw.text(
         (78, 350),
-        "Adaptive lessons  ·  Interactive labs  ·  Evidence-based review",
+        "HTML classroom  ·  Interactive labs  ·  Evidence-based review",
         font=font(25),
         fill=MUTED,
     )
@@ -250,11 +250,11 @@ def demo_frame(step: int) -> Image.Image:
     image = background((960, 540))
     draw = ImageDraw.Draw(image)
     draw.text((48, 32), "Mastery Learning", font=font(27, bold=True), fill=INK)
-    draw.text((272, 36), "for Codex", font=font(20, bold=True), fill=PURPLE)
+    draw.text((272, 36), "AI Teaching Skill", font=font(20, bold=True), fill=PURPLE)
     titles = [
         "Say what you want to learn",
-        "Set up once, then start",
-        "Learn with an interactive lab",
+        "Set up once in a clear HTML card",
+        "Learn inside one beautiful classroom",
         "Practice, explain, and transfer",
         "Save evidence — not vibes",
         "Continue from durable progress",
@@ -262,7 +262,7 @@ def demo_frame(step: int) -> Image.Image:
     subtitles = [
         "“I want to understand and train large language models.”",
         "One compact launch card · no entrance exam",
-        "Prediction first · annotated code · visible relationships",
+        "Orientation first · annotated code · visible relationships",
         "Hints fade while learner ownership grows",
         "Independent work + delayed recall + changed context",
         "Local-first · open source · no hidden telemetry",

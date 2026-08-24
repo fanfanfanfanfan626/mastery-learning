@@ -339,15 +339,129 @@ class ToolContractV4Tests(unittest.TestCase):
             workspace = Path(temporary)
             run(SCAFFOLD, "--workspace", workspace, "--id", "loopback-lab", "--type", "visual_lab", "--concept", "optimization", "--objective", "Predict and explain convergence under a changed learning rate")
             manifest = json.loads((workspace / ".mastery" / "tools" / "loopback-lab" / "tool.json").read_text(encoding="utf-8"))
-            self.assertIn("<python> -m http.server 8000 --bind 127.0.0.1", manifest["launch"])
-            self.assertIn("workspace-dependency loader", manifest["launch"])
-            self.assertIn("http://127.0.0.1:8000/index.html", manifest["launch"])
+            self.assertIn("<python> -m http.server 0 --bind 127.0.0.1", manifest["launch"])
+            self.assertIn("assigned loopback port", manifest["launch"])
+            self.assertIn("never hand these steps to the learner", manifest["launch"])
             self.assertNotIn("file://", manifest["launch"])
             self.assertEqual(manifest["accessibility_fallback"], "accessibility-fallback.html")
             fallback = workspace / ".mastery" / "tools" / "loopback-lab" / manifest["accessibility_fallback"]
             self.assertTrue(fallback.exists())
             self.assertIn("text and table equivalent", fallback.read_text(encoding="utf-8").lower())
             self.assertIn("accessibility-fallback.html", (fallback.parent / "index.html").read_text(encoding="utf-8"))
+
+    def test_scaffold_escapes_objectives_and_rejects_multiline_control_text(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            workspace = Path(temporary)
+            objective = 'Explain why <strong data-audit-marker="live">markup</strong> must remain text'
+            run(
+                SCAFFOLD, "--workspace", workspace, "--id", "escaped-objective", "--type", "visual_lab",
+                "--concept", "security", "--objective", objective,
+            )
+            page = (workspace / ".mastery" / "tools" / "escaped-objective" / "index.html").read_text(encoding="utf-8")
+            self.assertIn("&lt;strong data-audit-marker=&quot;live&quot;&gt;", page)
+            self.assertNotIn('<strong data-audit-marker="live">', page)
+            rejected = run(
+                SCAFFOLD, "--workspace", workspace, "--id", "multiline-objective", "--type", "code_lab",
+                "--concept", "security", "--objective", "Explain the safe behavior\nthen inject another code line",
+                expect=1,
+            )
+            self.assertIn("one line", rejected.stderr)
+
+    @unittest.skipUnless(os.name == "nt", "Windows directory-junction regression")
+    def test_scaffold_and_validator_reject_a_tools_directory_junction(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            workspace = Path(temporary) / "workspace"
+            outside = Path(temporary) / "outside"
+            mastery = workspace / ".mastery"
+            mastery.mkdir(parents=True)
+            outside.mkdir()
+            junction = mastery / "tools"
+            created = subprocess.run(
+                ["cmd", "/c", "mklink", "/J", str(junction), str(outside)],
+                text=True, encoding="utf-8", capture_output=True, check=False,
+            )
+            if created.returncode != 0:
+                self.skipTest(f"directory junction unavailable: {created.stderr or created.stdout}")
+            try:
+                rejected = run(
+                    SCAFFOLD, "--workspace", workspace, "--id", "junction-lab", "--type", "code_lab",
+                    "--concept", "python", "--objective", "Implement and explain a deterministic doubling function",
+                    expect=1,
+                )
+                self.assertIn("junction", rejected.stderr)
+                fake_tool = outside / "fake-tool"
+                fake_tool.mkdir()
+                (fake_tool / "tool.json").write_text("{}", encoding="utf-8")
+                validated = run(VALIDATE, junction / "fake-tool", expect=1)
+                self.assertIn("junction", validated.stdout)
+            finally:
+                if junction.exists():
+                    junction.rmdir()
+
+    def test_validator_rejects_deceptive_launch_sources_links_and_external_checks(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            workspace = Path(temporary)
+            run(
+                SCAFFOLD, "--workspace", workspace, "--id", "contract-bound-lab", "--type", "visual_lab",
+                "--concept", "optimization", "--objective", "Predict and explain convergence under a changed learning rate",
+            )
+            tool = workspace / ".mastery" / "tools" / "contract-bound-lab"
+            customize_visual_lab(tool)
+            manifest_path = tool / "tool.json"
+            clean_manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            entry = tool / "index.html"
+            clean_entry = entry.read_text(encoding="utf-8")
+
+            for source in [
+                {"title": "local", "url": "file:///private.txt"},
+                {"title": "script", "url": "javascript:alert(1)"},
+                {"title": "credential", "url": "https://user:pass@example.com/reference"},
+            ]:
+                changed = json.loads(json.dumps(clean_manifest))
+                changed["sources"] = [source]
+                manifest_path.write_text(json.dumps(changed), encoding="utf-8")
+                rejected = json.loads(run(VALIDATE, tool, expect=1).stdout)
+                self.assertIn("must be HTTPS without embedded credentials", "\n".join(rejected["errors"]))
+
+            changed = json.loads(json.dumps(clean_manifest))
+            changed["launch"] = "Do not run it; this sentence only mentions http.server 0 --bind 127.0.0.1 and assigned loopback port."
+            manifest_path.write_text(json.dumps(changed), encoding="utf-8")
+            rejected = json.loads(run(VALIDATE, tool, expect=1).stdout)
+            self.assertIn("canonical coach-internal", "\n".join(rejected["errors"]))
+
+            changed = json.loads(json.dumps(clean_manifest))
+            changed["cleanup"] = "Leave the server running and verify nothing."
+            manifest_path.write_text(json.dumps(changed), encoding="utf-8")
+            rejected = json.loads(run(VALIDATE, tool, expect=1).stdout)
+            self.assertIn("verify the assigned port is closed", "\n".join(rejected["errors"]))
+
+            manifest_path.write_text(json.dumps(clean_manifest), encoding="utf-8")
+            entry.write_text(
+                clean_entry.replace(
+                    "</main>",
+                    '<a href="http://user:pass@example.com/reference" rel="noopener noreferrer">bad</a></main>',
+                ),
+                encoding="utf-8",
+            )
+            rejected = json.loads(run(VALIDATE, tool, expect=1).stdout)
+            self.assertIn("remote executable or submission resource", "\n".join(rejected["errors"]))
+
+        with tempfile.TemporaryDirectory() as temporary:
+            workspace = Path(temporary)
+            run(
+                SCAFFOLD, "--workspace", workspace, "--id", "external-check-lab", "--type", "code_lab",
+                "--concept", "python", "--objective", "Implement and explain a deterministic doubling function",
+            )
+            tool = workspace / ".mastery" / "tools" / "external-check-lab"
+            customize_code_lab(tool)
+            payload = workspace / "payload_test.py"
+            payload.write_text("raise SystemExit('outside')\n", encoding="utf-8")
+            manifest_path = tool / "tool.json"
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            manifest["check_command"] = "python -m pytest -s ../../../payload_test.py"
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+            rejected = json.loads(run(VALIDATE, tool, expect=1).stdout)
+            self.assertIn("outside the allowed", "\n".join(rejected["errors"]))
 
     def test_visual_fallback_and_inspection_are_machine_gated(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

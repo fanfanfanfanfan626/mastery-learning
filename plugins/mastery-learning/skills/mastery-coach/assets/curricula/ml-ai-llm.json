@@ -20,11 +20,11 @@
     ]
   },
   "target_profiles": {
-    "llm-application-builder": ["production-ops", "responsible-ai", "agents-memory"],
-    "ml-engineer": ["linear-models", "trees-ensembles", "kernels-neighbors", "unsupervised-learning", "ml-pipelines", "convolution", "ml-production-ops"],
-    "ai-systems-builder": ["constraint-planning", "knowledge-representation", "sequential-decision-rl", "ml-production-ops"],
-    "llm-engineer": ["production-ops", "responsible-ai", "adaptation-alignment", "pretraining-scaling"],
-    "research": ["integrated-capstone"]
+    "llm-application-builder": ["ai-landscape", "production-ops", "responsible-ai", "agents-memory"],
+    "ml-engineer": ["ai-landscape", "linear-models", "trees-ensembles", "kernels-neighbors", "unsupervised-learning", "ml-pipelines", "convolution", "ml-production-ops"],
+    "ai-systems-builder": ["ai-landscape", "constraint-planning", "knowledge-representation", "sequential-decision-rl", "ml-production-ops"],
+    "llm-engineer": ["ai-landscape", "production-ops", "responsible-ai", "adaptation-alignment", "pretraining-scaling"],
+    "research": ["ai-landscape", "integrated-capstone"]
   },
   "target_outcomes": {
     "llm-application-builder": ["Build and evaluate a grounded LLM application with typed tools, representative evals, and explicit security boundaries."],
@@ -43,7 +43,7 @@
       "authority": "Maintained technical textbook with executable examples",
       "version_or_date": "Current web edition checked 2026-08-22",
       "license_reuse": "Link and paraphrase; verify the edition's stated license before redistributing text, figures, or code.",
-      "concepts": ["numpy", "linear-algebra", "calculus-autodiff", "probability", "optimization", "information-theory", "sequential-decision-rl", "tensors-backprop", "neural-training", "convolution", "sequence-models", "attention"],
+      "concepts": ["ai-landscape", "numpy", "linear-algebra", "calculus-autodiff", "probability", "optimization", "information-theory", "sequential-decision-rl", "tensors-backprop", "neural-training", "convolution", "sequence-models", "attention"],
       "known_gaps": "Broad treatment; use original papers and framework documentation for fast-moving implementation details.",
       "checked_at": "2026-08-22"
     },
@@ -95,7 +95,7 @@
       "authority": "Maintained university course covering classical artificial intelligence",
       "version_or_date": "Public course site checked 2026-08-22",
       "license_reuse": "Link and paraphrase only unless a specific artifact states a reusable license.",
-      "concepts": ["state-space-search", "constraint-planning", "knowledge-representation", "sequential-decision-rl"],
+      "concepts": ["ai-landscape", "state-space-search", "constraint-planning", "knowledge-representation", "sequential-decision-rl"],
       "known_gaps": "Course editions differ and do not cover every modern deep-learning or production topic.",
       "checked_at": "2026-08-22"
     },
@@ -108,7 +108,7 @@
       "authority": "Maintained course from a major open-source model tooling organization",
       "version_or_date": "Current course checked 2026-08-22",
       "license_reuse": "Link and paraphrase; verify the repository license for any copied code or media.",
-      "concepts": ["tokenization", "transformer", "decoding", "adaptation-alignment"],
+      "concepts": ["ai-landscape", "tokenization", "transformer", "decoding", "adaptation-alignment"],
       "known_gaps": "Tooling-oriented examples may lag research and do not replace original papers or independent evaluation.",
       "checked_at": "2026-08-22"
     },
@@ -166,6 +166,7 @@
     }
   ],
   "concepts": [
+    {"id":"ai-landscape","module":"ai-foundations","prerequisites":[],"outcome":"Distinguish rule-written software, artificial intelligence, machine learning, deep learning, foundation models, and LLMs; map an end-to-end goal through data, model behavior, evaluation, and limitations.","required_dimensions":["recall","conceptual","transfer"],"sources":["cs188","d2l","hf"]},
     {"id":"python","module":"computing","prerequisites":[],"outcome":"Write, trace, test, and debug small Python programs.","required_dimensions":["recall","application","debugging"],"sources":["pytorch"]},
     {"id":"numpy","module":"computing","prerequisites":["python"],"outcome":"Use arrays, shapes, indexing, broadcasting, and vectorization safely.","required_dimensions":["conceptual","application","debugging"],"sources":["d2l"]},
     {"id":"git-tests","module":"computing","prerequisites":["python"],"outcome":"Use version control and deterministic tests to run reproducible exercises.","required_dimensions":["application","debugging"],"sources":["pytorch"]},

@@ -1,19 +1,19 @@
 {
   "name": "mastery-learning",
   "version": "0.4.2",
-  "description": "A local-first AI tutor for Codex with adaptive lessons, interactive labs, mastery checks, and spaced review.",
+  "description": "An AI teaching skill with a polished local HTML classroom, adaptive lessons, interactive labs, mastery checks, and spaced review.",
   "author": {
     "name": "Mastery Learning Contributors"
   },
   "homepage": "https://github.com/fanfanfanfanfan626/mastery-learning",
   "repository": "https://github.com/fanfanfanfanfan626/mastery-learning",
   "license": "MIT",
-  "keywords": ["ai-tutor", "codex", "education", "learning", "mastery-learning", "spaced-repetition", "machine-learning", "llm", "programming"],
+  "keywords": ["ai-teaching", "teaching-skill", "ai-tutor", "agent-skill", "interactive-html", "codex", "education", "learning", "mastery-learning", "spaced-repetition", "machine-learning", "llm", "programming"],
   "skills": "./skills/",
   "interface": {
-    "displayName": "Mastery Learning for Codex",
-    "shortDescription": "An evidence-based AI tutor with lessons, labs, and durable progress.",
-    "longDescription": "Turn Codex into a local-first AI tutor for programming, mathematics, machine learning, AI, and LLMs. It plans adaptive lessons, builds interactive labs, coaches code, verifies transfer and delayed recall, schedules review, and keeps transparent learner-owned progress.",
+    "displayName": "Mastery Learning · AI Teaching Skill",
+    "shortDescription": "Beautiful HTML teaching with honest mastery and durable progress.",
+    "longDescription": "A local-first AI teaching system for programming, mathematics, machine learning, AI, and LLMs. Every teaching turn is rendered in a polished HTML classroom; the Coach plans adaptive lessons, builds interactive labs, coaches code, verifies transfer and delayed recall, schedules review, and keeps transparent learner-owned progress. This package is the tested Codex adapter for a platform-neutral teaching protocol.",
     "developerName": "Mastery Learning Contributors",
     "category": "Education",
     "capabilities": ["Interactive", "Local-first", "Write"],
@@ -24,7 +24,7 @@
     "logoDark": "./assets/logo-dark.png",
     "screenshots": ["./assets/screenshot1.png"],
     "defaultPrompt": [
-      "Turn my learning goal into a compact plan and begin teaching me.",
+      "Turn my learning goal into a compact plan and open my HTML classroom.",
       "Continue from my local progress and handle due reviews first.",
       "Teach this concept with an interactive lab and check transfer."
     ]

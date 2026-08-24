@@ -92,7 +92,9 @@ class ConversationEvalContractTests(unittest.TestCase):
             set(policy["critical_case_ids"]),
             {
                 "follow-up-onboarding-one-reply",
-                "follow-up-rich-zero-baseline-first-lesson",
+                "follow-up-rich-post-orientation-lesson",
+                "follow-up-ai-course-starts-with-landscape",
+                "follow-up-feedback-stays-in-classroom",
                 "follow-up-resume-from-another-directory",
                 "follow-up-confidence-is-not-mastery",
                 "boundary-scope-needs-confirmation",

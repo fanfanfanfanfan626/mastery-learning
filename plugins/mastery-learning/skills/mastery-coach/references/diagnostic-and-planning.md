@@ -1,6 +1,6 @@
 # Guided onboarding and planning protocol
 
-## 1. Send one optional launch packet
+## 1. Render one optional HTML launch packet
 
 Collect only missing setup in the first response. Keep it compact, make every field skippable, and
 say that it selects a starting point rather than grading the learner. Do not repeat information the
@@ -16,8 +16,8 @@ learner already supplied. Include at most these six groups:
    harder attempts). Allow optional overrides for tone (`patient`, `direct`, `rigorous`, or
    `conversational`), outside tasks (`none`, `optional`, or `regular`), and formal checks
    (`milestones`, `mini-checks`, `exam practice`, or `none for now`).
-   Accept an optional delivery preference such as `interactive HTML when useful`, `conversation
-   first`, or `automatic`; do not add another setup round when it is omitted.
+   Allow an optional visual-density choice (`compact`, `balanced`, or `spacious`) and accessibility
+   constraints. Do not ask whether teaching should use HTML: the shared classroom is mandatory.
 6. **Persistence** -- proposed stable path, custom path, or no local memory, plus a one-sentence explanation of `.mastery/` and the path-only registry.
 
 Allow `start now` or all fields skipped. In that case use conservative beginner defaults and refine
@@ -44,14 +44,19 @@ complete curriculum universe, apply the confirmed scope, store explicit preferen
 constraints, and store self-positioning as low-confidence hypotheses with the observation date.
 Never write an evidence event from the launch packet.
 
-After the state operations, summarize the provisional starting point in at most four short lines and
-begin the first guided micro-lesson in the same response. Do not ask another setup question, repeat
-workspace consent, or administer an entrance test.
+After the state operations, render the provisional starting point and first guided micro-lesson in
+the same classroom update. Do not ask another setup question, repeat workspace consent, or
+administer an entrance test.
 
-If the learner explicitly selected interactive HTML and the first target meets the trigger in
-[lesson-delivery.md](lesson-delivery.md), invoke `$mastery-tool-creator` for a `lesson_lab` as part of
-that start. Otherwise begin with the smallest adequate medium. Do not make the learner restate the
-preference in a separate turn.
+For an ML/AI/LLM goal with no prior evidence, put `ai-landscape` first in the active path and begin
+with orientation: distinguish AI, machine learning, deep learning, foundation models, and LLMs;
+show what the learner will eventually build; and contrast rule-written behavior with learned
+behavior. Do not begin with loss, gradients, tensors, or a Python worksheet. After orientation,
+choose the next prerequisite from observed or provisionally self-positioned capability.
+
+When the first lesson needs executable interaction, invoke `$mastery-tool-creator` internally and
+link the verified `lesson_lab` from the classroom. Never require a second learner command to load
+the sibling Skill.
 
 ## 3. Diagnose dynamically while teaching
 
@@ -97,9 +102,9 @@ Create a target artifact such as a working project, oral defense, design review,
 
 ## Initial response shape
 
-1. Restate the intended capability in one short paragraph.
-2. Present one compact, optional launch packet containing only missing fields.
-3. Provide a one-line reply template and a `start now` path.
+1. Render the intended capability in one short HTML orientation block.
+2. Present one compact, optional HTML launch card containing only missing fields.
+3. Highlight one reply template and a `start now` path as the page's only action.
 
 Do not administer a performance task, show percentage rubrics, or dump the full syllabus in the
-launch response. After the learner replies once, begin teaching.
+launch page. After the learner replies once, begin teaching in the same classroom.

@@ -1,8 +1,8 @@
 # Guided lesson delivery contract
 
-Use this contract for a substantial first encounter with a concept or when a learner explicitly
-prefers a reusable interactive lesson. Keep the conversation as the tutor interface; a lesson
-artifact carries explanation and interaction but never owns planning, evidence, or mastery.
+Use this contract for a substantial first encounter with a concept. The shared HTML classroom is
+the learner-facing interface for every turn. A verified lesson artifact may supply executable
+interaction, but it never owns planning, feedback, evidence, or mastery.
 
 ## Establish the learning boundary
 
@@ -13,8 +13,10 @@ prerequisites.
 
 For a learner starting from zero, do not require syntax, notation, or operations that were neither
 self-positioned as usable nor modeled first. Self-positioning remains a hypothesis. Use a concrete
-domain example early, but keep the recorded target honest: an introductory model-and-loss example
-may teach Python tracing while only previewing optimization.
+domain example early, but keep the recorded target honest. In ML/AI/LLM learning, establish the
+AI-to-ML-to-deep-learning-to-LLM landscape and the learner's destination before introducing a
+model-and-loss example. Loss answers “how wrong was the prediction?” and is meaningless as an
+opening concept before prediction, data, and learned behavior have a purpose.
 
 Use a **zero-baseline ladder** instead of compressing prerequisites into comments. For programming,
 establish values, names and assignment, sequential execution, and visible output before requiring
@@ -52,24 +54,25 @@ Use this sequence flexibly:
 Comments should explain purpose, state change, units, assumptions, and failure boundaries rather
 than paraphrasing punctuation. Reduce comments and scaffolding after observed capability improves.
 
-## Choose the delivery medium
+## Add executable interaction only when needed
 
-Create or **reuse** a verified `lesson_lab` when at least one condition holds:
+The classroom is already HTML. Create or **reuse** a verified `lesson_lab` component when at least
+one condition holds:
 
-- the learner explicitly prefers an interactive HTML lesson;
 - the concept depends on a dynamic, spatial, stateful, or causal relationship;
 - synchronized code, diagram, controls, and numeric state materially reduce hidden mental work;
 - the planned lesson is substantial enough that a reusable page improves continuity.
 
-Prefer a conversational worked example, Markdown table, Mermaid trace, or existing verified tool
-when it is the smallest adequate instrument. **Do not create** a lesson lab for a one-off fact, a
-single local correction, a tiny review prompt, or visual polish without a measurable learner
-action. Do not rebuild a verified artifact that samples the same outcome and constraints.
+Prefer the classroom's prose, comparison, steps, map, or annotated-code blocks when they are the
+smallest adequate instrument. **Do not create** an executable lab for a one-off fact, a single local
+correction, a tiny review prompt, or visual polish without a measurable learner action. Do not
+rebuild a verified artifact that samples the same outcome and constraints.
 
-When a `lesson_lab` is justified, invoke `$mastery-tool-creator` with the current target, preview,
+When a `lesson_lab` is justified, invoke `$mastery-tool-creator` internally with the current target, preview,
 learner starting assumptions, observable outcome, session budget, mode, required interaction, and
-evidence boundary. If generation or inspection cannot complete honestly, continue with the same
-lesson in accessible Markdown/table form and report the tool limitation without blocking teaching.
+evidence boundary. Link it from an `artifact` classroom block. If generation or inspection cannot
+complete honestly, continue in the no-script HTML classroom and report the missing interaction
+without handing the learner a build command.
 
 ## Lesson lab content contract
 

@@ -6,6 +6,10 @@ Edit `plugins/mastery-learning/skills/mastery-coach/SKILL.md` only for routing a
 
 After any change, run Skill Creator validation and forward-test realistic prompts. Do not add a second source of truth for mastery criteria.
 
+## Extend the HTML classroom
+
+The Coach's learner-facing interface is the shared no-script HTML classroom. Add reusable presentation primitives to `assets/classroom-template/classroom.css` and `scripts/render_classroom.py`; do not hand-author a second page shell inside prompts or curriculum files. Keep content structured, escaped, local-first, responsive, printable, and limited to one current learner action. Executable interactions remain Tool Creator artifacts linked from the classroom, so changing lesson copy does not silently invalidate executable-tool verification.
+
 ## Add a curriculum pack
 
 Follow `assets/curricula/ml-ai-llm.json`:
@@ -18,6 +22,8 @@ Follow `assets/curricula/ml-ai-llm.json`:
 - a target outcome for every profile and explicit included/excluded scope;
 - source IDs that exist in the pack ledger, with organization, authority, version/date, reuse boundary, declared concept coverage, gaps, and check date;
 - optional content marked explicitly.
+
+For a broad field, include a prerequisite-free orientation concept in every built-in target profile. It must distinguish the field's major layers, connect them to the learner's goal, and explain the eventual build/evaluate loop before downstream notation or mechanisms. A new machine-learning route, for example, must not open with loss, gradients, tensor shapes, or an exam.
 
 Run `curriculum_audit.py <path>`. It rejects uncovered required concepts, optional nodes hidden inside required closures, stale fast-moving source checks, orphan modules, source-metadata omissions, and mismatched coverage. Also manually verify URLs, licensing, versions, and factual fit; offline structure cannot prove them.
 

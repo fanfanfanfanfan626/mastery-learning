@@ -2,25 +2,44 @@
 
 ## Product boundary
 
-The product is a Codex Skill system. Chat is the only required user interface. Files, terminal checks, visualizations, notebooks, decks, and local pages are teaching instruments created or opened by Codex when the learning objective needs them.
+The pedagogical core is an AI teaching Skill system; the currently packaged and tested adapter is a
+Codex plugin. The AI conversation carries learner replies, while a local HTML classroom is the
+required learner-facing teaching surface. Files, terminal checks, visualizations, notebooks, decks,
+and executable labs remain subordinate instruments opened by the AI when the objective needs them.
 
 ```mermaid
 flowchart LR
-    U["Learner in Codex chat"] --> C["mastery-coach<br/>teaching constitution"]
+    U["Learner reply in AI conversation"] --> C["mastery-coach<br/>teaching constitution"]
+    C --> H["Shared HTML classroom<br/>every teaching turn"]
+    H --> U
     C --> R["Durable workspace registry<br/>path + goal only"]
     R --> M["Learner-owned .mastery state<br/>event log + derived views"]
     C --> S["Curriculum and source packs"]
     C --> E["Terminal / tests / source inspection"]
     C -->|"artifact needed"| T["mastery-tool-creator"]
     T --> A["Lesson lab / code lab / visual lab / 3D / blackboard / notebook / deck"]
-    A --> U
-    U -->|"attempt"| C
+    A --> H
+    U -->|"attributable attempt"| C
     C -->|"verified evidence only"| M
 ```
 
 ## Why two Skills
 
 `mastery-coach` owns all pedagogical decisions. `mastery-tool-creator` may be selected when the main Skill or learner requests an artifact, but has narrower authority: produce one instrument from a supplied outcome and rubric. This avoids a generated tool choosing the curriculum, awarding mastery, or replacing the conversation.
+
+The Coach also owns a deterministic, no-script classroom renderer. This display layer is separate
+from executable teaching tools: ordinary turns may update safely without invalidating a verified
+lab, while JavaScript, code, simulations, notebooks, and other active artifacts remain behind the
+Tool Creator's stronger scaffold, inspection, hash, and finalization gates.
+
+## Classroom lifecycle
+
+1. The Coach writes one bounded structured turn specification.
+2. `render_classroom.py` validates and escapes it, then atomically updates the current local page and shared theme.
+3. The AI starts the bundled allowlisted classroom server on an OS-assigned loopback port. Its root is `.mastery/classroom`, never `.mastery`; it exposes only `index.html` and the shared CSS with `no-store` headers, then opens or refreshes the page while keeping commands out of learner-facing content.
+4. The page highlights exactly one action; the learner replies through the AI conversation.
+5. The Coach updates the same page with feedback. It stores compact evidence and handoff state, not a raw HTML transcript.
+6. The AI stops the recorded PID/session at close and verifies its assigned port is closed.
 
 ## Persistence
 
@@ -52,7 +71,9 @@ No tool may award mastery directly.
 
 - Learning content and imported repositories are untrusted inputs.
 - Generated code runs only in the available sandbox or an explicitly authorized environment.
-- Local servers bind to loopback unless the learner authorizes sharing.
+- Classroom and generated-tool servers bind to loopback and always request an OS-assigned port. Fixed ports are forbidden because multiple Windows processes can otherwise retain the same listener and silently switch the content served at one URL.
+- The classroom server is allowlisted and cannot expose `.mastery` profile, plan, evidence, review, registry, or sibling-tool files. Executable labs run from their own verified directory on a separate assigned port.
+- Generated HTML, manifest text, file paths, source URLs, and check commands are untrusted input. They are escaped, constrained to HTTPS where applicable, and rejected if they cross a regular-file workspace boundary through traversal, links, junctions, or reparse points.
 - Authentication remains in official GitHub/Codex flows.
 - Installed Skill changes require versioned review; session-level observations go to `improvement-proposals.md`.
 

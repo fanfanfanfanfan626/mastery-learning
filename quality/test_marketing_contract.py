@@ -22,7 +22,8 @@ class MarketingContractTests(unittest.TestCase):
     def test_readme_opens_with_value_demo_and_supported_install(self) -> None:
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
         head = "\n".join(readme.splitlines()[:40]).lower()
-        self.assertIn("turn codex into a local-first ai tutor", head)
+        self.assertIn("mastery learning — ai teaching skill", head)
+        self.assertIn("beautiful interactive html lessons", head)
         self.assertIn("docs/assets/demo.gif", head)
         self.assertIn("codex plugin marketplace", head)
         self.assertIn("skill-installer", head)
@@ -37,7 +38,7 @@ class MarketingContractTests(unittest.TestCase):
         self.assertEqual(manifest["homepage"], "https://github.com/fanfanfanfanfan626/mastery-learning")
         self.assertEqual(manifest["repository"], manifest["homepage"])
         self.assertTrue(
-            {"ai-tutor", "codex", "machine-learning", "llm", "spaced-repetition"}.issubset(
+            {"ai-teaching", "teaching-skill", "ai-tutor", "agent-skill", "codex", "machine-learning", "llm", "spaced-repetition"}.issubset(
                 set(manifest["keywords"])
             )
         )

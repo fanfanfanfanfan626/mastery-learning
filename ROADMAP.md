@@ -4,6 +4,8 @@ The project optimizes for trustworthy learning behavior before feature count. Pr
 
 ## Now — make the first experience work
 
+- forward-test the mandatory HTML classroom across onboarding, orientation, feedback, review, and resume;
+- validate the Codex adapter's automatic loopback open/refresh/cleanup behavior on Windows and Linux;
 - publish a current release candidate with reproducible artifacts;
 - add a short installation and first-lesson walkthrough;
 - run fresh-task Codex conversation evaluations repeatedly;
@@ -17,6 +19,7 @@ The project optimizes for trustworthy learning behavior before feature count. Pr
 - split the state engine into state, validation, scheduling, registry, and migration modules;
 - add more cross-platform installation smoke tests;
 - document real lesson examples without exposing learner records.
+- define and test adapters before claiming support for additional AI agents or coding assistants;
 
 ## Later — evaluate learning outcomes
 

@@ -25,7 +25,7 @@ Before every reuse of an existing generated tool, rerun `mastery-tool-creator/sc
 
 ## Visual laboratory
 
-Use the conversation-native visualization capability when available. Otherwise create a local HTML/canvas, SVG, notebook, plot, or Mermaid diagram. Serve local HTML from an ephemeral loopback HTTP server bound to `127.0.0.1`; do not rely on `file://` access. Stop the server after inspection. A lab must include:
+Use the conversation-native visualization capability when available. Otherwise create a local HTML/canvas, SVG, notebook, plot, or diagram. Serve verified local HTML from its own tool directory with the manifest's exact dynamic-port loopback launch; do not assume a fixed port, share the classroom server, or rely on `file://` access. The Coach records the exact process/session and assigned port, opens the lab, then stops that process and verifies its port is closed; the learner never receives lifecycle commands. Link the running verified lab into the classroom only by its exact assigned loopback URL. A lab must include:
 
 - a question and prediction before reveal;
 - 1–3 meaningful controls;
@@ -39,25 +39,24 @@ Do not create decorative animation and call it a lab. Keep variables, units, sca
 ## Guided lesson lab
 
 Use [lesson-delivery.md](lesson-delivery.md) and invoke `$mastery-tool-creator` with type
-`lesson_lab` when one substantial concept encounter needs explanation, a complete worked example,
-annotated code, synchronized visualization, guided practice, and transfer in one reusable page.
-This is especially appropriate for an explicit interactive-HTML preference or a dynamic causal
-relationship such as parameter-to-output, algorithm state, tensor shape, probability, optimization,
-or attention.
+`lesson_lab` when one substantial concept encounter needs executable synchronized visualization,
+guided practice, and transfer beyond the classroom's no-script blocks. This is especially
+appropriate for a dynamic causal relationship such as parameter-to-output, algorithm state, tensor
+shape, probability, optimization, or attention.
 
 Reuse an exact verified lesson that samples the same target and assumptions. Do not create a lesson
 lab for a one-off fact, one local correction, tiny review, or decorative polish. If generation or
-inspection fails, preserve the teaching sequence with Markdown, a table, or a blackboard rather
-than blocking the learner. Page interaction is not evidence until the tutor observes attributable
-learner reasoning or production.
+inspection fails, preserve the teaching sequence in the HTML classroom rather than blocking the
+learner. Page interaction is not evidence until the tutor observes attributable learner reasoning
+or production.
 
 ## Blackboard
 
-Use a persistent Markdown block for derivations, traces, or evolving system state. Preserve earlier lines, highlight the current step, define symbols, and ask the learner to supply the next step. For algorithms, a table of iteration/state is often clearer than prose.
+Use persistent classroom steps, comparison, code, or map blocks for derivations, traces, or evolving system state. Preserve earlier lines, highlight the current step, define symbols, and ask the learner to supply the next step. For algorithms, a table of iteration/state is often clearer than prose.
 
 ## Slides and documents
 
-Generate slides when the learner needs a reusable mini-lesson, presentation rehearsal, or visual recap. Use a document/PDF when layout or offline study matters. Keep active-recall prompts outside the answer-facing slide or on a separate reveal. Never use slides as the default chat response.
+Generate slides when the learner needs a reusable mini-lesson, presentation rehearsal, or visual recap. Use a document/PDF when layout or offline study matters. Keep active-recall prompts outside the answer-facing slide or on a separate reveal. The HTML classroom remains the default teaching surface.
 
 ## Notebooks
 

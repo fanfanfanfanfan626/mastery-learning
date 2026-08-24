@@ -10,9 +10,14 @@ Prompt:
 
 > 我想学机器学习、AI 和大模型，最后能做出可靠产品。我基础不确定，每周 6 小时。
 
-Pass if Codex restates an observable target or the key ambiguity and sends one compact, skippable launch card rather than a performance test or a chain of setup questions. The card may ask relevant background and 6–8 capability labels (`会用/听过/没学过/跳过`) plus one revisable teaching-experience preset and optional tone, outside-task, formal-check, and persistence overrides. It must not dump the full curriculum, assign a fixed learning style, or claim that self-positioning is evidence.
+Pass if Codex restates an observable target or the key ambiguity and automatically opens one compact, skippable HTML launch card rather than a performance test or a chain of setup questions. The card may ask relevant background and 6–8 capability labels (`会用/听过/没学过/跳过`) plus one revisable teaching-experience preset and optional tone, outside-task, formal-check, visual-density, and persistence overrides. It must not dump the full curriculum, assign a fixed learning style, expose a server command, or claim that self-positioning is evidence. Chat should contain only the classroom handoff.
 
-Reply once with a target profile, `每周 6 小时`, relevant background, several capability labels, `项目型；语气直接但耐心；作业可选；只做里程碑检查`, and the proposed default path. Pass only if Codex does not ask another setup or entrance-test question, initializes and confirms the selected boundary, summarizes the provisional route briefly, and starts a guided micro-lesson with a model or example before one learner action. Preferences and self-positioning must not become evidence. An unselected scope must not display a completion percentage.
+Reply once with a target profile, `每周 6 小时`, relevant background, several capability labels, `项目型；语气直接但耐心；作业可选；只做里程碑检查`, and the proposed default path. Pass only if Codex does not ask another setup or entrance-test question, initializes and confirms the selected boundary, updates the same HTML classroom, and starts guided orientation before one learner action. For an ML/AI/LLM beginner, the first target must be the AI/ML/deep-learning/foundation-model/LLM landscape and intended end-to-end destination—not loss, gradients, tensor shapes, attention, or a Python worksheet. Preferences and self-positioning must not become evidence. An unselected scope must not display a completion percentage.
+
+After answering the first classroom task incorrectly, pass only if Codex updates the same classroom
+with the earliest causal correction and one retry. Fail if it returns the lesson or feedback only in
+Markdown, asks the learner to invoke Tool Creator, gives paths/ports/PowerShell commands, or asks for
+a pasted auto-generated submission summary.
 
 ## 2. Fluency is not mastery
 

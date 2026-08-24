@@ -12,7 +12,8 @@ The final outcome of learning is an independently usable capability. Therefore t
 4. Teach through active, turn-based interaction rather than monologue; for a substantial new
    concept, preserve one complete causal spine from orientation and modeling through guided action
    and close, while keeping future ideas labeled as previews.
-5. Generate tools only where they make a relationship or performance observable.
+5. Render every learner-facing turn in one polished, accessible, local HTML classroom. Generate
+   executable tools only where they make a relationship or performance observable.
 6. Give feedback at the earliest causal error and allow retries.
 7. Require independent and durable evidence before mastery.
 8. Schedule retrieval and changed-context review.
@@ -35,20 +36,25 @@ For ML/AI/LLM learning, the built-in pack covers computing, mathematics, classic
 
 ## Minimum viable user journey
 
-1. Learner states a target in Codex.
-2. Codex presents one compact, skippable launch packet covering the missing goal, time, relevant background, self-positioning, teaching experience, and local-persistence choices.
-3. After one reply, Codex initializes `.mastery/`, stores preferences and self-positioning without calling them evidence, shows the provisional short path and coverage boundary, and begins a guided micro-lesson without another setup round.
+1. Learner states a target to the installed AI tutor.
+2. The tutor renders and opens one compact HTML launch card covering the missing goal, time, relevant background, self-positioning, teaching experience, and local-persistence choices.
+3. After one reply, the tutor initializes `.mastery/`, stores preferences and self-positioning without calling them evidence, updates the HTML classroom with the provisional short path and coverage boundary, and begins guided orientation without another setup round.
 4. Each session retrieves prior or due learning when relevant, models genuinely new material before demanding performance, teaches one frontier capability, and ends with one clear next action.
-5. Code or interactive tools are generated only when justified; a reusable guided lesson may use
-   a verified `lesson_lab`, while simple explanations and small corrections stay in conversation.
+5. Every explanation, question, feedback turn, review, and close is rendered in the shared classroom. A verified `lesson_lab` or code/visual tool is linked only when executable interaction is justified.
 6. Evidence updates mastery and review dates.
 7. A capstone and defense verify integrated capability.
+
+For the built-in ML/AI/LLM map, a learner without prior evidence begins with `ai-landscape`: what
+AI, machine learning, deep learning, foundation models, and LLMs are; how the intended final system
+fits together; and how learned behavior differs from hand-written rules. Prediction precedes error,
+error precedes loss, and loss precedes optimization. A convenient worksheet must never determine
+the conceptual starting point.
 
 ## Non-goals for the initial release
 
 - hosted LMS, cohort management, certificates, grades, or surveillance analytics;
 - a fixed video/content library;
-- a general-purpose website as the main interface;
+- a hosted general-purpose website or LMS; the local HTML classroom is a teaching surface owned by the AI session;
 - automatic claims of pedagogical effectiveness without learner-outcome evaluation;
 - silent self-modification.
 
@@ -61,6 +67,10 @@ The research basis and product-specific claim boundary are documented in [pedago
 - curriculum identity, target closure, source provenance, scope, and DAG audit have no errors;
 - state initialization, explicit scope closure, cross-task discovery, serialized writes, interrupted-transaction recovery, derived-state recovery, conservative migration, strict durability transition, failure transition, due-review query, export, and confirmed deletion pass automated tests;
 - unfinished generated tools, incomplete lesson sequences, and placeholder checks fail; static validation never executes generated code; only separately observed sandbox/render results can mark a tool verified;
+- the deterministic classroom renderer escapes learner content, rejects unsafe links, uses a local-only no-script CSP, exposes exactly one current action, and never requires learner-operated servers or internal Skill commands;
+- the dedicated no-cache classroom server exposes only the current page and shared stylesheet from `.mastery/classroom`; learning profiles, plans, evidence, reviews, registries, and tools are never within its served root;
+- all local servers use OS-assigned loopback ports, retain an exact process/session identity, and are considered stopped only after the assigned port is verified closed;
+- tool objectives, sources, resource links, paths, and check commands are untrusted: HTML is escaped, remote references are credential-free HTTPS, check targets remain inside the tool snapshot, and links/junctions/reparse points fail closed;
 - README and `INSTALL.md` classify the distribution as one two-Skill plugin before any command runs;
   platform installers validate both marketplace and plugin identities, never fall back to a partial
   standalone-Skill install, and the exact release archive passes a fresh-clone smoke test before a

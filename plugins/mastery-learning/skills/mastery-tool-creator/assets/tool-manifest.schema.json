@@ -11,7 +11,7 @@
     "build_status": {"enum": ["scaffold", "complete"]},
     "type": {"enum": ["code_lab", "visual_lab", "lesson_lab", "simulation_3d", "blackboard", "notebook", "quiz", "slide_deck", "document", "project_lab"]},
     "concept": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
-    "objective": {"type": "string", "minLength": 12},
+    "objective": {"type": "string", "minLength": 12, "maxLength": 500, "pattern": "^[^\\r\\n\\u0000-\\u001f]+$"},
     "mode": {"enum": ["coach", "demonstration", "pair", "exam", "review"]},
     "prerequisites": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"}},
     "interaction": {
@@ -74,7 +74,20 @@
       },
       "additionalProperties": false
     },
-    "sources": {"type": "array"},
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["title", "url"],
+        "properties": {
+          "title": {"type": "string", "minLength": 1},
+          "url": {"type": "string", "pattern": "^https://[^/@:]+(?:\\.[^/@:]+)+(?:/.*)?$"},
+          "checked_at": {"type": "string", "minLength": 1},
+          "license_reuse": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": false
+      }
+    },
     "created_at": {"type": "string"},
     "generator": {
       "type": "object",

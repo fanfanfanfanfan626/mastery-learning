@@ -10,6 +10,23 @@ Use this as a completeness map, then personalize it. It is not a single mandator
 - **LLM engineer**: include training/inference systems, application engineering, evaluation, and safety.
 - **Research path**: complete the prerequisites of the chosen claim, then add paper replication and ablation evidence.
 
+## Start with orientation, not a downstream mechanism
+
+Every built-in target profile includes `ai-landscape`. For a learner with no observed evidence,
+teach it first even though the later prerequisite DAG also has other root concepts. The first
+experience should:
+
+- distinguish rule-written software, AI, machine learning, deep learning, foundation models, and LLMs;
+- show the learner's intended end-to-end destination and the major stages needed to reach it;
+- contrast a hand-authored rule with behavior learned from examples;
+- name important limitations and evaluation as part of the system, not an afterthought;
+- end with one classification or mapping action, not algebra or a coding worksheet.
+
+After orientation, validate self-positioned Python or mathematics inside meaningful guided work.
+Introduce prediction before error, error before loss, and loss before optimization. Do not start an
+AI course with loss, gradient descent, tensor shapes, or attention merely because they produce a
+convenient exercise.
+
 ## 0. Computing foundations
 
 - Python semantics, functions, classes, typing, packaging, environments.

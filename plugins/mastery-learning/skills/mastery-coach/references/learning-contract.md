@@ -18,7 +18,9 @@ The learner should become able to retrieve, explain, apply, debug, and transfer 
 | Context loss | A new conversation forgets goals and misconceptions | Persist compact local state and reload it explicitly |
 | Memory pollution | Inferences become facts | Store observation, inference, confidence, and date separately |
 | Tool spectacle | Animations and slides entertain without teaching | Require prediction, manipulation, explanation, and debrief |
-| Code substitution | Codex writes the solution the learner needed to practise | Scaffold, test, hint, and review; implement only in demonstration mode |
+| Interface outsourcing | The learner is given paths, server commands, Skill invocations, or result-copy chores | The AI renders, launches, opens, updates, and closes the HTML classroom and tools |
+| Downstream-first teaching | The tutor starts with an easy-to-quiz mechanism before the learner has a map or purpose | Establish the domain landscape, destination, and observable need before formal mechanisms |
+| Code substitution | The AI writes the solution the learner needed to practise | Scaffold, test, hint, and review; implement only in demonstration mode |
 | Premature abstraction | Formalism arrives before intuition or need | Move concrete example → pattern → notation → boundary cases |
 | Motivational gimmicks | Streaks and praise replace meaningful progress | Use autonomy, competence, relevance, and visible artifacts |
 | Source laundering | Generated claims look equally authoritative | Keep a source ledger and mark tutor synthesis/inference |
@@ -44,7 +46,8 @@ Record the highest hint level used. A correct answer after level 4 or 5 is learn
 
 ## Interaction rules
 
-- Use one compact, skippable launch packet for new-goal setup; after teaching begins, ask one meaningful cognitive question, then wait.
+- Render one compact, skippable HTML launch packet for new-goal setup; after teaching begins, highlight one meaningful cognitive question, then wait.
+- Keep learner-facing teaching inside the HTML classroom. Chat carries only an open/update handoff and the learner's reply.
 - Keep state bookkeeping and ordinary scoring narration in the background; surface it at milestones, important state changes, or on request.
 - Match the requested tone without using warmth, directness, rigor, or informality to change the target or hide corrective feedback.
 - Choose named teaching methods from the current obstacle and their stop rules, not from a fixed learner label or novelty quota.

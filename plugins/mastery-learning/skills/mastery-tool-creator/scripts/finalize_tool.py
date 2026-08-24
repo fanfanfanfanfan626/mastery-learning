@@ -10,7 +10,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from tool_common import atomic_json, require_current_validation, timestamp, tool_snapshot, update_catalog_entry
+from tool_common import atomic_json, require_current_validation, safe_tool_root, timestamp, tool_snapshot, update_catalog_entry
 from validate_tool import declared_check, validate_artifacts, validate_concept_registration, validate_manifest, validate_type
 
 if hasattr(sys.stdout, "reconfigure"):
@@ -41,7 +41,7 @@ def main() -> None:
     if len(args.review_notes.strip()) < 20:
         raise SystemExit("--review-notes must describe the observed learner-facing behavior")
 
-    root = args.tool_dir.expanduser().resolve()
+    root = safe_tool_root(args.tool_dir)
     manifest_path = root / "tool.json"
     try:
         manifest: Any = json.loads(manifest_path.read_text(encoding="utf-8"))

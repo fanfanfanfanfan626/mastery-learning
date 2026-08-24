@@ -268,16 +268,16 @@ class StateRegressionV4Tests(unittest.TestCase):
                 STATE, "scope-apply", "--workspace", workspace, "--target-profile", "llm-engineer",
                 "--reason", "Learner confirmed model internals and operations.",
             ).stdout)
-            self.assertEqual(applied["required_count"], 32)
+            self.assertEqual(applied["required_count"], 33)
             self.assertEqual(before, {name: (root / name).read_bytes() for name in before})
 
     def test_all_builtin_profile_closures_are_stable(self) -> None:
         expected_counts = {
-            "llm-application-builder": 31,
-            "ml-engineer": 22,
-            "ai-systems-builder": 21,
-            "llm-engineer": 32,
-            "research": 33,
+            "llm-application-builder": 32,
+            "ml-engineer": 23,
+            "ai-systems-builder": 22,
+            "llm-engineer": 33,
+            "research": 34,
         }
         with tempfile.TemporaryDirectory() as temporary:
             parent = Path(temporary)
@@ -291,7 +291,7 @@ class StateRegressionV4Tests(unittest.TestCase):
                 self.assertTrue(result["ok"])
                 scope = json.loads(run(STATE, "scope-status", "--workspace", workspace).stdout)
                 self.assertEqual(scope["required_count"], expected)
-                self.assertEqual(scope["required_concepts"][0], "python")
+                self.assertIn("ai-landscape", scope["required_concepts"])
 
     def test_scope_rejects_unknown_profile_and_outside_active_path(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
