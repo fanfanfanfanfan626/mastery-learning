@@ -115,7 +115,7 @@ class AgentSkillDistributionTests(unittest.TestCase):
         adapters = self.manifest["adapters"]
         self.assertEqual(adapters["claude-code"]["user_directory"], "~/.claude/skills")
         self.assertEqual(adapters["github-copilot"]["project_directory"], ".agents/skills")
-        self.assertEqual(adapters["codex"]["status"], "verified-adapter")
+        self.assertEqual(adapters["codex"]["status"], "engineering-verified-e2-pending")
         self.assertEqual(adapters["claude-code"]["status"], "experimental")
         self.assertEqual(adapters["github-copilot"]["status"], "experimental")
         self.assertEqual(adapters["opencode"]["status"], "planned")

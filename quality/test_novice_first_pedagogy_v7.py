@@ -87,6 +87,7 @@ class NoviceFirstPedagogyV7ContractTests(unittest.TestCase):
             "current_target",
             "mental_move",
             "new_terms",
+            "answer_options",
             "concrete_experience",
             "example",
             "counterexample",
@@ -97,6 +98,7 @@ class NoviceFirstPedagogyV7ContractTests(unittest.TestCase):
         ]:
             self.assertIn(f"`{field}`", body)
         self.assertIn("exactly one `TeachingTurnSpec`", body)
+        self.assertIn("below hint level 5", body)
 
     def test_optional_multi_agent_protocol_is_bounded_host_neutral_and_serialized(self) -> None:
         protocol = re.search(

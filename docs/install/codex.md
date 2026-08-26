@@ -1,6 +1,7 @@
 # Install the Codex adapter
 
-Codex is the verified reference adapter. It installs `mastery-tutor@mastery-tutor` as one complete
+Codex is the engineering-verified reference adapter; fresh-conversation E2 evidence is still
+pending. It installs `mastery-tutor@mastery-tutor` as one complete
 plugin containing both canonical Skills. Do not use `skill-installer` or copy either nested Skill.
 
 ## Success condition

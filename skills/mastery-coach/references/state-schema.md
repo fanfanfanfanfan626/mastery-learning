@@ -6,8 +6,11 @@ The engine also keeps one atomic entry per workspace under `$MASTERY_HOME/worksp
 override is unset, an explicit `$CODEX_HOME` remains supported for the Codex adapter; otherwise new
 installations use `~/.mastery-learning/workspaces.d/`. If the portable directory does not yet exist
 but an older `~/.codex/mastery-learning` registry does, the engine keeps using that existing registry
-so an upgrade cannot hide prior learning. It stores only workspace ID, path, goal, and update time so
-a new AI task can find prior learning without a shared read-modify-write race. Initialization fails
+so an upgrade cannot hide prior learning. Current entries store only workspace ID, path, and update
+time. Discovery projects every readable entry onto that four-field allowlist before validating it,
+so even a damaged legacy entry cannot retain a goal or other learning content. Goal search loads
+the workspace's visible `profile.json` instead of duplicating it globally. A new
+AI task can still find prior learning without a shared read-modify-write race. Initialization fails
 visibly when this registry is not writable, and discovery fails visibly with the exact entry path
 when registry data is malformed. `.mastery/.gitignore` is engine-managed and excludes learner
 records from Git by default.

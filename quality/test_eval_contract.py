@@ -107,6 +107,9 @@ class ConversationEvalContractTests(unittest.TestCase):
         manifest = json.loads(
             (ROOT / "plugins" / "mastery-tutor" / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8")
         )
+        raw_suite = json.loads(EVALS.read_text(encoding="utf-8"))
+        self.assertEqual(raw_suite["plugin_version_source"], "VERSION")
+        self.assertNotIn("plugin_version", raw_suite)
         self.assertEqual(self.suite["plugin_version"], manifest["version"])
 
     def test_suite_hash_is_formatting_independent(self) -> None:
@@ -192,6 +195,17 @@ class ConversationEvalContractTests(unittest.TestCase):
         self.assertFalse(report["ok"])
         self.assertIn("need at least 3", "\n".join(report["errors"]))
         self.assertEqual(report["release_policy"]["effective_minimum_complete_runs"], 3)
+
+    def test_public_adapter_label_cannot_outrun_committed_e2_evidence(self) -> None:
+        version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
+        evidence_root = ROOT / "quality" / "evals" / "results" / version
+        report = audit_release_evidence(self.suite, evidence_root)
+        compatibility = (ROOT / "COMPATIBILITY.md").read_text(encoding="utf-8")
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        if not report["ok"]:
+            self.assertNotIn("| Codex | **Verified adapter**", compatibility)
+            self.assertIn("Engineering-verified; E2 pending", compatibility)
+            self.assertIn("conversation evidence pending", readme)
 
     def test_release_evidence_gate_rejects_an_all_blocked_template(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

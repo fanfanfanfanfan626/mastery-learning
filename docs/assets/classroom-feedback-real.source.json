@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "page_id": "spam-rule-first-retry",
+  "kind": "feedback",
+  "language": "zh-CN",
+  "course": "Mastery Tutor",
+  "progress": "第 1 课 · 第一次修正",
+  "eyebrow": "先修正最早的一步",
+  "title": "可疑，不等于这条规则会拦截",
+  "lead": "我们保留原来的邮件和规则，只把判断依据换回题目真正检查的文字。",
+  "meta": [
+    {"label": "当前动作", "value": "修正一次判断"},
+    {"label": "提示", "value": "第 1 级，共 5 级"}
+  ],
+  "sections": [
+    {
+      "type": "callout",
+      "tone": "concept",
+      "title": "关键差别",
+      "body": ["你判断的是邮件看起来可不可疑；程序判断的是标题里有没有‘中奖’两个字。"]
+    },
+    {
+      "type": "comparison",
+      "title": "把直觉和程序规则分开",
+      "headers": ["判断者", "实际检查什么", "这封邮件的结果"],
+      "rows": [
+        ["你", "它看起来是否可疑", "可疑"],
+        ["程序", "标题是否含有‘中奖’", "等你重新判断"]
+      ]
+    },
+    {
+      "type": "details",
+      "title": "为什么暂时不直接给答案",
+      "body": ["这一步只把注意力拉回规则；最后的拦截或放行仍由你完成。"]
+    }
+  ],
+  "teaching_turn": {
+    "schema_version": 1,
+    "learner_problem": "为什么有些垃圾邮件能绕过手写规则？",
+    "current_target": "根据一条明确规则修正对新例子的判断。",
+    "mental_move": "repair",
+    "new_terms": [],
+    "answer_options": ["拦截", "放行"],
+    "concrete_experience": "同一封邮件在人的直觉和程序规则下得到不同判断依据。",
+    "example": {
+      "case": "标题含有‘中奖’，规则会拦截。",
+      "deciding_feature": "标题是否含有中奖"
+    },
+    "counterexample": {
+      "case": "标题不含‘中奖’，规则会放行。",
+      "deciding_feature": "标题是否含有中奖"
+    },
+    "visual": {
+      "form": "对照表分开人的直觉和程序检查的文字。",
+      "deciding_feature": "标题是否含有中奖"
+    },
+    "action": "仍按‘标题含有中奖才拦截’这条规则，‘限时福利，马上领取’会被拦截还是放行？只写结果和一行依据。",
+    "evidence_boundary": {
+      "can_show": "能否在当前例子上修正并准确执行规则。",
+      "not_observed": [
+        "不能证明能设计规则。",
+        "不能证明理解机器学习。",
+        "还没有换场景检验。"
+      ]
+    },
+    "feedback_plan": {
+      "earliest_error": "把邮件看起来可疑和规则实际检查的文字混在一起。",
+      "first_hint": "只检查标题里有没有‘中奖’两个字。",
+      "retry_shape": "保留原邮件和规则，让学习者重新判断并给一行依据。"
+    }
+  },
+  "feedback_context": {
+    "attempt_id": "spam-attempt-one",
+    "original_task": "按照‘标题含有中奖才拦截’这条规则，‘限时福利，马上领取’会被拦截还是放行？",
+    "learner_response": "拦截，因为它看起来很可疑。",
+    "earliest_error": "使用了人的直觉，而不是程序实际检查的文字。",
+    "hint_level": 1,
+    "hint": "只检查标题里有没有‘中奖’两个字。",
+    "solution_revealed": false
+  },
+  "action": {
+    "title": "重新判断同一封邮件",
+    "prompt": "仍按‘标题含有中奖才拦截’这条规则，‘限时福利，马上领取’会被拦截还是放行？只写结果和一行依据。",
+    "response_hint": "格式：结果 + 一行依据"
+  }
+}

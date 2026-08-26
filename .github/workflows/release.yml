@@ -12,7 +12,37 @@ permissions:
   artifact-metadata: write
 
 jobs:
+  reproducibility:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      PYTHONUTF8: "1"
+      MASTERY_HOME: ${{ github.workspace }}/work/release-mastery-home
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verify source and tests on release platform
+        run: |
+          python quality/build_adapters.py --check
+          python -m compileall -q skills adapters quality
+          python -m unittest discover -s quality -p "test_*.py" -v
+      - name: Build platform candidates
+        run: |
+          python quality/build_release.py --kind core --output work/release-candidates/core.zip
+          python quality/build_release.py --kind codex --output work/release-candidates/codex.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-candidate-${{ runner.os }}
+          path: work/release-candidates/*.zip
+          if-no-files-found: error
+
   release:
+    needs: reproducibility
     runs-on: ubuntu-latest
     env:
       PYTHONUTF8: "1"
@@ -24,6 +54,15 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: release-candidate-*
+          path: work/reproducibility
+      - name: Compare Linux, Windows, and macOS release bytes
+        shell: bash
+        run: |
+          python quality/release_audit.py compare work/reproducibility/release-candidate-Linux/core.zip work/reproducibility/release-candidate-Windows/core.zip work/reproducibility/release-candidate-macOS/core.zip
+          python quality/release_audit.py compare work/reproducibility/release-candidate-Linux/codex.zip work/reproducibility/release-candidate-Windows/codex.zip work/reproducibility/release-candidate-macOS/codex.zip
       - id: version
         name: Match tag to VERSION
         shell: bash

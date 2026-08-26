@@ -16,6 +16,7 @@ The learner should become able to retrieve, explain, apply, debug, and transfer 
 | Entrance-exam onboarding | The tutor tries to classify the learner before creating value | Use one optional self-positioning packet, then diagnose dynamically inside guided teaching |
 | Under-assessment | Completion and confidence are treated as mastery | Require independent, delayed, and transfer evidence |
 | Context loss | A new conversation forgets goals and misconceptions | Persist compact local state and reload it explicitly |
+| Feedback context loss | A rewritten page refers to vanished steps or silently changes the task | Preserve the original task, learner response, earliest error, hint level, and a complete retry prompt in every feedback page |
 | Memory pollution | Inferences become facts | Store observation, inference, confidence, and date separately |
 | Tool spectacle | Animations and slides entertain without teaching | Require prediction, manipulation, explanation, and debrief |
 | Interface outsourcing | The learner is given paths, server commands, Skill invocations, or result-copy chores | The AI renders, launches, opens, updates, and closes the HTML classroom and tools |

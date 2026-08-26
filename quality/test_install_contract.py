@@ -304,6 +304,42 @@ class InstallContractTests(unittest.TestCase):
         self.assertEqual(completed.returncode, 0, completed.stdout + completed.stderr)
         self.assertIn("Check-only mode", completed.stdout)
 
+    def test_check_only_rejects_a_package_missing_either_bundled_skill(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            package = Path(temporary) / "package"
+            for relative in [
+                Path(".agents/plugins/marketplace.json"),
+                Path("plugins/mastery-tutor/.codex-plugin/plugin.json"),
+                Path("plugins/mastery-tutor/skills/mastery-coach/SKILL.md"),
+                Path("VERSION"),
+            ]:
+                destination = package / relative
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(ROOT / relative, destination)
+            if os.name == "nt":
+                powershell = shutil.which("pwsh") or shutil.which("powershell")
+                self.assertIsNotNone(powershell, "PowerShell is required on Windows")
+                shutil.copy2(ROOT / "install.ps1", package / "install.ps1")
+                command = [
+                    str(powershell), "-NoProfile", "-ExecutionPolicy", "Bypass", "-File",
+                    str(package / "install.ps1"), "-CheckOnly",
+                ]
+            else:
+                shutil.copy2(ROOT / "install.sh", package / "install.sh")
+                command = ["sh", str(package / "install.sh"), "--check-only"]
+            completed = subprocess.run(
+                command,
+                cwd=package,
+                text=True,
+                encoding="utf-8",
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=False,
+            )
+            output = completed.stdout + completed.stderr
+            self.assertNotEqual(completed.returncode, 0, output)
+            self.assertIn("mastery-tool-creator/SKILL.md", output.replace("\\", "/"))
+
 
 if __name__ == "__main__":
     unittest.main()

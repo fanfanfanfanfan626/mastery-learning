@@ -9,6 +9,9 @@ allowed to vary.
 ```text
 skills/                         canonical Agent Skills
   mastery-coach/
+    scripts/mastery.py          state-domain CLI and mastery rules
+    scripts/mastery_registry.py privacy-owned registry/discovery boundary
+    scripts/teaching_turn.py    machine validation for one teaching turn
   mastery-tool-creator/
 adapters/
   codex/                        Codex-only manifest and asset sources
@@ -56,7 +59,9 @@ checks, and migration rules.
 The global registry stores only enough information to locate workspaces. New installations use the
 portable `~/.mastery-learning` location. Existing `CODEX_HOME/mastery-learning` and
 `~/.codex/mastery-learning` registries remain discoverable so the product rename does not orphan
-learner data.
+learner data. Registry entries contain workspace ID, path, and update time only; searchable goals
+are read from the learner-owned workspace. `mastery_registry.py` owns this privacy boundary and
+sanitizes valid legacy goal-bearing entries during discovery.
 
 Mastery is deliberately stricter than task completion. Independent evidence across required
 dimensions, transfer, and delayed retrieval are separate conditions. Assistance is recorded;
@@ -75,6 +80,11 @@ Static classroom rendering remains available when a host cannot create or inspec
 Reusable dynamic artifacts go through Tool Creator. Both surfaces escape learner-controlled text,
 avoid remote dependencies, provide a non-script fallback, support narrow screens and reduced motion,
 and use loopback HTTP rather than `file://` when a browser is required.
+
+Orientation, lesson, feedback, and review pages bind a validated `TeachingTurnSpec` hash. The
+validator enforces one mental move, a three-term ceiling, a shared example/counterexample/visual
+feature, a bounded evidence claim, and exact action binding. Feedback additionally carries the
+original task and learner response so a page rewrite cannot create dangling step references.
 
 ## Optional teaching organization
 
@@ -97,9 +107,9 @@ Adapters map the requirements in [host-contract.md](host-contract.md) to a host:
 - persistent session recovery;
 - process and uninstall lifecycle.
 
-Codex is the current Verified adapter. Other hosts remain Experimental or Core-compatible until the
-matrix in [COMPATIBILITY.md](../COMPATIBILITY.md) has recorded results. A directory convention is
-not behavioral proof.
+Codex is engineering-verified at E0/E1; its current E2 conversation evidence is pending. Other hosts
+remain Experimental or Core-compatible until the matrix in [COMPATIBILITY.md](../COMPATIBILITY.md)
+has recorded results. A directory convention or passing engine suite is not behavioral proof.
 
 ## Release model
 

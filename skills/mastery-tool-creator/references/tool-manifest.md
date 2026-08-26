@@ -39,7 +39,7 @@ Every generated tool directory contains `tool.json` with this shape:
     {"title": "Primary reference", "url": "https://example.org/reference", "checked_at": "2026-08-22", "license_reuse": "Link and paraphrase only."}
   ],
   "created_at": "2026-08-22T12:00:00+00:00",
-  "generator": {"name": "mastery-tool-creator", "version": "0.5.0"}
+  "generator": {"name": "mastery-tool-creator", "version": "sha256:<generator-script-sha256>"}
 }
 ```
 

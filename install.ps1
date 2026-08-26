@@ -89,6 +89,13 @@ if ($PluginManifest.name -ne "mastery-tutor" -or $PluginManifest.skills -ne "./s
 if ($PluginManifest.version -ne $ReleaseVersion) {
     throw "Plugin version mismatch: generated adapter does not match VERSION"
 }
+$BundledSkillsRoot = Join-Path $RepositoryRoot 'plugins\mastery-tutor\skills'
+foreach ($SkillName in @('mastery-coach', 'mastery-tool-creator')) {
+    $SkillManifest = Join-Path (Join-Path $BundledSkillsRoot $SkillName) 'SKILL.md'
+    if (-not (Test-Path -LiteralPath $SkillManifest -PathType Leaf)) {
+        throw "Incomplete plugin package: missing bundled Skill $SkillName/SKILL.md"
+    }
+}
 
 Write-Output "Preflight passed: Mastery Tutor $ReleaseVersion with both bundled Skills."
 Write-Output "Repository root: $RepositoryRoot"

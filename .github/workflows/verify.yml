@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     env:
       PYTHONUTF8: "1"
@@ -65,6 +65,28 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
+  python-compatibility:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ["3.10", "3.13"]
+    runs-on: ${{ matrix.os }}
+    env:
+      PYTHONUTF8: "1"
+      MASTERY_HOME: ${{ github.workspace }}/work/ci-mastery-home
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Verify generated adapters
+        run: python quality/build_adapters.py --check
+      - name: Compile Python sources
+        run: python -m compileall -q skills adapters quality
+      - name: Run complete test suite
+        run: python -m unittest discover -s quality -p "test_*.py" -v
+
   release-reproducibility:
     needs: test
     runs-on: ubuntu-latest
@@ -91,8 +113,15 @@ jobs:
           python quality/release_audit.py compare
           work/release-candidates/release-ubuntu-latest/mastery-tutor-${{ steps.version.outputs.value }}-codex.zip
           work/release-candidates/release-windows-latest/mastery-tutor-${{ steps.version.outputs.value }}-codex.zip
+      - name: Compare macOS and Linux candidate bytes
+        shell: bash
+        run: |
+          python quality/release_audit.py compare "work/release-candidates/release-ubuntu-latest/mastery-tutor-${{ steps.version.outputs.value }}-core.zip" "work/release-candidates/release-macos-latest/mastery-tutor-${{ steps.version.outputs.value }}-core.zip"
+          python quality/release_audit.py compare "work/release-candidates/release-ubuntu-latest/mastery-tutor-${{ steps.version.outputs.value }}-codex.zip" "work/release-candidates/release-macos-latest/mastery-tutor-${{ steps.version.outputs.value }}-codex.zip"
       - name: Compare checksum files
         shell: bash
         run: |
           python quality/release_audit.py compare "work/release-candidates/release-ubuntu-latest/mastery-tutor-${{ steps.version.outputs.value }}-core.zip.sha256" "work/release-candidates/release-windows-latest/mastery-tutor-${{ steps.version.outputs.value }}-core.zip.sha256"
           python quality/release_audit.py compare "work/release-candidates/release-ubuntu-latest/mastery-tutor-${{ steps.version.outputs.value }}-codex.zip.sha256" "work/release-candidates/release-windows-latest/mastery-tutor-${{ steps.version.outputs.value }}-codex.zip.sha256"
+          python quality/release_audit.py compare "work/release-candidates/release-ubuntu-latest/mastery-tutor-${{ steps.version.outputs.value }}-core.zip.sha256" "work/release-candidates/release-macos-latest/mastery-tutor-${{ steps.version.outputs.value }}-core.zip.sha256"
+          python quality/release_audit.py compare "work/release-candidates/release-ubuntu-latest/mastery-tutor-${{ steps.version.outputs.value }}-codex.zip.sha256" "work/release-candidates/release-macos-latest/mastery-tutor-${{ steps.version.outputs.value }}-codex.zip.sha256"

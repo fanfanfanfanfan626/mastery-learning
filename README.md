@@ -5,24 +5,44 @@
 Guided HTML lessons, hands-on practice, transfer checks, spaced review, and progress that stays in
 your own workspace.
 
-[简体中文](README.zh-CN.md) · [Compatibility](COMPATIBILITY.md) · [Install](INSTALL.md)
+It ships as one product with two cooperating Skills: `mastery-coach` teaches and tracks learning;
+`mastery-tool-creator` builds the interactive labs a lesson actually needs.
+
+[简体中文](README.zh-CN.md) · [AI one-prompt install](AI_INSTALL.md) ·
+[Manual install](INSTALL.md) · [Compatibility](COMPATIBILITY.md)
 
 [![CI](https://github.com/fanfanfanfanfan626/mastery-tutor/actions/workflows/verify.yml/badge.svg)](https://github.com/fanfanfanfan626/mastery-tutor/actions/workflows/verify.yml)
 [![Release](https://img.shields.io/github/v/release/fanfanfanfanfan626/mastery-tutor?label=release)](https://github.com/fanfanfanfan626/mastery-tutor/releases)
 
-![Mastery Tutor walkthrough](docs/assets/demo.gif)
+> **Release status:** `main` is the next release candidate. The latest published package still uses
+> the legacy Mastery Learning identity; do not describe `main` as a released adapter until the E2
+> evidence gate and tagged release workflow pass.
+
+![Real Mastery Tutor feedback classroom](docs/assets/classroom-feedback-real.png)
+
+*Real output from the deterministic classroom renderer: the retry keeps the original task, learner
+response, earliest error, and a level-1 hint without revealing the answer. The
+[source and byte-level capture provenance](docs/assets/classroom-feedback-real.provenance.json) are
+checked into the repository.*
+
+<details><summary>Illustrated end-to-end walkthrough</summary>
+
+![Illustrated Mastery Tutor walkthrough](docs/assets/demo.gif)
+
+This second asset is an illustrated product flow, not a learner-session recording.
+</details>
 
 | Host | Status | Installation |
 |---|---|---|
-| Codex | **Verified adapter** | Complete plugin |
+| Codex | **Engineering-verified · conversation evidence pending** | Complete plugin |
 | Claude Code | Experimental | Two-Skill bundle |
 | GitHub Copilot | Experimental | Two-Skill bundle |
 | Generic Agent Skills hosts | Core-compatible | Two-Skill bundle |
 | OpenCode | Planned | Not published yet |
 
-“Core-compatible” means the two Skills can be discovered and their files can be installed. It does
-not claim that every host has passed the full classroom, persistence, cleanup, and resume test
-matrix. See [COMPATIBILITY.md](COMPATIBILITY.md) for the evidence behind each label.
+“Engineering-verified” means the package and deterministic engines pass E0/E1 checks; it is not an
+E2 claim about fresh AI conversations. “Core-compatible” means the two Skills can be discovered and
+installed. See [COMPATIBILITY.md](COMPATIBILITY.md) for the evidence behind each label.
 
 ## Try it
 
@@ -83,6 +103,13 @@ and only one component may update learning state. Single-agent hosts use the sam
 The canonical sources live in [`skills/`](skills/). Host packages are generated adapters; changes
 must never be hand-copied between platforms. The architecture and host requirements are described
 in [docs/architecture.md](docs/architecture.md) and [docs/host-contract.md](docs/host-contract.md).
+
+## Built-in curriculum scope
+
+The teaching engine can work from learner-provided books, papers, repositories, and custom concept
+maps. Today, however, the only bundled, source-audited curriculum pack is machine learning, AI, and
+large language models. Programming or mathematics outside that pack uses an explicit custom map;
+the project does not claim complete ready-made coverage of every subject.
 
 ## Local by design
 

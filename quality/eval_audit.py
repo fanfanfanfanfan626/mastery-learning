@@ -75,6 +75,12 @@ def load_json(path: Path) -> dict[str, Any]:
     value = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(value, dict):
         raise ValueError(f"{path}: root must be an object")
+    if value.get("plugin_version_source") == "VERSION" and "plugin_version" not in value:
+        version_path = path.resolve().parents[2] / "VERSION"
+        version = version_path.read_text(encoding="utf-8").strip()
+        if len(version.split(".")) != 3 or not all(part.isdigit() for part in version.split(".")):
+            raise ValueError(f"{version_path}: expected one numeric semantic version")
+        value["plugin_version"] = version
     return value
 
 

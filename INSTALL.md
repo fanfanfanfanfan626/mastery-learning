@@ -4,7 +4,7 @@ Mastery Tutor contains two canonical Agent Skills. Choose the host you are actua
 
 | Host | Status | Instructions |
 |---|---|---|
-| Codex | Verified reference adapter | [docs/install/codex.md](docs/install/codex.md) |
+| Codex | Engineering-verified; E2 conversation evidence pending | [docs/install/codex.md](docs/install/codex.md) |
 | Claude Code | Experimental | [docs/install/claude-code.md](docs/install/claude-code.md) |
 | GitHub Copilot | Experimental | [docs/install/github-copilot.md](docs/install/github-copilot.md) |
 | OpenCode | Planned | [docs/install/opencode.md](docs/install/opencode.md) |
