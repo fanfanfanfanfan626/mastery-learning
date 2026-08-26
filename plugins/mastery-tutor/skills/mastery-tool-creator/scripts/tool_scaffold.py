@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import html
 import json
 import os
@@ -20,6 +21,8 @@ from tool_common import register_catalog_entry
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
+
+GENERATOR_VERSION = f"sha256:{hashlib.sha256(Path(__file__).read_bytes()).hexdigest()}"
 
 TOOL_TYPES = {
     "code_lab", "visual_lab", "lesson_lab", "simulation_3d", "blackboard", "notebook",
@@ -269,7 +272,7 @@ def main() -> None:
         },
         "sources": [],
         "created_at": timestamp(),
-        "generator": {"name": "mastery-tool-creator", "version": "0.5.0"},
+        "generator": {"name": "mastery-tool-creator", "version": GENERATOR_VERSION},
     }
     rubric = {
         "schema_version": 1,

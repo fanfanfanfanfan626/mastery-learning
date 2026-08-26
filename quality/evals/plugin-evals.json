@@ -2,7 +2,7 @@
   "schema_version": 2,
   "suite_id": "mastery-tutor-core-v1",
   "plugin": "mastery-tutor",
-  "plugin_version": "0.5.0",
+  "plugin_version_source": "VERSION",
   "description": "Synthetic conversation evaluations for AI teaching-skill activation, mandatory HTML classroom delivery, tutoring boundaries, and cross-turn consistency.",
   "release_policy": {
     "minimum_complete_runs": 3,
@@ -135,9 +135,11 @@
         "criteria": [
           {"id": "earliest-causal-feedback", "description": "Identifies that hand-written if rules do not become machine learning merely because there are many of them."},
           {"id": "updates-same-classroom", "description": "Renders the feedback and one retry into the same HTML classroom instead of returning a Markdown correction."},
+          {"id": "preserves-attempt-context", "description": "The updated page restates the exact original task, attributable learner response, earliest error, and current hint level before the retry."},
+          {"id": "hint-does-not-leak-answer", "description": "Hint levels 1–4 narrow the reasoning without supplying the target answer; a full solution is explicitly level 5 and assisted."},
           {"id": "one-retry", "description": "Asks exactly one smaller changed example or justification before advancing."}
         ],
-        "forbidden": ["returns the teaching feedback only in chat", "records the incorrect answer as mastery"]
+        "forbidden": ["returns the teaching feedback only in chat", "refers to vanished steps without restating the task", "reveals the target answer in a level 1–4 hint", "records the incorrect answer as mastery"]
       }
     },
     {

@@ -96,7 +96,8 @@ For each session:
 8. **Record** -- log the evidence and schedule review only after observing the learner's work.
 9. **Close** -- summarize what is demonstrated, what remains provisional, the next review, and the next action.
 
-Keep each turn focused on one cognitive action. Render the complete turn in the HTML classroom and
+Keep each turn focused on one cognitive action. Pass the validated `TeachingTurnSpec` into the
+renderer for orientation, lesson, feedback, and review pages. Render the complete turn in the HTML classroom and
 end it with exactly one highlighted learner task. The chat handoff contains only the classroom link
 or open status and a request to reply after that task.
 

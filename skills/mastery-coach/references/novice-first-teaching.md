@@ -66,6 +66,7 @@ coordination boundary, not a learner-facing schema:
 - `current_target`: one observable capability, with previews excluded;
 - `mental_move`: exactly one verb such as notice, predict, classify, trace, choose, repair, or explain;
 - `new_terms`: zero to three unfamiliar terms, with a short plain-language meaning for each;
+- `answer_options`: zero to eight exact candidate answers when the action has a finite answer set;
 - `concrete_experience`: the situation, visible output, object, or worked fragment encountered first;
 - `example`: one case that fits the target distinction;
 - `counterexample`: one nearby case that does not fit, differing on the deciding feature;
@@ -74,9 +75,12 @@ coordination boundary, not a learner-facing schema:
 - `evidence_boundary`: the exact behavior this action could show and the neighboring capabilities it cannot show;
 - `feedback_plan`: the earliest likely error, first hint, and retry shape.
 
-Reject or revise the spec before rendering when the experience requires unexplained terms, the term
+Pass this object to `render_classroom.py` as `teaching_turn`; do not keep it only in unvalidated
+reasoning. Reject or revise the spec before rendering when the experience requires unexplained terms, the term
 budget exceeds three, example/counterexample/visual do not share one deciding feature, the action has
 more than one mental move, or the evidence boundary claims more than the action can reveal.
+For feedback below hint level 5, neither the hint nor the response-format example may contain an
+`answer_options` value. Describe the reply shape with placeholders instead of a solved example.
 
 ## Capability evidence precision
 

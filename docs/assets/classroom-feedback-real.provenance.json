@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "description": "Byte-level provenance for the real classroom renderer screenshot used by both READMEs.",
+  "source": {
+    "path": "docs/assets/classroom-feedback-real.source.json",
+    "sha256": "a0d66c9a3bdddc01b8b54153260c8502c8dd2128864105fafc793f600481b8d5"
+  },
+  "renderer": {
+    "path": "skills/mastery-coach/scripts/render_classroom.py",
+    "sha256": "dae1172ac7e29730f234e493f775626992341c3e4ba05506d549024c623116d0"
+  },
+  "stylesheet": {
+    "path": "skills/mastery-coach/assets/classroom-template/classroom.css",
+    "sha256": "24359cc4ea539d1a6a33f9d047c0918167eed65d8503a270b05bc5ad5a78171e"
+  },
+  "image": {
+    "path": "docs/assets/classroom-feedback-real.png",
+    "sha256": "eb2afa179d46bb3ad0e9e0ed8691c137d6cf916f4007a81767ada183dfe48d31",
+    "width": 1280,
+    "height": 720
+  },
+  "recipe": {
+    "render": "python skills/mastery-coach/scripts/render_classroom.py --spec docs/assets/classroom-feedback-real.source.json --output-dir work/readme-classroom",
+    "serve": "python skills/mastery-coach/scripts/serve_classroom.py --root work/readme-classroom --port 0",
+    "capture": "Open the emitted 127.0.0.1 URL in the in-app browser at a 1280x720 content viewport, capture the full visible viewport, then losslessly encode it as PNG without resizing. Stop the exact server process and verify its emitted port is closed."
+  }
+}

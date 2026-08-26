@@ -71,6 +71,7 @@ a:focus-visible, [tabindex]:focus-visible { outline: 3px solid var(--amber); out
   gap: 1rem;
   align-items: stretch;
 }
+.turn-intro--hero-only { display: block; }
 .lesson-hero {
   position: relative;
   overflow: hidden;
@@ -155,11 +156,18 @@ pre { margin: 0; overflow-x: auto; padding: 1.2rem; font: .9rem/1.7 var(--mono);
 .choice-option input:checked + span { color: var(--violet-deep); font-weight: 800; }
 .choice-fallback { margin: .75rem 0 0; color: var(--muted); font-size: .88rem; }
 
-.current-action { display: flex; min-width: 0; margin: 0; padding: clamp(1.2rem, 2.5vw, 1.7rem); flex-direction: column; justify-content: center; border: 2px solid var(--violet); border-radius: 24px; color: #f9f8ff; background: linear-gradient(140deg, #29214e, #4c3aae); box-shadow: 0 16px 40px rgb(73 55 181 / 18%); scroll-margin-top: 1rem; }
+.current-action { display: flex; min-width: 0; margin: 0 0 .85rem; padding: clamp(1.2rem, 2.5vw, 1.7rem); flex-direction: column; justify-content: center; border: 2px solid var(--violet); border-radius: 24px; color: #f9f8ff; background: linear-gradient(140deg, #29214e, #4c3aae); box-shadow: 0 16px 40px rgb(73 55 181 / 18%); scroll-margin-top: 1rem; }
+.turn-intro > .current-action { margin-bottom: 0; }
 .current-action h2 { color: white; }
 .current-action > p:not(.action-label, .response-hint) { max-width: 58ch; margin-top: 0; font-size: 1.02rem; }
 .action-label { color: #cfc7ff; }
 .response-hint { margin: 1.2rem 0 0; padding: .85rem 1rem; border-radius: 14px; color: #e7e3ff; background: rgb(255 255 255 / 9%); }
+.feedback-context { display: grid; gap: .75rem; margin: 1rem 0; padding: 1rem; border: 1px solid rgb(255 255 255 / 24%); border-radius: 16px; background: rgb(255 255 255 / 8%); }
+.feedback-context > div { display: grid; gap: .2rem; }
+.feedback-context strong { color: #d8d2ff; font-size: .78rem; letter-spacing: .04em; text-transform: uppercase; }
+.feedback-context p { max-width: 58ch; margin: 0; overflow-wrap: anywhere; }
+body[data-turn-kind="feedback"] .turn-intro { grid-template-columns: minmax(0, 1fr); }
+body[data-turn-kind="feedback"] .feedback-context { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .sources h2 { font-size: 1.25rem; }
 .sources ul { margin-bottom: 0; }
 
@@ -189,6 +197,7 @@ body[data-turn-kind="onboarding"] .lesson-grid { margin-top: .8rem; }
 }
 
 @media (max-width: 600px) {
+  body[data-turn-kind="feedback"] .feedback-context { grid-template-columns: minmax(0, 1fr); }
   body { font-size: 16px; }
   .topbar { align-items: flex-start; }
   .progress-chip { display: none; }

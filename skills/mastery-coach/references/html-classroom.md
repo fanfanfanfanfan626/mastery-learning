@@ -21,7 +21,14 @@ rendering.
 Before sending learner-facing teaching content:
 
 1. Build one JSON spec with `schema_version`, `page_id`, `kind`, `eyebrow`, `title`, `lead`, optional
-   `meta`, 1–16 semantic `sections`, and exactly one `action`.
+   `meta`, 1–16 semantic `sections`, and exactly one `action`. Orientation, lesson, feedback, and
+   review pages must embed the current machine-readable `TeachingTurnSpec` as `teaching_turn`; the
+   renderer validates its term budget, single mental move, shared deciding feature, evidence limits,
+   feedback plan, and exact binding to `action.prompt`, then binds its hash into the HTML.
+   A `feedback` page must also include `feedback_context` with the original task, attributable
+   learner response, earliest causal error, current hint and level, and whether a full solution was
+   revealed. The renderer rejects feedback that drops this context or claims a revealed solution
+   below hint level 5.
 2. For an agreed learner workspace, render to `<workspace>/.mastery/classroom/index.html`. Before
    workspace selection, render the launch packet to a task-local temporary output directory; do not
    initialize durable learner state merely to display onboarding.
@@ -60,6 +67,12 @@ Keep a strong hierarchy, generous whitespace, readable line length, responsive l
 support, visible focus, reduced motion, printable output, and a strict local-only CSP. Do not add
 decorative animation, remote fonts, trackers, or visual density that competes with the current task.
 
+Order the page by teaching state. Onboarding shows its choices before the unified reply action.
+Orientation and lesson pages show the concrete model, example, close counterexample, and visual
+distinction before the action. Feedback keeps the preserved attempt and current hint at the top;
+review may put the retrieval prompt first because the model is intentionally withheld. Optional
+`details` follow the action so extra depth cannot turn a guided attempt back into a lecture.
+
 ## Interaction boundary
 
 The HTML page may show the full explanation needed for the present step, but it must highlight
@@ -71,6 +84,14 @@ stop a process, locate internal files, invoke the sibling Skill, or paste a long
 Page views, scrolling, clicks, and generated summaries are not evidence. The Coach must observe an
 attributable learner explanation, calculation, decision, code change, or transfer attempt before
 recording evidence.
+
+Feedback must be self-contained. Never replace the original situation with an ordinal reference
+such as “retry step 1” or “fix the second part.” Preserve the exact task and learner response beside
+the smallest useful hint, then ask one complete retry question. Hint levels 1–4 must leave the
+target production to the learner; level 5 may explain a full solution only after failed retries or
+an explicit request, and must be labeled as assisted learning rather than independent evidence.
+When the `TeachingTurnSpec` declares finite `answer_options`, the renderer rejects those values in
+feedback hints and response-format examples below level 5.
 
 ## Durable-content boundary
 

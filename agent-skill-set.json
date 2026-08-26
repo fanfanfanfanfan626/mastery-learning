@@ -35,7 +35,7 @@
     "codex": {
       "source": "plugins/mastery-tutor",
       "installer_contract": "AI_INSTALL.md",
-      "status": "verified-adapter"
+      "status": "engineering-verified-e2-pending"
     },
     "opencode": {
       "status": "planned"

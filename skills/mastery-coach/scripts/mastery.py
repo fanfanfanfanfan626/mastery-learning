@@ -21,6 +21,23 @@ from pathlib import Path
 from typing import Any, Iterator
 from urllib.parse import urlparse
 
+SCRIPT_ROOT = Path(__file__).resolve().parent
+if str(SCRIPT_ROOT) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_ROOT))
+
+from mastery_registry import (  # noqa: E402
+    discover_workspaces,
+    inspect_registry_entry,
+    preflight_registry,
+    register_workspace,
+    registry_base,
+    registry_dir,
+    registry_entries,
+    resolve_workspace,
+    unregister_workspace,
+    workspace_key,
+)
+
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 if hasattr(sys.stderr, "reconfigure"):
@@ -333,176 +350,6 @@ def ensure_privacy_file(root: Path) -> str | None:
         return str(backup)
     atomic_text(target, PRIVACY_CONTENT)
     return None
-
-
-def registry_base() -> Path:
-    override = os.environ.get("MASTERY_HOME")
-    if override:
-        return Path(override).expanduser().resolve()
-    codex_home = os.environ.get("CODEX_HOME")
-    if codex_home:
-        return (Path(codex_home).expanduser().resolve() / "mastery-learning")
-    portable = (Path.home() / ".mastery-learning").resolve()
-    legacy_codex = (Path.home() / ".codex" / "mastery-learning").resolve()
-    # Existing Codex learners must keep discovering their prior registry after the portable default
-    # is introduced. New cross-host installations use a product-owned home instead of a host-owned
-    # directory. MASTERY_HOME remains the explicit, deterministic override.
-    if not portable.exists() and legacy_codex.exists():
-        return legacy_codex
-    return portable
-
-
-def registry_dir() -> Path:
-    return registry_base() / "workspaces.d"
-
-
-def legacy_registry_path() -> Path:
-    return registry_base() / "workspaces.json"
-
-
-def workspace_key(workspace: Path) -> str:
-    canonical = os.path.normcase(str(workspace.resolve()))
-    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
-
-
-def preflight_registry() -> None:
-    directory = registry_dir()
-    try:
-        directory.mkdir(parents=True, exist_ok=True)
-        probe = directory / f".write-probe-{os.getpid()}-{uuid.uuid4().hex}"
-        descriptor = os.open(str(probe), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
-        os.close(descriptor)
-        probe.unlink()
-    except OSError as error:
-        raise SystemExit(
-            f"The durable workspace registry is not writable at {directory}: {error}. "
-            "Set MASTERY_HOME to a persistent writable directory or authorize that location before initializing."
-        ) from error
-
-
-def register_workspace(workspace: Path, goal: str, workspace_id: str) -> None:
-    entry = {
-        "schema_version": 2, "workspace_id": workspace_id, "path": str(workspace.resolve()),
-        "goal": goal, "updated_at": iso(),
-    }
-    try:
-        atomic_json(registry_dir() / f"{workspace_key(workspace)}.json", entry)
-    except OSError as error:
-        raise SystemExit(f"Learner state exists, but durable registry update failed at {registry_dir()}: {error}") from error
-
-
-def unregister_workspace(workspace: Path) -> str | None:
-    entry = registry_dir() / f"{workspace_key(workspace)}.json"
-    try:
-        entry.unlink(missing_ok=True)
-        return None
-    except OSError as error:
-        return f"Could not remove stale registry entry {entry}: {error}"
-
-
-def registry_entry_problem(value: Any) -> str | None:
-    if not isinstance(value, dict):
-        return "registry entry must be an object"
-    missing = [
-        field for field in ["workspace_id", "path", "goal", "updated_at"]
-        if not isinstance(value.get(field), str) or not value[field].strip()
-    ]
-    if value.get("schema_version") != 2 or missing:
-        return f"invalid registry schema or fields: {missing}"
-    try:
-        parse_time(value["updated_at"], "registry updated_at")
-    except ValueError as error:
-        return str(error)
-    return None
-
-
-def registry_entries() -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
-    entries: list[dict[str, Any]] = []
-    errors: list[dict[str, str]] = []
-    if registry_dir().exists():
-        for path in sorted(registry_dir().glob("*.json")):
-            try:
-                value = json.loads(path.read_text(encoding="utf-8"))
-            except (OSError, json.JSONDecodeError) as error:
-                errors.append({"code": "invalid-registry-entry", "entry": str(path), "message": f"unreadable registry entry: {error}"})
-                continue
-            problem = registry_entry_problem(value)
-            if problem:
-                errors.append({"code": "invalid-registry-entry", "entry": str(path), "message": problem})
-                continue
-            entries.append(value)
-    legacy = legacy_registry_path()
-    if legacy.exists():
-        try:
-            value = json.loads(legacy.read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError) as error:
-            errors.append({"code": "invalid-legacy-registry", "entry": str(legacy), "message": f"unreadable legacy registry: {error}"})
-        else:
-            workspaces = value.get("workspaces") if isinstance(value, dict) else None
-            if not isinstance(workspaces, list):
-                errors.append({"code": "invalid-legacy-registry", "entry": str(legacy), "message": "legacy registry must contain a workspaces array"})
-            else:
-                for index, item in enumerate(workspaces):
-                    if not isinstance(item, dict) or not isinstance(item.get("path"), str) or not item["path"].strip() or not isinstance(item.get("goal", ""), str):
-                        errors.append({"code": "invalid-legacy-registry", "entry": f"{legacy}#workspaces[{index}]", "message": "legacy workspace entry is invalid"})
-                    else:
-                        entries.append(item)
-    return entries, errors
-
-
-def discover_workspaces() -> tuple[list[dict[str, str]], list[dict[str, str]], list[dict[str, str]]]:
-    entries: list[dict[str, str]] = []
-    errors: list[dict[str, str]] = []
-    warnings: list[dict[str, str]] = []
-    seen: set[str] = set()
-    current = Path.cwd().resolve()
-    for candidate in [current, *current.parents]:
-        profile_path = candidate / ".mastery" / "profile.json"
-        if profile_path.exists():
-            try:
-                profile = json.loads(profile_path.read_text(encoding="utf-8"))
-            except (OSError, json.JSONDecodeError) as error:
-                errors.append({"code": "invalid-current-workspace", "entry": str(profile_path), "message": str(error)})
-            else:
-                if not isinstance(profile, dict) or not isinstance(profile.get("goal"), str):
-                    errors.append({"code": "invalid-current-workspace", "entry": str(profile_path), "message": "profile root/goal is invalid"})
-                else:
-                    entries.append({"path": str(candidate), "goal": profile["goal"], "source": "current-tree"})
-                    seen.add(os.path.normcase(str(candidate)))
-            break
-    registered, registry_errors = registry_entries()
-    errors.extend(registry_errors)
-    for item in registered:
-        raw = item.get("path")
-        assert isinstance(raw, str)
-        candidate = Path(raw).expanduser().resolve()
-        key = os.path.normcase(str(candidate))
-        if key in seen:
-            continue
-        if not (candidate / ".mastery" / "profile.json").exists():
-            warnings.append({"code": "stale-registry-entry", "entry": str(candidate), "message": "workspace profile is missing"})
-            continue
-        entries.append({"path": str(candidate), "goal": str(item.get("goal", "")), "source": "registry"})
-        seen.add(key)
-    return entries, errors, warnings
-
-
-def resolve_workspace(raw: str | None) -> Path:
-    if raw:
-        workspace = explicit_workspace(raw)
-        if not (workspace / ".mastery" / "profile.json").exists():
-            raise SystemExit(f"No initialized learner state at {workspace}. Run `mastery.py init`, `migrate`, or `locate`.")
-        return workspace
-    entries, errors, _ = discover_workspaces()
-    if errors:
-        details = "\n".join(f"- {item['entry']}: {item['message']}" for item in errors)
-        raise SystemExit(f"Learner workspace discovery is unsafe because registry/profile data is invalid:\n{details}")
-    if len(entries) == 1:
-        return Path(entries[0]["path"])
-    if not entries:
-        raise SystemExit("No learner workspace found. Pass --workspace or initialize one with `mastery.py init`.")
-    choices = "\n".join(f"- {item['path']} — {item['goal']}" for item in entries)
-    raise SystemExit(f"Multiple learner workspaces found. Pass --workspace explicitly:\n{choices}")
 
 
 def profile_errors(value: Any) -> list[str]:
@@ -1334,7 +1181,7 @@ def cmd_init(args: argparse.Namespace) -> None:
         privacy_backup = ensure_privacy_file(root)
         if not (root / "improvement-proposals.md").exists():
             atomic_text(root / "improvement-proposals.md", "# Improvement proposals\n\nNo proposals yet.\n")
-    register_workspace(workspace, profile["goal"], profile["workspace_id"])
+        register_workspace(workspace, profile["workspace_id"])
     print(json.dumps({"ok": True, "state_dir": str(root), "status": plan["status"], "preserved_evidence": len(events), "privacy_backup": privacy_backup}, ensure_ascii=False, indent=2))
 
 
@@ -1704,14 +1551,13 @@ def cmd_validate(args: argparse.Namespace) -> None:
             warnings.append("legacy session-log.md remains; new session summaries use sessions.jsonl")
         if isinstance(profile_value, dict):
             entry_path = registry_dir() / f"{workspace_key(workspace)}.json"
-            try:
-                entry_value = json.loads(entry_path.read_text(encoding="utf-8"))
-            except (OSError, json.JSONDecodeError) as error:
-                warnings.append(f"workspace registry entry is missing or unreadable at {entry_path}: {error}")
-            else:
-                problem = registry_entry_problem(entry_value)
-                if problem or entry_value.get("workspace_id") != profile_value.get("workspace_id"):
-                    warnings.append(f"workspace registry entry is invalid at {entry_path}: {problem or 'workspace_id mismatch'}")
+            entry_value, registry_error = inspect_registry_entry(entry_path)
+            if registry_error:
+                warnings.append(
+                    f"workspace registry entry is invalid at {entry_path}: {registry_error['message']}"
+                )
+            elif entry_value is not None and entry_value.get("workspace_id") != profile_value.get("workspace_id"):
+                warnings.append(f"workspace registry entry is invalid at {entry_path}: workspace_id mismatch")
         result = {"ok": not errors, "workspace": str(workspace), "state_dir": str(root), "events": len(events), "sessions": len(sessions), "errors": errors, "warnings": warnings}
     print(json.dumps(result, ensure_ascii=False, indent=2))
     if errors:
@@ -1953,6 +1799,7 @@ def cmd_delete(args: argparse.Namespace) -> None:
     if root.name != ".mastery" or root.parent != workspace:
         raise SystemExit("Refusing unsafe deletion target")
     backup = Path(args.backup).expanduser().resolve() if args.backup else None
+    warning: str | None = None
     with state_lock(workspace):
         if not root.exists():
             raise SystemExit("Learner state was already deleted")
@@ -1966,7 +1813,9 @@ def cmd_delete(args: argparse.Namespace) -> None:
             if tombstone.exists() and not root.exists():
                 os.replace(tombstone, root)
             raise
-    warning = unregister_workspace(workspace)
+        # Keep registry removal in the same workspace transaction. Otherwise
+        # an older delete can unlink a concurrent init's fresh registration.
+        warning = unregister_workspace(workspace)
     print(json.dumps({"ok": True, "deleted": str(root), "recoverable_from": str(backup) if backup else None, "warning": warning}, ensure_ascii=False, indent=2))
 
 
@@ -2184,7 +2033,7 @@ def cmd_migrate(args: argparse.Namespace) -> None:
             "sessions.jsonl": "".join(json.dumps(session, ensure_ascii=False, sort_keys=True) + "\n" for session in sessions),
             "mastery.json": mastery, "reviews.json": reviews, "migration-report.json": report,
         })
-    register_workspace(workspace, profile["goal"], profile["workspace_id"])
+        register_workspace(workspace, profile["workspace_id"])
     print(json.dumps({"ok": True, "workspace": str(workspace), **report}, ensure_ascii=False, indent=2))
 
 

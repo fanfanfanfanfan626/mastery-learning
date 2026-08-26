@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import struct
 import unittest
 from pathlib import Path
@@ -19,6 +20,25 @@ def image_dimensions(path: Path) -> tuple[int, int]:
 
 
 class MarketingContractTests(unittest.TestCase):
+    def test_real_classroom_screenshot_has_bound_reproduction_provenance(self) -> None:
+        provenance_path = ROOT / "docs" / "assets" / "classroom-feedback-real.provenance.json"
+        provenance = json.loads(provenance_path.read_text(encoding="utf-8"))
+        self.assertEqual(provenance["schema_version"], 1)
+        for field in ["source", "renderer", "stylesheet", "image"]:
+            record = provenance[field]
+            path = ROOT / record["path"]
+            self.assertTrue(path.is_file(), f"missing screenshot {field}: {path}")
+            self.assertEqual(
+                hashlib.sha256(path.read_bytes()).hexdigest(),
+                record["sha256"],
+                f"stale screenshot {field} provenance",
+            )
+        self.assertEqual(
+            image_dimensions(ROOT / provenance["image"]["path"]),
+            (provenance["image"]["width"], provenance["image"]["height"]),
+        )
+        self.assertIn("--port 0", provenance["recipe"]["serve"])
+
     def test_readme_opens_with_value_demo_and_supported_install(self) -> None:
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
         head = "\n".join(readme.splitlines()[:50]).lower()
@@ -26,10 +46,14 @@ class MarketingContractTests(unittest.TestCase):
         self.assertIn("# mastery tutor", head)
         self.assertIn("a local-first mastery tutor for ai agents", normalized_head)
         self.assertIn("guided html lessons", normalized_head)
-        self.assertIn("verified adapter", normalized_head)
+        self.assertIn("engineering-verified", normalized_head)
+        self.assertIn("conversation evidence pending", normalized_head)
+        self.assertIn("release candidate", normalized_head)
         self.assertIn("experimental", normalized_head)
         self.assertIn("core-compatible", normalized_head)
         self.assertIn("docs/assets/demo.gif", head)
+        self.assertIn("docs/assets/classroom-feedback-real.png", head)
+        self.assertIn("real output from the deterministic classroom renderer", normalized_head)
         self.assertIn("ai_install.md", head)
         self.assertIn("mastery-tutor", head)
         self.assertIn("readme.zh-cn.md", head)
@@ -81,6 +105,10 @@ class MarketingContractTests(unittest.TestCase):
         self.assertEqual(image_dimensions(screenshot), (1280, 720))
         self.assertEqual(image_dimensions(ROOT / "docs" / "assets" / "social-preview.png"), (1280, 640))
         self.assertEqual(image_dimensions(ROOT / "docs" / "assets" / "demo.gif"), (960, 540))
+        self.assertEqual(
+            image_dimensions(ROOT / "docs" / "assets" / "classroom-feedback-real.png"),
+            (1280, 720),
+        )
 
     def test_repository_has_a_clear_maintainer_onramp(self) -> None:
         for relative in [
@@ -96,6 +124,11 @@ class MarketingContractTests(unittest.TestCase):
             "CODE_OF_CONDUCT.md",
         ]:
             self.assertTrue((ROOT / relative).is_file(), f"missing maintainer entrypoint: {relative}")
+
+    def test_public_copy_names_the_single_bundled_curriculum_boundary(self) -> None:
+        readme = (ROOT / "README.md").read_text(encoding="utf-8").lower()
+        self.assertIn("only bundled, source-audited curriculum pack", readme)
+        self.assertIn("does not claim complete ready-made coverage of every subject", readme)
 
 
 if __name__ == "__main__":

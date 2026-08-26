@@ -15,11 +15,19 @@
 - Rebuilt beginner teaching around concrete experience, prediction, visible contrast, concept
   naming, guided use, and transfer instead of opening with a taxonomy or glossary.
 - Made the classroom learning-first: real accessible choice controls, a compact initial viewport,
-  progressive depth, and one immediately visible learner action.
+  progressive depth, and one learner action placed after modeling new material; retrieval and
+  feedback may still put the active task first.
 - Added an optional bounded multi-agent preparation protocol for substantial lessons while keeping
   one learner-facing tutor, one state writer, and a complete single-agent fallback.
-
-## Unreleased
+- Split privacy-minimal workspace discovery into `mastery_registry.py`; new entries no longer copy
+  learning goals into the global registry, every readable entry is privacy-projected before
+  validation, and registry changes share the workspace state transaction.
+- Added a machine-validated `TeachingTurnSpec` bound to classroom HTML plus a required feedback
+  context that preserves the original task, learner response, earliest error, and honest hint level.
+- Downgraded the public Codex label to engineering-verified/E2-pending until three release-quality
+  conversation runs exist; clarified the illustrated demo and single bundled curriculum boundary.
+- Added macOS release reproducibility plus Python 3.10/3.13 boundary testing on Windows, Linux, and
+  macOS, while retaining the Python 3.12 release build.
 
 - Promoted Mastery Learning from a Codex-only package to one portable two-Skill Agent Skills system:
   added a canonical skill-set manifest, host capability tiers, an AI-readable cross-host install

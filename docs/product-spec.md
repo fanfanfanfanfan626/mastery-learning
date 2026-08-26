@@ -50,8 +50,8 @@ For ML/AI/LLM learning, the built-in pack covers computing, mathematics, classic
 
 For the built-in ML/AI/LLM map, a learner without prior evidence begins inside `ai-landscape`, but
 does not receive the whole taxonomy as the first lesson. The first turn starts with one familiar
-problem, asks for a prediction, makes the limitation of a hand-written rule visible, and only then
-names learning from examples as machine learning. AI, deep learning, foundation models, and LLMs
+problem, makes the limitation of a hand-written rule visible through a modeled contrast, and then
+asks for one guided prediction before naming learning from examples as machine learning. AI, deep learning, foundation models, and LLMs
 enter later as an optional roadmap and synthesis. Prediction precedes error, error precedes loss,
 and loss precedes optimization. A taxonomy or convenient worksheet must never determine the
 conceptual starting point.
@@ -74,7 +74,7 @@ The research basis and product-specific claim boundary are documented in [pedago
 - state initialization, explicit scope closure, cross-task discovery, serialized writes, interrupted-transaction recovery, derived-state recovery, conservative migration, strict durability transition, failure transition, due-review query, export, and confirmed deletion pass automated tests;
 - unfinished generated tools, incomplete lesson sequences, and placeholder checks fail; static validation never executes generated code; only separately observed sandbox/render results can mark a tool verified;
 - the deterministic classroom renderer escapes learner content, rejects unsafe links, uses a local-only no-script CSP, exposes exactly one current action, and never requires learner-operated servers or internal Skill commands;
-- a beginner classroom puts the concrete problem and current action in the initial viewport, uses
+- a beginner classroom puts the concrete problem and a usable model in the initial viewport, places the current action after modeling, uses
   real accessible controls for choices, introduces no more than three new terms per turn, and does
   not use a glossary or taxonomy dump as the opening lesson;
 - the dedicated no-cache classroom server exposes only the current page and shared stylesheet from `.mastery/classroom`; learning profiles, plans, evidence, reviews, registries, and tools are never within its served root;

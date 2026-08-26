@@ -10,6 +10,13 @@ After any change, run Skill Creator validation and forward-test realistic prompt
 
 The Coach's learner-facing interface is the shared no-script HTML classroom. Add reusable presentation primitives to `assets/classroom-template/classroom.css` and `scripts/render_classroom.py`; do not hand-author a second page shell inside prompts or curriculum files. Keep content structured, escaped, local-first, responsive, printable, and limited to one current learner action. Executable interactions remain Tool Creator artifacts linked from the classroom, so changing lesson copy does not silently invalidate executable-tool verification.
 
+The real README screenshot has a checked-in source and byte-level provenance record at
+`docs/assets/classroom-feedback-real.source.json` and
+`docs/assets/classroom-feedback-real.provenance.json`. When the renderer or classroom stylesheet
+changes, regenerate the page with the recorded command, capture the exact recorded viewport in the
+in-app browser, stop the exact loopback server, and update all four hashes together. The marketing
+contract fails closed when the source, renderer, stylesheet, or screenshot drifts from that record.
+
 ## Add a curriculum pack
 
 Follow `assets/curricula/ml-ai-llm.json`:
@@ -48,10 +55,12 @@ fork teaching rules into a host-specific copy.
 
 ## Release
 
-1. Compile the Python sources, audit the curriculum, and run all repository tests on Windows and Linux.
+1. Compile the Python sources, audit the curriculum, and run all repository tests on Windows, Linux,
+   and macOS across the supported Python boundary versions.
 2. Run both Skill Creator validators, portable installation tests, and Codex Plugin Creator validation.
 3. Validate `quality/evals/plugin-evals.json`; update it whenever triggering or teaching behavior changes.
-4. Update version and changelog, then build twice, audit the archive against the intended Git ref, and compare Windows/Linux artifacts byte-for-byte.
+4. Update version and changelog, then build on Windows, Linux, and macOS, audit the archive against
+   the intended Git ref, and compare all artifacts byte-for-byte.
 5. Install from the archive in fresh Codex tasks and run the complete Codex conversation suite three
    times with unique run IDs. Critical cases must pass every run, aggregate case pass rate must be at
    least 90%, every non-critical case must pass at least two of three runs, and no case may be blocked

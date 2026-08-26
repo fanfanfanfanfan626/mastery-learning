@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import subprocess
@@ -94,6 +95,148 @@ class StateEngineTests(unittest.TestCase):
             run(STATE, "init", "--workspace", workspace, "--goal", "Unique registry discovery goal")
             located = json.loads(run(STATE, "locate", "--goal", "registry discovery").stdout)
             self.assertEqual(located["workspaces"][0]["path"], str(workspace.resolve()))
+
+    def test_registry_is_path_only_and_migrates_legacy_goal_metadata(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            workspace = Path(temporary) / "private-goal-workspace"
+            workspace.mkdir()
+            private_goal = "Private career-change learning goal"
+            run(STATE, "init", "--workspace", workspace, "--goal", private_goal)
+            registry = TEST_RUNTIME / "registry" / "workspaces.d"
+            entry_path = next(
+                path for path in registry.glob("*.json")
+                if json.loads(path.read_text(encoding="utf-8")).get("path") == str(workspace.resolve())
+            )
+            entry = json.loads(entry_path.read_text(encoding="utf-8"))
+            self.assertEqual(entry["schema_version"], 3)
+            self.assertEqual(set(entry), {"schema_version", "workspace_id", "path", "updated_at"})
+            self.assertNotIn(private_goal, entry_path.read_text(encoding="utf-8"))
+
+            entry["schema_version"] = 2
+            entry["goal"] = private_goal
+            entry_path.write_text(json.dumps(entry), encoding="utf-8")
+            located = json.loads(run(STATE, "locate", "--goal", "career-change").stdout)
+            self.assertEqual(located["workspaces"][0]["goal"], private_goal)
+            migrated = json.loads(entry_path.read_text(encoding="utf-8"))
+            self.assertEqual(migrated["schema_version"], 3)
+            self.assertNotIn("goal", migrated)
+
+            migrated["notes"] = "private coaching note"
+            migrated["profile_snapshot"] = {"interests": ["private topic"]}
+            entry_path.write_text(json.dumps(migrated), encoding="utf-8")
+            run(STATE, "locate", "--goal", "career-change")
+            minimized = json.loads(entry_path.read_text(encoding="utf-8"))
+            self.assertEqual(
+                set(minimized),
+                {"schema_version", "workspace_id", "path", "updated_at"},
+            )
+
+    def test_legacy_registry_removes_migrated_goals_even_when_another_entry_is_bad(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            registry_home = root / "registry"
+            workspace = root / "valid-workspace"
+            workspace.mkdir()
+            isolated_env = {
+                **os.environ,
+                "MASTERY_HOME": str(registry_home),
+                "PYTHONUTF8": "1",
+            }
+
+            initialized = subprocess.run(
+                [sys.executable, str(STATE), "init", "--workspace", str(workspace), "--goal", "Sensitive valid goal"],
+                cwd=ROOT,
+                text=True,
+                encoding="utf-8",
+                capture_output=True,
+                check=False,
+                env=isolated_env,
+            )
+            self.assertEqual(initialized.returncode, 0, initialized.stderr)
+            for entry_path in (registry_home / "workspaces.d").glob("*.json"):
+                entry_path.unlink()
+
+            legacy = registry_home / "workspaces.json"
+            legacy.write_text(
+                json.dumps({
+                    "schema_version": 1,
+                    "workspaces": [
+                        {"path": str(workspace), "goal": "Sensitive valid goal"},
+                        {"path": str(root / "missing-workspace"), "goal": "Sensitive invalid goal"},
+                    ],
+                }),
+                encoding="utf-8",
+            )
+            located = subprocess.run(
+                [sys.executable, str(STATE), "locate"],
+                cwd=ROOT,
+                text=True,
+                encoding="utf-8",
+                capture_output=True,
+                check=False,
+                env=isolated_env,
+            )
+            self.assertEqual(located.returncode, 1)
+            report = json.loads(located.stdout)
+            self.assertTrue(any(item["path"] == str(workspace.resolve()) for item in report["workspaces"]))
+            rewritten = legacy.read_text(encoding="utf-8")
+            self.assertNotIn("Sensitive valid goal", rewritten)
+            self.assertNotIn("Sensitive invalid goal", rewritten)
+            self.assertEqual(
+                json.loads(rewritten)["workspaces"],
+                [{"path": str(root / "missing-workspace")}],
+            )
+
+    def test_corrupt_registry_entry_is_redacted_before_it_is_reported(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            registry_home = root / "registry"
+            workspace = root / "workspace"
+            workspace.mkdir()
+            isolated_env = {
+                **os.environ,
+                "MASTERY_HOME": str(registry_home),
+                "PYTHONUTF8": "1",
+            }
+            initialized = subprocess.run(
+                [sys.executable, str(STATE), "init", "--workspace", str(workspace), "--goal", "Original goal"],
+                cwd=ROOT,
+                text=True,
+                encoding="utf-8",
+                capture_output=True,
+                check=False,
+                env=isolated_env,
+            )
+            self.assertEqual(initialized.returncode, 0, initialized.stderr)
+            entry_path = next((registry_home / "workspaces.d").glob("*.json"))
+            entry = json.loads(entry_path.read_text(encoding="utf-8"))
+            entry.update({
+                "schema_version": 2,
+                "goal": "CORRUPT-V2-SECRET",
+                "notes": "another private field",
+                "updated_at": "not-a-time",
+            })
+            entry_path.write_text(json.dumps(entry), encoding="utf-8")
+
+            located = subprocess.run(
+                [sys.executable, str(STATE), "locate"],
+                cwd=ROOT,
+                text=True,
+                encoding="utf-8",
+                capture_output=True,
+                check=False,
+                env=isolated_env,
+            )
+            self.assertEqual(located.returncode, 1)
+            report = json.loads(located.stdout)
+            self.assertEqual(report["errors"][0]["code"], "invalid-registry-entry")
+            redacted = entry_path.read_text(encoding="utf-8")
+            self.assertNotIn("CORRUPT-V2-SECRET", redacted)
+            self.assertNotIn("another private field", redacted)
+            self.assertEqual(
+                set(json.loads(redacted)),
+                {"schema_version", "workspace_id", "path", "updated_at"},
+            )
 
     def test_mastery_requires_fixed_dimensions_transfer_and_real_delay(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -266,7 +409,7 @@ class StateEngineTests(unittest.TestCase):
 
 
 class ToolCreatorTests(unittest.TestCase):
-    def test_scaffold_generator_version_matches_plugin(self) -> None:
+    def test_scaffold_generator_version_is_content_addressed(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             workspace = Path(temporary)
             run(
@@ -279,7 +422,10 @@ class ToolCreatorTests(unittest.TestCase):
             )
             tool = workspace / ".mastery" / "tools" / "version-check-lab" / "tool.json"
             generator = json.loads(tool.read_text(encoding="utf-8"))["generator"]
-            self.assertEqual(generator["version"], (ROOT / "VERSION").read_text(encoding="utf-8").strip())
+            self.assertEqual(
+                generator["version"],
+                f"sha256:{hashlib.sha256(SCAFFOLD.read_bytes()).hexdigest()}",
+            )
 
     def customize_code_lab(self, tool: Path) -> None:
         manifest_path = tool / "tool.json"

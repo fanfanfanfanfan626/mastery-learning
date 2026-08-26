@@ -7,7 +7,7 @@ recovery, inspection, or cleanup.
 
 | Host | Distribution | Current evidence | Status |
 |---|---|---|---|
-| Codex | Generated marketplace plugin | Package, installer, engine, classroom, tool, and conversation contracts | Verified adapter |
+| Codex | Generated marketplace plugin | Package, installer, engine, classroom, and tool contracts | Engineering-verified; E2 pending |
 | Claude Code | Portable two-Skill installer | Layout and byte-preserving installation | Experimental; behavior verification pending |
 | GitHub Copilot | Portable two-Skill installer | Layout and byte-preserving installation | Experimental; behavior verification pending |
 | Generic Agent Skills | Portable two-Skill installer | Standard Skill structure and custom-target install | Core-compatible; host behavior varies |

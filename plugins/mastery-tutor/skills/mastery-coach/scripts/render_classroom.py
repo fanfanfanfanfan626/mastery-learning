@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import html
 import json
 import os
@@ -14,9 +15,12 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 from urllib.parse import unquote, urlsplit
 
+from teaching_turn import TeachingTurnError, validate_teaching_turn
+
 
 SCHEMA_VERSION = 1
 KINDS = {"onboarding", "orientation", "lesson", "feedback", "review", "summary"}
+TEACHING_KINDS = {"orientation", "lesson", "feedback", "review"}
 SECTION_TYPES = {"prose", "callout", "steps", "comparison", "code", "map", "details", "choices", "artifact"}
 CALLOUT_TONES = {"concept", "example", "caution", "insight"}
 LANGUAGE_PATTERN = re.compile(r"^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$")
@@ -40,6 +44,10 @@ UI_TEXT = {
         "progress": "Current learning turn",
         "action_label": "Now · one action",
         "response_prefix": "Reply in the AI conversation:",
+        "feedback_task": "Original task",
+        "feedback_response": "Your response",
+        "feedback_error": "Earliest point to repair",
+        "feedback_hint": "Current hint",
         "sources": "Sources to verify",
         "rail_label": "How to use this classroom",
         "rail": [
@@ -62,6 +70,10 @@ UI_TEXT = {
         "progress": "当前学习回合",
         "action_label": "现在 · 一个任务",
         "response_prefix": "回到 AI 对话回复：",
+        "feedback_task": "刚才的任务",
+        "feedback_response": "你的回答",
+        "feedback_error": "最早需要修正的地方",
+        "feedback_hint": "本轮提示",
         "sources": "参考来源",
         "rail_label": "如何使用这个课堂",
         "rail": [
@@ -307,6 +319,47 @@ def validate_references(value: Any) -> list[dict[str, str]]:
     return result
 
 
+def render_feedback_context(value: Any, ui: dict[str, Any]) -> str:
+    if not isinstance(value, dict):
+        fail("feedback pages require a feedback_context object")
+    expected = {
+        "attempt_id", "original_task", "learner_response", "earliest_error",
+        "hint_level", "hint", "solution_revealed",
+    }
+    unknown = sorted(set(value) - expected)
+    if unknown:
+        fail(f"feedback_context has unknown fields: {unknown}")
+    attempt_id = text(value.get("attempt_id"), "feedback_context.attempt_id", maximum=96)
+    if not PAGE_ID_PATTERN.fullmatch(attempt_id):
+        fail("feedback_context.attempt_id must be lowercase hyphen-case")
+    original_task = text(value.get("original_task"), "feedback_context.original_task", maximum=2_000)
+    learner_response = text(value.get("learner_response"), "feedback_context.learner_response", maximum=2_000)
+    earliest_error = text(value.get("earliest_error"), "feedback_context.earliest_error", maximum=1_500)
+    hint = text(value.get("hint"), "feedback_context.hint", maximum=1_500)
+    hint_level = value.get("hint_level")
+    if not isinstance(hint_level, int) or isinstance(hint_level, bool) or not 1 <= hint_level <= 5:
+        fail("feedback_context.hint_level must be an integer from 1 to 5")
+    solution_revealed = value.get("solution_revealed")
+    if not isinstance(solution_revealed, bool):
+        fail("feedback_context.solution_revealed must be true or false")
+    if solution_revealed and hint_level < 5:
+        fail("a revealed full solution must use hint level 5")
+    fields = [
+        (ui["feedback_task"], original_task),
+        (ui["feedback_response"], learner_response),
+        (ui["feedback_error"], earliest_error),
+        (f'{ui["feedback_hint"]} · {hint_level}/5', hint),
+    ]
+    return (
+        f'<div class="feedback-context" data-attempt-id="{escape(attempt_id)}">'
+        + "".join(
+            f'<div><strong>{escape(label)}</strong><p>{escape(body)}</p></div>'
+            for label, body in fields
+        )
+        + "</div>"
+    )
+
+
 def load_spec(path: Path) -> dict[str, Any]:
     if not path.is_file() or path.stat().st_size > MAX_SPEC_BYTES:
         fail(f"spec must be a regular JSON file no larger than {MAX_SPEC_BYTES} bytes")
@@ -360,7 +413,12 @@ def render(spec: dict[str, Any]) -> str:
         fail("orientation pages require a map or comparison that establishes the field structure")
     if kind == "lesson" and not section_types.intersection({"steps", "comparison", "code", "map"}):
         fail("lesson pages require a worked structure such as steps, comparison, code, or map")
-    sections_html = "\n".join(render_section(section, index, ui) for index, section in enumerate(sections))
+    rendered_sections = [
+        (section.get("type") == "details", render_section(section, index, ui))
+        for index, section in enumerate(sections)
+    ]
+    core_sections_html = "\n".join(html for optional, html in rendered_sections if not optional)
+    optional_sections_html = "\n".join(html for optional, html in rendered_sections if optional)
 
     action = spec.get("action")
     if not isinstance(action, dict):
@@ -368,10 +426,36 @@ def render(spec: dict[str, Any]) -> str:
     action_title = text(action.get("title"), "action.title", maximum=120)
     action_prompt = text(action.get("prompt"), "action.prompt", maximum=2_000)
     response_hint = text(action.get("response_hint"), "action.response_hint", maximum=500)
+    teaching_turn = None
+    if kind in TEACHING_KINDS:
+        try:
+            teaching_turn = validate_teaching_turn(spec.get("teaching_turn"), action_prompt)
+        except TeachingTurnError as error:
+            fail(str(error))
+    elif spec.get("teaching_turn") is not None:
+        fail(f"teaching_turn is required only for {sorted(TEACHING_KINDS)}")
+    feedback_html = ""
+    if kind == "feedback":
+        feedback_html = render_feedback_context(spec.get("feedback_context"), ui)
+        assert teaching_turn is not None
+        if teaching_turn["feedback_plan"]["first_hint"] != spec["feedback_context"]["hint"].strip():
+            fail("feedback_context.hint must exactly match teaching_turn.feedback_plan.first_hint")
+        if spec["feedback_context"]["hint_level"] < 5:
+            leak_surfaces = {
+                "feedback_context.hint": spec["feedback_context"]["hint"],
+                "action.response_hint": response_hint,
+            }
+            for field, surface in leak_surfaces.items():
+                for option in teaching_turn["answer_options"]:
+                    if option.casefold() in surface.casefold():
+                        fail(f"{field} must not reveal answer option {option!r} below hint level 5")
+    elif spec.get("feedback_context") is not None:
+        fail("feedback_context is allowed only when kind is feedback")
     action_html = f"""
         <section class="current-action" data-classroom-action="one">
           <p class="action-label">{escape(ui["action_label"])}</p>
           <h2>{escape(action_title)}</h2>
+          {feedback_html}
           <p>{escape(action_prompt)}</p>
           <p class="response-hint">{escape(ui["response_prefix"])} {escape(response_hint)}</p>
         </section>"""
@@ -387,6 +471,17 @@ def render(spec: dict[str, Any]) -> str:
             + "</ul></section>"
         )
 
+    turn_hash = ""
+    if teaching_turn is not None:
+        turn_hash = hashlib.sha256(
+            json.dumps(teaching_turn, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        ).hexdigest()
+
+    action_first = kind in {"feedback", "review"}
+    intro_action_html = action_html if action_first else ""
+    flow_action_html = "" if action_first else action_html
+    intro_class = "turn-intro" if action_first else "turn-intro turn-intro--hero-only"
+
     return f"""<!doctype html>
 <html lang="{escape(language)}">
 <head>
@@ -397,7 +492,7 @@ def render(spec: dict[str, Any]) -> str:
   <title>{escape(title)} · {escape(course)}</title>
   <link rel="stylesheet" href="assets/classroom.css">
 </head>
-<body data-page-id="{escape(page_id)}" data-turn-kind="{escape(kind)}">
+<body data-page-id="{escape(page_id)}" data-turn-kind="{escape(kind)}" data-teaching-turn-sha256="{turn_hash}">
   <a class="skip-link" href="#classroom-main">{escape(ui["skip"])}</a>
   <div class="ambient ambient--one" aria-hidden="true"></div>
   <div class="ambient ambient--two" aria-hidden="true"></div>
@@ -409,8 +504,8 @@ def render(spec: dict[str, Any]) -> str:
     <p class="progress-chip">{escape(progress)}</p>
   </header>
   <main id="classroom-main" class="classroom-shell">
-    <div class="turn-intro">
-      {action_html}
+    <div class="{intro_class}">
+      {intro_action_html}
       <header class="lesson-hero">
         <p class="eyebrow">{escape(eyebrow)}</p>
         <h1>{escape(title)}</h1>
@@ -420,7 +515,9 @@ def render(spec: dict[str, Any]) -> str:
     </div>
     <div class="lesson-grid">
       <article class="lesson-flow">
-        {sections_html}
+        {core_sections_html}
+        {flow_action_html}
+        {optional_sections_html}
         {references_html}
       </article>
       <aside class="learning-rail" aria-label="{escape(ui["rail_label"])}">

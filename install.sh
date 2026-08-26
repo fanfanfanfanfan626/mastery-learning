@@ -92,6 +92,12 @@ if ! grep -Eq '"version"[[:space:]]*:[[:space:]]*"'"$RELEASE_VERSION"'"' "$PLUGI
     echo "Plugin version mismatch: generated adapter does not match VERSION" >&2
     exit 1
 fi
+for skill in mastery-coach mastery-tool-creator; do
+    if [ ! -f "$REPOSITORY_ROOT/plugins/mastery-tutor/skills/$skill/SKILL.md" ]; then
+        echo "Incomplete plugin package: missing bundled Skill $skill/SKILL.md" >&2
+        exit 1
+    fi
+done
 
 echo "Preflight passed: Mastery Tutor $RELEASE_VERSION with both bundled Skills."
 echo "Repository root: $REPOSITORY_ROOT"
