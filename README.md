@@ -17,6 +17,7 @@ It ships as one product with two cooperating Skills: `mastery-coach` teaches and
 > **Release status:** `main` is the next release candidate. The latest published package still uses
 > the legacy Mastery Learning identity; do not describe `main` as a released adapter until the E2
 > evidence gate and tagged release workflow pass.
+> Current evidence levels and promotion criteria are documented in [COMPATIBILITY.md](COMPATIBILITY.md).
 
 ![Real Mastery Tutor feedback classroom](docs/assets/classroom-feedback-real.png)
 
@@ -133,3 +134,4 @@ dedicated issue form so compatibility claims stay reproducible.
 ## License
 
 [MIT](LICENSE)
+
