@@ -21,13 +21,31 @@ def image_dimensions(path: Path) -> tuple[int, int]:
 class MarketingContractTests(unittest.TestCase):
     def test_readme_opens_with_value_demo_and_supported_install(self) -> None:
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
-        head = "\n".join(readme.splitlines()[:40]).lower()
-        self.assertIn("mastery learning — ai teaching skill", head)
-        self.assertIn("beautiful interactive html lessons", head)
+        head = "\n".join(readme.splitlines()[:50]).lower()
+        self.assertIn("# mastery learning", head)
+        self.assertIn("让 ai 教你，但不替你学", head)
+        self.assertIn("开源的 codex 学习插件", head)
         self.assertIn("docs/assets/demo.gif", head)
-        self.assertIn("codex plugin marketplace", head)
+        self.assertIn("让 ai 安装", head)
+        self.assertIn("ai_install.md", head)
         self.assertIn("skill-installer", head)
-        self.assertIn("60 秒开始使用", head)
+
+    def test_public_copy_prefers_concrete_actions_to_hype(self) -> None:
+        readme = (ROOT / "README.md").read_text(encoding="utf-8").lower()
+        manifest = json.loads(
+            (ROOT / "plugins" / "mastery-learning" / ".codex-plugin" / "plugin.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        public_copy = "\n".join([
+            readme,
+            str(manifest["description"]),
+            str(manifest["interface"]),
+        ]).lower()
+        for phrase in ["beautiful interactive html lessons", "honest mastery", "durable progress"]:
+            self.assertNotIn(phrase, public_copy)
+        for phrase in ["guided html lessons", "hands-on practice", "local progress"]:
+            self.assertIn(phrase, public_copy)
 
     def test_discovery_metadata_points_to_real_brand_assets(self) -> None:
         manifest = json.loads(
@@ -37,6 +55,11 @@ class MarketingContractTests(unittest.TestCase):
         )
         self.assertEqual(manifest["homepage"], "https://github.com/fanfanfanfanfan626/mastery-learning")
         self.assertEqual(manifest["repository"], manifest["homepage"])
+        self.assertEqual(manifest["interface"]["displayName"], "Mastery Learning")
+        self.assertEqual(
+            manifest["interface"]["shortDescription"],
+            "Guided lessons, hands-on practice, and local progress.",
+        )
         self.assertTrue(
             {"ai-teaching", "teaching-skill", "ai-tutor", "agent-skill", "codex", "machine-learning", "llm", "spaced-repetition"}.issubset(
                 set(manifest["keywords"])

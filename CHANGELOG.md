@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Added a root `AI_INSTALL.md` contract and hardened both platform installers so an AI can complete
+  a one-message GitHub install without guessing: legacy standalone Skills stop before mutation,
+  the existing Codex CLI is probed without downloading a replacement, and `codex plugin list`
+  verifies the final installation.
+- Rewrote the GitHub first impression, plugin metadata, and marketing copy in a direct open-source
+  voice that explains the learner workflow before package internals or product claims.
 - Replaced optional HTML lesson delivery with a mandatory learner-facing HTML classroom for every
   onboarding, explanation, feedback, review, and close turn; chat now carries only the minimal
   classroom handoff and learner reply.

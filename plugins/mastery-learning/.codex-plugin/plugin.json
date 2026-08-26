@@ -1,7 +1,7 @@
 {
   "name": "mastery-learning",
   "version": "0.4.2",
-  "description": "An AI teaching skill with a polished local HTML classroom, adaptive lessons, interactive labs, mastery checks, and spaced review.",
+  "description": "A local-first tutoring plugin for Codex with guided HTML lessons, practice, projects, and review.",
   "author": {
     "name": "Mastery Learning Contributors"
   },
@@ -11,9 +11,9 @@
   "keywords": ["ai-teaching", "teaching-skill", "ai-tutor", "agent-skill", "interactive-html", "codex", "education", "learning", "mastery-learning", "spaced-repetition", "machine-learning", "llm", "programming"],
   "skills": "./skills/",
   "interface": {
-    "displayName": "Mastery Learning · AI Teaching Skill",
-    "shortDescription": "Beautiful HTML teaching with honest mastery and durable progress.",
-    "longDescription": "A local-first AI teaching system for programming, mathematics, machine learning, AI, and LLMs. Every teaching turn is rendered in a polished HTML classroom; the Coach plans adaptive lessons, builds interactive labs, coaches code, verifies transfer and delayed recall, schedules review, and keeps transparent learner-owned progress. This package is the tested Codex adapter for a platform-neutral teaching protocol.",
+    "displayName": "Mastery Learning",
+    "shortDescription": "Guided lessons, hands-on practice, and local progress.",
+    "longDescription": "Tell Mastery Learning what you want to learn and how much time you have. It plans a route, opens each teaching turn in a local HTML classroom, prepares exercises and interactive labs, checks independent work and later recall, and resumes from learner-owned progress in a new Codex task.",
     "developerName": "Mastery Learning Contributors",
     "category": "Education",
     "capabilities": ["Interactive", "Local-first", "Write"],
@@ -24,9 +24,9 @@
     "logoDark": "./assets/logo-dark.png",
     "screenshots": ["./assets/screenshot1.png"],
     "defaultPrompt": [
-      "Turn my learning goal into a compact plan and open my HTML classroom.",
-      "Continue from my local progress and handle due reviews first.",
-      "Teach this concept with an interactive lab and check transfer."
+      "Help me learn this topic from my current level.",
+      "Continue from my saved progress and start with anything due for review.",
+      "Turn this concept into a guided lesson with a hands-on exercise."
     ]
   }
 }

@@ -135,26 +135,24 @@ def social_preview() -> Image.Image:
     mark = logo_mark(172, dark=True)
     image.paste(mark, (76, 76), mark)
     draw.text((284, 84), "Mastery Learning", font=font(68, bold=True), fill=INK)
-    draw.text((286, 168), "AI Teaching Skill", font=font(40, bold=True), fill=PURPLE)
     draw.text(
-        (78, 286),
-        "Beautiful HTML teaching. Durable mastery.",
-        font=font(38, bold=True),
+        (78, 270),
+        "A local classroom for learning with AI",
+        font=font(39, bold=True),
         fill=INK,
     )
     draw.text(
-        (78, 350),
-        "HTML classroom  ·  Interactive labs  ·  Evidence-based review",
-        font=font(25),
+        (80, 338),
+        "Plan a route. Work through lessons. Practise. Come back and review.",
+        font=font(23),
         fill=MUTED,
     )
-    x = 78
-    for text, color in [
-        ("LOCAL-FIRST", CYAN),
-        ("OPEN SOURCE", GREEN),
-        ("NO TELEMETRY", AMBER),
-    ]:
-        x = pill(draw, x, 426, text, color)
+    draw.text(
+        (80, 430),
+        "Open source  ·  Codex plugin  ·  Progress stays on your machine",
+        font=font(22, bold=True),
+        fill=CYAN,
+    )
     draw.text(
         (80, 522),
         "github.com/fanfanfanfanfan626/mastery-learning",
@@ -169,12 +167,12 @@ def social_preview() -> Image.Image:
         outline="#2B3B5D",
         width=2,
     )
-    draw.text((970, 310), "Goal", font=font(24, bold=True), fill=PURPLE)
+    draw.text((970, 310), "Your route", font=font(24, bold=True), fill=PURPLE)
     draw.line((1008, 354, 1008, 459), fill="#435272", width=4)
     for y, label, color in [
-        (372, "Lesson", CYAN),
-        (420, "Practice", AMBER),
-        (468, "Mastery", GREEN),
+        (372, "Learn", CYAN),
+        (420, "Practise", AMBER),
+        (468, "Review", GREEN),
     ]:
         draw.ellipse((995, y - 8, 1021, y + 18), fill=color)
         draw.text((1043, y - 9), label, font=font(22, bold=True), fill=INK)
@@ -250,22 +248,22 @@ def demo_frame(step: int) -> Image.Image:
     image = background((960, 540))
     draw = ImageDraw.Draw(image)
     draw.text((48, 32), "Mastery Learning", font=font(27, bold=True), fill=INK)
-    draw.text((272, 36), "AI Teaching Skill", font=font(20, bold=True), fill=PURPLE)
+    draw.text((272, 36), "Learn by doing", font=font(20, bold=True), fill=PURPLE)
     titles = [
-        "Say what you want to learn",
-        "Set up once in a clear HTML card",
-        "Learn inside one beautiful classroom",
-        "Practice, explain, and transfer",
-        "Save evidence — not vibes",
-        "Continue from durable progress",
+        "Tell it what you want to learn",
+        "Choose a starting point",
+        "Work through a lesson",
+        "Try it yourself",
+        "Show what you can do",
+        "Pick up where you left off",
     ]
     subtitles = [
         "“I want to understand and train large language models.”",
-        "One compact launch card · no entrance exam",
-        "Orientation first · annotated code · visible relationships",
-        "Hints fade while learner ownership grows",
-        "Independent work + delayed recall + changed context",
-        "Local-first · open source · no hidden telemetry",
+        "One short setup card, then the first lesson",
+        "A clear explanation, annotated code, and one next step",
+        "Predict, change something, explain, then use it elsewhere",
+        "Independent work and later recall move the route forward",
+        "Your route and review history stay on your machine",
     ]
     draw.text((48, 94), titles[step], font=font(40, bold=True), fill=INK)
     draw.text((50, 150), subtitles[step], font=font(22), fill=MUTED)

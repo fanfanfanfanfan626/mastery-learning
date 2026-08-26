@@ -17,6 +17,7 @@ ROOT_FILES = [
     Path(".gitattributes"),
     Path(".gitignore"),
     Path("AGENTS.md"),
+    Path("AI_INSTALL.md"),
     Path("CHANGELOG.md"),
     Path("CONTRIBUTING.md"),
     Path("INSTALL.md"),
@@ -157,6 +158,7 @@ def verify_archive(path: Path, version: str) -> None:
         required = {safe_archive_name(path) for path in ROOT_FILES}
         required.update({
             "AGENTS.md",
+            "AI_INSTALL.md",
             "INSTALL.md",
             "install.ps1",
             "install.sh",

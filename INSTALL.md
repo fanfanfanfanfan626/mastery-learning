@@ -1,38 +1,28 @@
 # Install Mastery Learning
 
-> **Package type: Codex plugin marketplace — not a standalone Skill.**
->
-> Do not use `skill-installer`, and do not look for `SKILL.md` at the repository root. A standalone
-> Skill install would omit the bundled teaching-tool creator and is not supported.
+Mastery Learning is a complete Codex plugin marketplace with two bundled Skills. Install the whole
+repository. Do not use `skill-installer` and do not copy a nested `SKILL.md`.
 
-## Let Codex install it
+## Ask an AI to install it
 
-The normal conversational install request is one short sentence:
+Send this one message to Codex:
 
 ```text
-请把这个仓库作为 Codex 插件（不是独立 Skill）安装：https://github.com/fanfanfanfanfan626/mastery-learning 。按根目录 INSTALL.md 完成并验证。
+请安装这个完整 Codex 插件：https://github.com/fanfanfanfan626/mastery-learning 。先读取并严格执行仓库根目录的 AI_INSTALL.md；完成其中全部成功条件前，不要宣称安装成功。
 ```
 
-`INSTALL.md` and `AGENTS.md` carry the detailed routing rules, so the learner does not need to put
-an implementation checklist in every prompt.
+The machine-readable [AI_INSTALL.md](AI_INSTALL.md) defines the stable-directory rule, legacy-Skill
+check, CLI boundary, exact installer entrypoint, and final verification. The user does not need to
+repeat those details in the prompt.
 
-The installer validates both of these identities before changing Codex configuration:
+## Install it yourself
 
-- marketplace: `.agents/plugins/marketplace.json` → `mastery-learning`
-- plugin: `plugins/mastery-learning/.codex-plugin/plugin.json` → `mastery-learning`
-
-It does not download code, request credentials, or copy files into the standalone Skills folder.
-
-## Install from a Git clone
-
-Choose a stable parent directory first. Do not clone into an operating-system temporary directory
-or a disposable Codex task checkout, because the configured marketplace continues to reference the
-clone.
+Keep the repository in a directory that will still exist after the current task ends.
 
 Windows PowerShell:
 
 ```powershell
-git clone https://github.com/fanfanfanfanfan626/mastery-learning.git
+git clone https://github.com/fanfanfanfan626/mastery-learning.git
 Set-Location .\mastery-learning
 powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1
 ```
@@ -40,37 +30,57 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1
 macOS/Linux:
 
 ```bash
-git clone https://github.com/fanfanfanfanfan626/mastery-learning.git
+git clone https://github.com/fanfanfanfan626/mastery-learning.git
 cd mastery-learning
 sh ./install.sh
 ```
 
-## Install from a Release ZIP
+For a Release ZIP, verify its published SHA-256, extract the complete archive into a stable
+directory, and run the platform installer from the level containing both `.agents/` and `plugins/`.
 
-Download an asset that actually exists on the
-[Releases page](https://github.com/fanfanfanfanfan626/mastery-learning/releases), verify its published
-SHA-256, and extract the complete archive into a stable directory. Run `install.ps1` or `install.sh`
-from the extracted root—the level that contains both `.agents/` and `plugins/`.
+## What the installer checks
 
-## What the installer runs
+Before changing Codex configuration, it verifies:
 
-After validating the repository layout, the platform scripts execute only these Codex operations:
+- `.agents/plugins/marketplace.json` identifies the `mastery-learning` marketplace;
+- `plugins/mastery-learning/.codex-plugin/plugin.json` identifies the complete plugin;
+- no old standalone `mastery-coach` or `mastery-tool-creator` directory can shadow the plugin;
+- the existing `codex` command can run.
+
+It then runs:
 
 ```text
 codex plugin marketplace add <absolute-repository-root>
 codex plugin add mastery-learning@mastery-learning
+codex plugin list
 ```
 
-If either operation fails, the installer stops and prints the failed boundary. It does not silently
-fall back to `skill-installer`. After success, open a new Codex task and ask:
+Installation is complete only when the add command succeeds and the list contains
+`mastery-learning`. Start a new Codex task afterward so both bundled Skills load.
+
+## If an old standalone Skill is found
+
+The installer stops before changing configuration and prints the exact paths. Review those paths
+and decide whether to remove or archive them. Neither the installer nor an AI agent should delete
+them without permission.
+
+## If the Codex CLI cannot run
+
+The installer stops and says that the plugin is not installed. It will not download a second Codex
+CLI or fall back to a partial Skill install.
+
+Open a normal local terminal where this succeeds:
 
 ```text
-我想系统学习机器学习、AI 和大模型。请先诊断我的目标和基础，不要直接给完整课程。
+codex --version
 ```
 
-## Preflight only
+Then return to the stable repository and rerun the platform installer. A cloned repository or a
+successful package preflight alone is not an installation.
 
-To validate the package without changing Codex configuration:
+## Package-only preflight
+
+These commands validate repository structure without requiring Codex or changing configuration:
 
 ```powershell
 .\install.ps1 -CheckOnly
@@ -79,3 +89,9 @@ To validate the package without changing Codex configuration:
 ```bash
 sh ./install.sh --check-only
 ```
+
+## Why GitHub is one prompt, not a directory button
+
+OpenAI's public Plugins Directory provides the `+` install button. A GitHub repo marketplace is a
+separate distribution source and still depends on a local Codex host and CLI. Until this project is
+listed in the public directory, the supported GitHub experience is the one-message AI install above.

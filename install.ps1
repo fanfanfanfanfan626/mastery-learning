@@ -45,6 +45,56 @@ if ($RepositoryRoot.StartsWith($TemporaryRoot + '\', [System.StringComparison]::
     throw "Refusing a temporary install source. Move the complete repository to a stable directory and run again."
 }
 
+$CodexHome = if ($env:CODEX_HOME) {
+    [System.IO.Path]::GetFullPath($env:CODEX_HOME)
+} else {
+    Join-Path ([Environment]::GetFolderPath('UserProfile')) '.codex'
+}
+$StandaloneSkillsRoot = Join-Path $CodexHome 'skills'
+$LegacySkills = @(
+    @(
+        'mastery-coach',
+        'mastery-tool-creator'
+    ) | ForEach-Object {
+        Join-Path $StandaloneSkillsRoot $_
+    } | Where-Object {
+        Test-Path -LiteralPath $_ -PathType Container
+    }
+)
+
+if ($LegacySkills.Count -gt 0) {
+    $LegacyList = $LegacySkills -join [Environment]::NewLine
+    throw @"
+Legacy standalone Mastery Skills were found:
+$LegacyList
+
+No Codex configuration was changed. These copies can shadow the complete plugin. Show the paths to
+the user and ask before removing or moving them, then rerun this installer. Do not delete them
+silently and do not install around them.
+"@
+}
+
+try {
+    $CodexVersion = @(& $CodexCommand --version 2>&1)
+} catch {
+    throw @"
+Could not launch the Codex CLI: $($_.Exception.Message)
+
+The repository passed preflight, but the plugin is not installed. Do not download another Codex
+CLI, use skill-installer, or copy a nested Skill. Open a normal local terminal where
+'codex --version' succeeds, return to this stable repository, and run install.ps1 again.
+"@
+}
+if ($LASTEXITCODE -ne 0) {
+    throw @"
+The Codex CLI probe failed with exit code $LASTEXITCODE.
+
+The plugin is not installed. Do not download another Codex CLI or use skill-installer. Open a normal
+local terminal where 'codex --version' succeeds and rerun this installer.
+"@
+}
+Write-Output "Codex CLI: $($CodexVersion -join ' ')"
+
 try {
     & $CodexCommand plugin marketplace add $RepositoryRoot
 } catch {
@@ -63,4 +113,18 @@ if ($LASTEXITCODE -ne 0) {
     throw "Codex plugin installation failed with exit code $LASTEXITCODE."
 }
 
-Write-Output "Installed mastery-learning as a Codex plugin. Open a new Codex task to load both bundled Skills."
+try {
+    $PluginList = @(& $CodexCommand plugin list 2>&1)
+} catch {
+    throw "The plugin command completed, but installation verification could not run. $($_.Exception.Message)"
+}
+if ($LASTEXITCODE -ne 0) {
+    throw "The plugin command completed, but 'codex plugin list' failed with exit code $LASTEXITCODE."
+}
+$PluginListText = $PluginList -join [Environment]::NewLine
+if ($PluginListText -notmatch '(?im)mastery-learning') {
+    throw "Installation verification failed: 'codex plugin list' did not contain mastery-learning."
+}
+
+Write-Output $PluginListText
+Write-Output "Installed and verified mastery-learning as a complete Codex plugin. Open a new Codex task to load both bundled Skills."

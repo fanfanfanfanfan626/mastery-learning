@@ -70,6 +70,40 @@ case "$REPOSITORY_ROOT/" in
         ;;
 esac
 
+CODEX_HOME=${CODEX_HOME:-"$HOME/.codex"}
+LEGACY_SKILLS=""
+for skill in mastery-coach mastery-tool-creator; do
+    path=$CODEX_HOME/skills/$skill
+    if [ -d "$path" ]; then
+        LEGACY_SKILLS="${LEGACY_SKILLS}${path}
+"
+    fi
+done
+
+if [ -n "$LEGACY_SKILLS" ]; then
+    echo "Legacy standalone Mastery Skills were found:" >&2
+    printf '%s' "$LEGACY_SKILLS" >&2
+    echo >&2
+    echo "No Codex configuration was changed. Show these paths to the user and ask before removing or moving them." >&2
+    echo "Do not delete them silently and do not install around them." >&2
+    exit 1
+fi
+
+if ! command -v "$CODEX_COMMAND" >/dev/null 2>&1; then
+    echo "Could not find the Codex CLI." >&2
+    echo "The repository passed preflight, but the plugin is not installed." >&2
+    echo "Do not download another Codex CLI, use skill-installer, or copy a nested Skill." >&2
+    echo "Open a normal local terminal where 'codex --version' succeeds and rerun install.sh." >&2
+    exit 1
+fi
+if ! CODEX_VERSION=$("$CODEX_COMMAND" --version 2>&1); then
+    echo "The Codex CLI could not be launched." >&2
+    echo "The plugin is not installed. Do not download another Codex CLI or use skill-installer." >&2
+    echo "Open a normal local terminal where 'codex --version' succeeds and rerun install.sh." >&2
+    exit 1
+fi
+echo "Codex CLI: $CODEX_VERSION"
+
 if ! "$CODEX_COMMAND" plugin marketplace add "$REPOSITORY_ROOT"; then
     echo "Codex marketplace registration failed. Do not use skill-installer as a fallback." >&2
     exit 1
@@ -79,4 +113,16 @@ if ! "$CODEX_COMMAND" plugin add "mastery-learning@mastery-learning"; then
     exit 1
 fi
 
-echo "Installed mastery-learning as a Codex plugin. Open a new Codex task to load both bundled Skills."
+if ! PLUGIN_LIST=$("$CODEX_COMMAND" plugin list 2>&1); then
+    echo "The plugin command completed, but 'codex plugin list' failed." >&2
+    exit 1
+fi
+case "$PLUGIN_LIST" in
+    *mastery-learning*) ;;
+    *)
+        echo "Installation verification failed: 'codex plugin list' did not contain mastery-learning." >&2
+        exit 1
+        ;;
+esac
+printf '%s\n' "$PLUGIN_LIST"
+echo "Installed and verified mastery-learning as a complete Codex plugin. Open a new Codex task to load both bundled Skills."
