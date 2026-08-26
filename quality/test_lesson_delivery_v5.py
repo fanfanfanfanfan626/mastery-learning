@@ -96,9 +96,9 @@ class LessonDeliveryV5Tests(unittest.TestCase):
         rich = cases["follow-up-rich-post-orientation-lesson"]
         self.assertEqual(rich["expected"]["activate"], ["mastery-coach", "mastery-tool-creator"])
         self.assertIn("follow-up-rich-post-orientation-lesson", suite["release_policy"]["critical_case_ids"])
-        landscape = cases["follow-up-ai-course-starts-with-landscape"]
+        landscape = cases["follow-up-ai-course-starts-with-experience"]
         self.assertEqual(landscape["expected"]["activate"], ["mastery-coach"])
-        self.assertIn("follow-up-ai-course-starts-with-landscape", suite["release_policy"]["critical_case_ids"])
+        self.assertIn("follow-up-ai-course-starts-with-experience", suite["release_policy"]["critical_case_ids"])
         simple = cases["direct-simple-learning-explanation"]
         self.assertEqual(simple["expected"]["must_not_activate"], ["mastery-tool-creator"])
 

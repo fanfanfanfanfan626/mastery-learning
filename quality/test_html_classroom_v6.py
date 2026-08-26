@@ -63,49 +63,44 @@ def run_workspace_render(
 def orientation_spec() -> dict[str, object]:
     return {
         "schema_version": 1,
-        "page_id": "ai-landscape-start",
+        "page_id": "spam-rule-first-step",
         "kind": "orientation",
         "language": "zh-CN",
-        "course": "AI Mastery",
-        "progress": "第 0 课 · 建立全景",
-        "eyebrow": "从目标开始，而不是从公式开始",
-        "title": "人工智能到底在学什么？",
-        "lead": "先建立 AI、机器学习、深度学习与大模型之间的地图，再进入代码和数学。",
+        "course": "Mastery Tutor",
+        "progress": "第 1 步 · 先看规则会漏掉什么",
+        "eyebrow": "先遇到问题，再给它名字",
+        "title": "为什么有些垃圾邮件能绕过规则？",
+        "lead": "今天只做一件事：看清电脑是在照规则办事，还是能从例子里改变判断。",
         "meta": [
-            {"label": "当前目标", "value": "AI 全景"},
-            {"label": "预计时间", "value": "20 分钟"},
+            {"label": "预计时间", "value": "5 分钟"},
+            {"label": "新词", "value": "暂时 0 个"},
         ],
         "sections": [
             {
-                "type": "map",
-                "title": "你将走过的四层地图",
-                "items": [
-                    {"name": "AI", "description": "让机器完成需要判断、规划或生成的任务。"},
-                    {"name": "机器学习", "description": "从例子中形成可评价的行为。"},
-                    {"name": "深度学习", "description": "用多层神经网络学习表示。"},
-                    {"name": "大模型", "description": "在广泛数据上训练并适配多种任务。"},
-                ],
+                "type": "callout",
+                "tone": "example",
+                "title": "一条很简单的拦截规则",
+                "body": ["如果邮件标题里出现‘中奖’，系统就拦截；否则放行。电脑只负责照做。"],
             },
             {
                 "type": "comparison",
-                "title": "规则与学习",
-                "headers": ["系统", "行为来源", "检查方式"],
+                "title": "把规则放到两个例子上",
+                "headers": ["邮件标题", "有没有‘中奖’", "按这条规则会怎样"],
                 "rows": [
-                    ["规则程序", "开发者写出的条件", "测试规则边界"],
-                    ["学习系统", "数据与训练共同形成", "评测代表性行为"],
+                    ["恭喜中奖，点击领取", "有", "拦截"],
+                    ["限时福利，马上领取", "没有", "等你判断"],
                 ],
             },
             {
-                "type": "callout",
-                "tone": "insight",
-                "title": "为什么不先讲损失",
-                "body": ["只有先知道模型在做什么以及为什么需要改进，衡量错误才有意义。"],
+                "type": "details",
+                "title": "完整路线以后再展开",
+                "body": ["后面会走到机器学习、深度学习和大模型；现在不需要背这些名字。"],
             },
         ],
         "action": {
-            "title": "先判断一个系统",
-            "prompt": "垃圾邮件系统完全由人工写下关键词规则，它更接近规则程序还是机器学习？为什么？",
-            "response_hint": "写出你的选择和一句理由",
+            "title": "只判断第二封邮件",
+            "prompt": "按照‘标题含有中奖才拦截’这条规则，‘限时福利，马上领取’会被拦截还是放行？",
+            "response_hint": "只回复‘拦截’或‘放行’",
         },
         "references": [{"title": "Dive into Deep Learning", "url": "https://d2l.ai/"}],
     }
@@ -123,11 +118,11 @@ class HtmlClassroomV6Tests(unittest.TestCase):
             for marker in [
                 'data-turn-kind="orientation"',
                 'data-classroom-action="one"',
-                'data-classroom-block="map"',
                 'data-classroom-block="comparison"',
                 'data-classroom-block="callout"',
+                'data-classroom-block="details"',
                 "script-src 'none'",
-                "人工智能到底在学什么？",
+                "为什么有些垃圾邮件能绕过规则？",
             ]:
                 self.assertIn(marker, page)
             for marker in [
@@ -180,6 +175,7 @@ class HtmlClassroomV6Tests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             spec = orientation_spec()
             spec["kind"] = "onboarding"
+            spec.pop("progress", None)
             spec["sections"] = [
                 {
                     "type": "choices", "title": "一次说清你的偏好", "items": [
@@ -193,10 +189,80 @@ class HtmlClassroomV6Tests(unittest.TestCase):
             run_render(spec, output)
             page = (output / "index.html").read_text(encoding="utf-8")
             self.assertIn("AI 教学 Skill · 本地课堂", page)
+            self.assertIn("当前学习回合", page)
+            self.assertNotIn("Current learning turn", page)
             self.assertIn('data-classroom-block="choices"', page)
             self.assertIn('data-classroom-block="details"', page)
             self.assertLess(page.index('data-classroom-action="one"'), page.index('data-classroom-block="choices"'))
+            self.assertIn('<fieldset data-choice-group="pace">', page)
+            self.assertIn('<legend>节奏</legend>', page)
+            self.assertIn('type="radio" name="choice-0-pace"', page)
+            self.assertIn('<label class="choice-option" for="choice-0-0-0">', page)
+            self.assertIn('class="choice-fallback"', page)
+            self.assertNotIn("<form", page.lower())
             self.assertNotIn("Now · one action", page)
+
+    def test_single_action_is_in_compact_intro_before_all_learning_sections(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary) / "classroom"
+            run_render(orientation_spec(), output)
+            page = (output / "index.html").read_text(encoding="utf-8")
+            css = (output / "assets" / "classroom.css").read_text(encoding="utf-8")
+            self.assertEqual(page.count('data-classroom-action="one"'), 1)
+            self.assertIn('<div class="turn-intro">', page)
+            self.assertLess(page.index('data-classroom-action="one"'), page.index('class="lesson-hero"'))
+            self.assertLess(page.index('data-classroom-action="one"'), page.index('class="lesson-grid"'))
+            self.assertLess(page.index('data-classroom-action="one"'), page.index('data-classroom-block="comparison"'))
+            self.assertIn(".turn-intro {", css)
+            self.assertIn("grid-template-columns: minmax(18rem, .65fr) minmax(0, 1.35fr)", css)
+
+    def test_choices_are_native_no_script_controls_with_escaped_long_labels(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            long_option = "x" * 420 + "<guided>"
+            spec = orientation_spec()
+            spec["kind"] = "onboarding"
+            spec["language"] = "en"
+            spec["sections"] = [{
+                "type": "choices",
+                "title": "Choose a route",
+                "items": [{
+                    "id": "route",
+                    "prompt": "Starting route",
+                    "options": [long_option, "Project first"],
+                }],
+            }]
+            output = Path(temporary) / "classroom"
+            run_render(spec, output)
+            page = (output / "index.html").read_text(encoding="utf-8")
+            css = (output / "assets" / "classroom.css").read_text(encoding="utf-8")
+            self.assertIn('<div class="launch-choices" role="group" aria-label="Onboarding choices">', page)
+            self.assertIn('<fieldset data-choice-group="route">', page)
+            self.assertIn('id="choice-0-0-0" type="radio" name="choice-0-route"', page)
+            self.assertIn('&lt;guided&gt;', page)
+            self.assertNotIn('<guided>', page)
+            self.assertIn("Selections are not submitted or saved by this page.", page)
+            self.assertIn("form-action 'none'", page)
+            self.assertNotIn("<script", page.lower())
+            self.assertIn("overflow-wrap: anywhere", css)
+            self.assertIn("grid-template-columns: auto minmax(0, 1fr)", css)
+
+    def test_details_use_native_progressive_disclosure_and_matching_styles(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            spec = orientation_spec()
+            spec["sections"].append({
+                "type": "details",
+                "title": "Optional derivation",
+                "body": ["Hidden until the learner chooses to open it."],
+            })
+            output = Path(temporary) / "classroom"
+            run_render(spec, output)
+            page = (output / "index.html").read_text(encoding="utf-8")
+            css = (output / "assets" / "classroom.css").read_text(encoding="utf-8")
+            self.assertIn("<details><summary>", page)
+            self.assertIn('<div class="details-body">', page)
+            self.assertNotIn("<details open", page)
+            self.assertIn(".optional-depth details[open] summary", css)
+            self.assertIn(".details-body", css)
 
     def test_orientation_and_lesson_require_real_semantic_structure(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

@@ -11,6 +11,9 @@ retrieval of content that has not been taught. For prior learning or a due revie
 For a substantial first encounter or an explicitly requested interactive lesson, also follow
 [lesson-delivery.md](lesson-delivery.md). Name one current evidence target and label any later idea
 shown for motivation as a preview; never score the preview as if its prerequisites were complete.
+For a novice or an unencountered concept, also apply
+[novice-first-teaching.md](novice-first-teaching.md): meet a concrete experience before terminology,
+use one mental move, and limit the turn to at most three new terms.
 Use this sequence flexibly across several HTML classroom turns:
 
 1. Orientation to one useful outcome.
@@ -43,10 +46,13 @@ Classify the response as correct and grounded, correct but fragile, locally inco
 ## Multiple representations
 
 Move deliberately among concrete instance, visual model, verbal cause, mathematical notation, executable code, and system trade-off. Ask the learner to translate between at least two. Translation is stronger evidence than recognition inside one representation.
+For a new abstraction, the first usable model includes an example, a close counterexample, and a
+visual that exposes their deciding difference; all three support the same action.
 
 ## Manage cognitive load
 
-- Chunk no more than 3–5 new interacting elements before an attempt.
+- Chunk no more than 3–5 interacting elements before an attempt; for a beginner, at most three of
+  them may be new terms.
 - Externalize long derivations on a blackboard block and preserve intermediate states.
 - Give a worked example only when no usable schema exists; fade steps in the next example.
 - Do not require code syntax, notation, or operations that were neither observed as usable nor modeled in the lesson. Expand beginner code and annotate new state changes before introducing compact idioms.

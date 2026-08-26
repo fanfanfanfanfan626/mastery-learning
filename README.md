@@ -50,14 +50,14 @@ I can study for 40 minutes a day and prefer visual explanations.
 ```
 
 Mastery Tutor first creates a compact, skippable onboarding classroom. It asks for background,
-goals, pace, and teaching preferences in one place, then starts with orientation rather than an
-entrance exam.
+goals, pace, and teaching preferences in one place. The first lesson begins with something the
+learner can see and try, then names the idea; it does not open with an entrance exam or glossary.
 
 ## What changes compared with a normal AI chat?
 
 | A typical learning chat can… | Mastery Tutor instead… |
 |---|---|
-| jump directly into a technical detail | begins with the field map, destination, and prerequisites |
+| open with definitions or a field taxonomy | starts with a concrete problem, prediction, reveal, and one guided use |
 | confuse “that makes sense” with mastery | requires independent retrieval, application, and transfer evidence |
 | scatter lessons across chat messages | maintains one polished local HTML classroom per learning thread |
 | reveal an answer after the first mistake | gives staged hints and records how much help was needed |
@@ -75,6 +75,10 @@ is documented in [docs/pedagogy-evidence.md](docs/pedagogy-evidence.md) and
   and restores learning state.
 - **`mastery-tool-creator`** creates and verifies reusable lesson labs, code exercises, simulations,
   visual explanations, and accessible fallbacks.
+
+On hosts that support subagents, substantial lessons may use bounded planning, subject review,
+classroom design, and independent QA behind the scenes. The learner still interacts with one tutor,
+and only one component may update learning state. Single-agent hosts use the same teaching contract.
 
 The canonical sources live in [`skills/`](skills/). Host packages are generated adapters; changes
 must never be hand-copied between platforms. The architecture and host requirements are described

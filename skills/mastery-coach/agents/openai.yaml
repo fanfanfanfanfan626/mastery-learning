@@ -1,7 +1,7 @@
 interface:
   display_name: "Mastery Coach"
-  short_description: "Guided lessons, practice, review, and local progress"
-  default_prompt: "Use $mastery-coach to help me learn this from my current level, without starting with an entrance exam."
+  short_description: "Experience-first HTML lessons and durable practice"
+  default_prompt: "Use $mastery-coach to teach me from my current level through concrete examples, guided practice, and local progress."
 
 policy:
   allow_implicit_invocation: true

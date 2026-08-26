@@ -46,13 +46,16 @@ Never write an evidence event from the launch packet.
 
 After the state operations, render the provisional starting point and first guided micro-lesson in
 the same classroom update. Do not ask another setup question, repeat workspace consent, or
-administer an entrance test.
+administer an entrance test. Apply [novice-first-teaching.md](novice-first-teaching.md) when no usable
+schema has been observed.
 
 For an ML/AI/LLM goal with no prior evidence, put `ai-landscape` first in the active path and begin
-with orientation: distinguish AI, machine learning, deep learning, foundation models, and LLMs;
-show what the learner will eventually build; and contrast rule-written behavior with learned
-behavior. Do not begin with loss, gradients, tensors, or a Python worksheet. After orientation,
-choose the next prerequisite from observed or provisionally self-positioned capability.
+from a concrete learner problem such as why a chat assistant can sound confident and still be wrong.
+Keep `ai-landscape` as the internal target, but make the first learner-facing turn an experience,
+not a taxonomy. Introduce only the two or three labels needed for the first distinction; reveal the
+larger AI/ML/deep-learning/foundation-model/LLM map across later turns. Do not begin with loss,
+gradients, tensors, or a Python worksheet. After orientation, choose the next prerequisite from
+observed or provisionally self-positioned capability.
 
 When the first lesson needs executable interaction, invoke `$mastery-tool-creator` internally and
 link the verified `lesson_lab` from the classroom. Never require a second learner command to load

@@ -166,7 +166,7 @@
     }
   ],
   "concepts": [
-    {"id":"ai-landscape","module":"ai-foundations","prerequisites":[],"outcome":"Distinguish rule-written software, artificial intelligence, machine learning, deep learning, foundation models, and LLMs; map an end-to-end goal through data, model behavior, evaluation, and limitations.","required_dimensions":["recall","conceptual","transfer"],"sources":["cs188","d2l","hf"]},
+    {"id":"ai-landscape","module":"ai-foundations","prerequisites":[],"outcome":"Use concrete examples and counterexamples to distinguish hand-written rules from behavior learned from data, then place machine learning, deep learning, foundation models, and LLMs within the broader AI landscape and an end-to-end system.","required_dimensions":["recall","conceptual","transfer"],"sources":["cs188","d2l","hf"]},
     {"id":"python","module":"computing","prerequisites":[],"outcome":"Write, trace, test, and debug small Python programs.","required_dimensions":["recall","application","debugging"],"sources":["pytorch"]},
     {"id":"numpy","module":"computing","prerequisites":["python"],"outcome":"Use arrays, shapes, indexing, broadcasting, and vectorization safely.","required_dimensions":["conceptual","application","debugging"],"sources":["d2l"]},
     {"id":"git-tests","module":"computing","prerequisites":["python"],"outcome":"Use version control and deterministic tests to run reproducible exercises.","required_dimensions":["application","debugging"],"sources":["pytorch"]},

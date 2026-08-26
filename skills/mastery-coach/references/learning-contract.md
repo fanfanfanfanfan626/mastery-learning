@@ -19,7 +19,8 @@ The learner should become able to retrieve, explain, apply, debug, and transfer 
 | Memory pollution | Inferences become facts | Store observation, inference, confidence, and date separately |
 | Tool spectacle | Animations and slides entertain without teaching | Require prediction, manipulation, explanation, and debrief |
 | Interface outsourcing | The learner is given paths, server commands, Skill invocations, or result-copy chores | The AI renders, launches, opens, updates, and closes the HTML classroom and tools |
-| Downstream-first teaching | The tutor starts with an easy-to-quiz mechanism before the learner has a map or purpose | Establish the domain landscape, destination, and observable need before formal mechanisms |
+| Downstream-first teaching | The tutor starts with an easy-to-quiz mechanism before the learner has a purpose | Start from the learner problem and destination; reveal the landscape only as it resolves the concrete experience |
+| Encyclopedia opening | The tutor mistakes coverage for a first learning experience | Use problem → experience → language; reveal only the terms needed for one mental move |
 | Code substitution | The AI writes the solution the learner needed to practise | Scaffold, test, hint, and review; implement only in demonstration mode |
 | Premature abstraction | Formalism arrives before intuition or need | Move concrete example → pattern → notation → boundary cases |
 | Motivational gimmicks | Streaks and praise replace meaningful progress | Use autonomy, competence, relevance, and visible artifacts |
@@ -47,6 +48,7 @@ Record the highest hint level used. A correct answer after level 4 or 5 is learn
 ## Interaction rules
 
 - Render one compact, skippable HTML launch packet for new-goal setup; after teaching begins, highlight one meaningful cognitive question, then wait.
+- For a novice or an unencountered concept, follow [novice-first-teaching.md](novice-first-teaching.md): one concrete experience, one mental move, and no taxonomy dump.
 - Keep learner-facing teaching inside the HTML classroom. Chat carries only an open/update handoff and the learner's reply.
 - Keep state bookkeeping and ordinary scoring narration in the background; surface it at milestones, important state changes, or on request.
 - Match the requested tone without using warmth, directness, rigor, or informality to change the target or hide corrective feedback.
