@@ -51,8 +51,8 @@ jobs:
       - name: Audit candidates against checked-out Git tree
         shell: bash
         run: |
-          python quality/release_audit.py archive +            "work/mastery-tutor-${{ steps.version.outputs.value }}-core.zip" +            --kind core --git-ref HEAD --expected-version "${{ steps.version.outputs.value }}"
-          python quality/release_audit.py archive +            "work/mastery-tutor-${{ steps.version.outputs.value }}-codex.zip" +            --kind codex --git-ref HEAD --expected-version "${{ steps.version.outputs.value }}"
+          python quality/release_audit.py archive "work/mastery-tutor-${{ steps.version.outputs.value }}-core.zip" --kind core --git-ref HEAD --expected-version "${{ steps.version.outputs.value }}"
+          python quality/release_audit.py archive "work/mastery-tutor-${{ steps.version.outputs.value }}-codex.zip" --kind codex --git-ref HEAD --expected-version "${{ steps.version.outputs.value }}"
       - name: Upload platform candidates
         uses: actions/upload-artifact@v4
         with:
@@ -94,5 +94,5 @@ jobs:
       - name: Compare checksum files
         shell: bash
         run: |
-          python quality/release_audit.py compare +            "work/release-candidates/release-ubuntu-latest/mastery-tutor-${{ steps.version.outputs.value }}-core.zip.sha256" +            "work/release-candidates/release-windows-latest/mastery-tutor-${{ steps.version.outputs.value }}-core.zip.sha256"
-          python quality/release_audit.py compare +            "work/release-candidates/release-ubuntu-latest/mastery-tutor-${{ steps.version.outputs.value }}-codex.zip.sha256" +            "work/release-candidates/release-windows-latest/mastery-tutor-${{ steps.version.outputs.value }}-codex.zip.sha256"
+          python quality/release_audit.py compare "work/release-candidates/release-ubuntu-latest/mastery-tutor-${{ steps.version.outputs.value }}-core.zip.sha256" "work/release-candidates/release-windows-latest/mastery-tutor-${{ steps.version.outputs.value }}-core.zip.sha256"
+          python quality/release_audit.py compare "work/release-candidates/release-ubuntu-latest/mastery-tutor-${{ steps.version.outputs.value }}-codex.zip.sha256" "work/release-candidates/release-windows-latest/mastery-tutor-${{ steps.version.outputs.value }}-codex.zip.sha256"
