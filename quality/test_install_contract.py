@@ -120,7 +120,15 @@ class InstallContractTests(unittest.TestCase):
             output = completed.stdout + completed.stderr
             normalized = " ".join(output.split())
             self.assertNotEqual(completed.returncode, 0, output)
-            self.assertIn(str(legacy), output)
+            # Windows runners can expand an 8.3 temp path (RUNNER~1) to its long form
+            # (runneradmin) inside PowerShell. The stable, user-actionable suffix must
+            # still be printed even when the two processes spell the temp root differently.
+            expected_path = (
+                str(Path("codex-home") / "skills" / "mastery-coach")
+                if os.name == "nt"
+                else str(legacy)
+            )
+            self.assertIn(expected_path, output)
             self.assertIn("No Codex configuration was", normalized)
             self.assertIn("changed.", normalized)
             self.assertFalse(capture.exists(), "Codex must not run before legacy copies are resolved")
