@@ -1,4 +1,4 @@
-# Contributing to Mastery Learning
+# Contributing to Mastery Tutor
 
 Thanks for helping make AI-assisted learning more honest, useful, and accessible.
 
@@ -10,19 +10,24 @@ Thanks for helping make AI-assisted learning more honest, useful, and accessible
 - document a reproducible teaching failure without including private learner data;
 - add a curriculum source only when its scope, provenance, and covered concepts are explicit.
 
-Look for issues labeled [`good first issue`](https://github.com/fanfanfanfanfan626/mastery-learning/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
+Start with an existing issue or open a focused proposal that states the learner or adapter problem,
+the expected behavior, and how it can be verified.
 
 ## Development setup
 
-Use Python 3.10 or newer. The core project has no runtime package installer; Codex supplies the AI interface and the repository scripts use the standard library unless a validation tool states otherwise.
+Use Python 3.10 or newer. The core project has no runtime package installer; the selected AI host
+supplies the conversation and tool interface, while repository scripts use the standard library
+unless a validation tool states otherwise.
 
 ```bash
-python plugins/mastery-learning/skills/mastery-coach/scripts/curriculum_audit.py
+python skills/mastery-coach/scripts/curriculum_audit.py
 python quality/eval_audit.py suite quality/evals/plugin-evals.json
 python -m unittest discover -s quality -p "test_*.py" -v
 ```
 
-Before changing plugin or Skill metadata, also run the current Codex `plugin-creator` and `skill-creator` validators. Do not weaken an evidence, privacy, deletion, inspection, or answer-leakage boundary merely to make a test pass.
+Before changing the Codex adapter or Skill metadata, also run the current Codex `plugin-creator`
+and `skill-creator` validators plus the portable installation tests. Do not weaken an evidence,
+privacy, deletion, inspection, or answer-leakage boundary merely to make a test pass.
 
 ## Pull requests
 

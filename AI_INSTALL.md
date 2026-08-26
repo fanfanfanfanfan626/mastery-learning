@@ -1,60 +1,49 @@
-# AI install contract
+# AI installation router
 
-This file is for the AI agent installing Mastery Learning from GitHub.
-
-## Package identity
-
-Mastery Learning is one complete Codex plugin marketplace. It contains two bundled Skills:
+Mastery Tutor is a portable two-Skill teaching system, not one root Skill and not a Codex-only
+prompt. It always installs both canonical Skills listed in `agent-skill-set.json`:
 
 - `mastery-coach`
 - `mastery-tool-creator`
 
-Do not use `skill-installer`, do not search for a root `SKILL.md`, and do not copy either nested
-Skill into the standalone Skills directory.
+## Route by the current host
 
-## Success means all of these are true
+Identify the AI host before changing configuration. Do not choose a host from repository marketing
+copy or from an executable found on disk.
 
-1. The complete repository is stored in a stable, learner-owned directory.
-2. The root installer passes its package checks.
-3. `codex plugin add mastery-learning@mastery-learning` exits successfully.
-4. `codex plugin list` contains `mastery-learning`.
-5. The learner is told to start a new Codex task before using the bundled Skills.
+- **Codex:** read and follow `docs/install/codex.md`. Install the complete generated plugin, not
+  standalone Skill copies.
+- **Claude Code:** read and follow `docs/install/claude-code.md`.
+- **GitHub Copilot:** read and follow `docs/install/github-copilot.md`.
+- **OpenCode:** read `docs/install/opencode.md`. It is planned, not verified; do not invent an
+  installation procedure.
+- **Another Agent Skills host:** read and follow `docs/install/generic-agent.md` only when the host
+  documents filesystem-backed Agent Skills.
+- **No Agent Skills/filesystem support:** stop. Protocol-only teaching is a reduced mode, not an
+  installation of the full product.
 
-A clone, a downloaded ZIP, `-CheckOnly`, or a copied `SKILL.md` is not a successful install.
-Do not claim success until every condition above has been observed.
+## Shared safety boundary
 
-## Install procedure
+Before replacing anything, show exact existing paths for `mastery-coach`,
+`mastery-tool-creator`, the old `mastery-learning` Codex plugin, or a previous `mastery-tutor`
+installation. Never silently delete them. Never delete `.mastery/` learner workspaces during an
+install, product rename, adapter change, or uninstall.
 
-1. Read the repository-root `AGENTS.md` and `INSTALL.md` before changing anything.
-2. Resolve a stable install directory. Reuse an existing clean clone only when its `origin` is this
-   repository. Do not install from an operating-system temp directory or a disposable task checkout.
-3. Check for old standalone copies at `<CODEX_HOME>/skills/mastery-coach` and
-   `<CODEX_HOME>/skills/mastery-tool-creator`. If either exists, show the exact paths and ask the
-   learner before deleting or moving them. Do not continue around a conflicting copy.
-4. Run the root installer for the current platform. The installer performs preflight, probes the
-   existing Codex CLI, registers the repository marketplace, installs the complete plugin, and
-   verifies the plugin list.
-5. Report the repository path, Git commit, and verification result. Ask the learner to start a new
-   Codex task.
+Use only the selected host's documented installation surface. Do not use `skill-installer` for the
+Codex adapter, copy a WindowsApps executable, change package ACLs, or treat a repository clone as an
+installed product.
 
-Windows:
+## Shared success condition
 
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1
-```
+Do not claim success until the selected host document's observable checks pass for both Skills.
+Report:
 
-macOS/Linux:
+1. host and adapter;
+2. exact installed paths or plugin identity;
+3. version from `VERSION`;
+4. post-install verification result;
+5. capability level from `COMPATIBILITY.md`;
+6. whether host behavior is Verified, Experimental, Planned, or Core only.
 
-```bash
-sh ./install.sh
-```
-
-## Hard stop
-
-If `codex --version` cannot run from the current task, stop and report that exact boundary. Do not
-download or install another Codex CLI with npm, npx, winget, Homebrew, curl, or a package manager.
-Do not fall back to `skill-installer`.
-
-Tell the learner to open a normal local terminal where `codex --version` succeeds, change to the
-stable repository directory, and run the root installer shown above. The plugin is not installed
-until the success conditions in this file are met.
+File installation proves package integrity. It does not upgrade an Experimental or Planned host to
+Verified.

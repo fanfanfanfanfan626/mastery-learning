@@ -11,7 +11,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-COACH = ROOT / "plugins" / "mastery-learning" / "skills" / "mastery-coach"
+COACH = ROOT / "skills" / "mastery-coach"
 STATE = COACH / "scripts" / "mastery.py"
 CURRICULUM = COACH / "assets" / "curricula" / "ml-ai-llm.json"
 TEST_RUNTIME = ROOT / "work" / "test-runtime-v4"

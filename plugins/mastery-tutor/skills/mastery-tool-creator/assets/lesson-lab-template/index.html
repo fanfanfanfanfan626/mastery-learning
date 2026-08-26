@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="{{CSP}}">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Guided lesson lab</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#lesson-main">Skip to the lesson</a>
+  <main id="lesson-main" class="lesson-shell" data-session-minutes="30">
+    <header class="hero" data-lesson-section="orientation">
+      <p class="eyebrow">Guided lesson · {{MODE}}</p>
+      <h1>Observe one cause, then explain it</h1>
+      <p class="lede">{{OBJECTIVE}}</p>
+      <div class="boundary-grid" aria-label="Learning boundary">
+        <p><span>Current target</span><strong data-role="current-target">CUSTOMIZE: name the one assessed capability.</strong></p>
+        <p><span>Preview</span><strong data-role="preview">CUSTOMIZE: name later ideas shown only for orientation.</strong></p>
+        <p><span>Time</span><strong>About 30 minutes</strong></p>
+      </div>
+    </header>
+
+    <section class="lesson-card" data-lesson-section="mental-model">
+      <p class="step-label">01 · Build a useful picture</p>
+      <h2>Start from something observable</h2>
+      <p>CUSTOMIZE: introduce a concrete situation, define no more than five interacting elements, and connect it to the learner's goal.</p>
+      <details data-progressive-disclosure>
+        <summary>Terms and assumptions</summary>
+        <p>CUSTOMIZE: define symbols, units, boundaries, and what this model leaves out.</p>
+      </details>
+    </section>
+
+    <section class="lesson-card" data-lesson-section="worked-example">
+      <p class="step-label">02 · Watch the complete path</p>
+      <h2>Worked example with intermediate state</h2>
+      <div class="table-wrap" tabindex="0" aria-label="Worked example table">
+        <table>
+          <thead><tr><th>Input</th><th>Decision</th><th>Visible result</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>Baseline</td><td>Keep the control at 2</td><td>Output 4</td><td>The rule maps one visible input to one visible output.</td></tr>
+            <tr><td>Changed case</td><td>Move the control to 3</td><td>Output 6</td><td>Only one causal input changed.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>CUSTOMIZE: replace the generic trace with every intermediate value the learner will later produce.</p>
+    </section>
+
+    <section class="lesson-card" data-lesson-section="annotated-code">
+      <p class="step-label">03 · Translate the model into code</p>
+      <h2>Beginner-readable implementation</h2>
+      <pre aria-label="Annotated example code"><code># Store an input using a descriptive name.
+input_value = 2
+
+# Apply one visible rule and preserve the intermediate result.
+output_value = input_value * 2
+
+# Print the result so the program state can be inspected.
+print(output_value)</code></pre>
+      <ol class="code-notes">
+        <li data-code-note><code>input_value</code> names the state we can change.</li>
+        <li data-code-note><code>output_value</code> preserves the result instead of hiding the step.</li>
+        <li data-code-note><code>print</code> makes the state observable for checking and debugging.</li>
+      </ol>
+      <details data-progressive-disclosure>
+        <summary>Later, after the expanded form is clear</summary>
+        <p>CUSTOMIZE: show a compact equivalent only after the learner can trace the explicit version.</p>
+      </details>
+    </section>
+
+    <section class="lesson-card lab-card" data-lesson-section="interactive-model">
+      <p class="step-label">04 · Predict, then manipulate</p>
+      <h2>Make one prediction before reveal</h2>
+      <label for="prediction">What will change when the control increases?</label>
+      <textarea id="prediction" rows="3" placeholder="Write a short prediction. You can revise it after the experiment."></textarea>
+      <button id="lock-prediction" class="primary-button" type="button">Lock prediction and reveal controls</button>
+
+      <div id="experiment" class="experiment" hidden>
+        <div class="control-panel">
+          <label for="control-value">Input control <output id="control-output" for="control-value">2</output></label>
+          <input id="control-value" type="range" min="1" max="5" step="1" value="2">
+          <p class="assumption">Assumption: the demonstration rule doubles the selected input.</p>
+        </div>
+        <div class="visual-panel" aria-label="Input to output visual model">
+          <div class="meter-track"><div id="meter-fill" class="meter-fill"></div></div>
+          <p id="state-summary" class="state-summary" aria-live="polite">Input 2 produces output 4.</p>
+        </div>
+        <div class="table-wrap" tabindex="0" aria-label="Current experiment state">
+          <table><thead><tr><th>Input</th><th>Rule</th><th>Output</th></tr></thead>
+            <tbody><tr><td id="table-input">2</td><td>× 2</td><td id="table-output">4</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson-card" data-lesson-section="guided-practice">
+      <p class="step-label">05 · Explain the causal chain</p>
+      <h2>One guided action</h2>
+      <p>CUSTOMIZE: ask for one coherent explanation, calculation, trace, or code change tied to the current target.</p>
+      <label for="explanation">What changed, what stayed fixed, and why did the output move?</label>
+      <textarea id="explanation" rows="4"></textarea>
+      <button id="check-explanation" type="button">Check for the required parts</button>
+      <p id="explanation-feedback" class="feedback" aria-live="polite">Describe the change when you are ready.</p>
+      <details data-progressive-disclosure>
+        <summary>Need a hint?</summary>
+        <ol><li>Name the control you changed.</li><li>Name the rule that stayed fixed.</li><li>Connect both to the observed output.</li></ol>
+      </details>
+    </section>
+
+    <section class="lesson-card" data-lesson-section="transfer">
+      <p class="step-label">06 · Change the condition</p>
+      <h2>Transfer challenge</h2>
+      <p>CUSTOMIZE: change one surface feature, data pattern, assumption, or constraint without changing the target capability.</p>
+      <label for="transfer-response">Which part of your explanation still applies, and which part must change?</label>
+      <textarea id="transfer-response" rows="4"></textarea>
+    </section>
+
+    <section class="lesson-card summary-card" data-lesson-section="summary">
+      <p class="step-label">07 · Keep the useful model</p>
+      <h2>Lesson close</h2>
+      <ul><li>CUSTOMIZE: summarize the demonstrated current target.</li><li>CUSTOMIZE: keep preview knowledge explicitly provisional.</li><li>CUSTOMIZE: name one next action.</li></ul>
+      <p><a href="accessibility-fallback.html">Open the complete text and table equivalent</a></p>
+    </section>
+  </main>
+</body>
+</html>

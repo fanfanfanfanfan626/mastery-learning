@@ -6,7 +6,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-STATE_ENGINE = ROOT / "plugins" / "mastery-learning" / "skills" / "mastery-coach" / "scripts" / "mastery.py"
+STATE_ENGINE = ROOT / "skills" / "mastery-coach" / "scripts" / "mastery.py"
 
 
 class MaintainabilityBudgetTests(unittest.TestCase):

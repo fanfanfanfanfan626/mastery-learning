@@ -586,7 +586,7 @@ def audit_release_evidence(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Validate Mastery Learning conversation eval suites and results")
+    parser = argparse.ArgumentParser(description="Validate Mastery Tutor conversation eval suites and results")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     suite_parser = subparsers.add_parser("suite")

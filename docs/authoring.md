@@ -2,7 +2,7 @@
 
 ## Change the main teaching rules
 
-Edit `plugins/mastery-learning/skills/mastery-coach/SKILL.md` only for routing and universally required behavior. Put detailed protocols in `references/` and link them directly from the relevant route. Keep the frontmatter limited to `name` and `description`.
+Edit `skills/mastery-coach/SKILL.md` only for routing and universally required behavior. Put detailed protocols in `references/` and link them directly from the relevant route. Keep the frontmatter limited to `name` and `description`.
 
 After any change, run Skill Creator validation and forward-test realistic prompts. Do not add a second source of truth for mastery criteria.
 
@@ -41,15 +41,23 @@ New tool types must still require learner action, feedback, transfer, and eviden
 
 ## Propose self-improvement
 
-Session-level observations belong in the learner workspace's `.mastery/improvement-proposals.md`. Promote a proposal into the Skill only after reviewing evidence across cases, considering regressions, updating tests, and incrementing the plugin version.
+Session-level observations belong in the learner workspace's `.mastery/improvement-proposals.md`.
+Promote a proposal into the canonical Skill only after reviewing evidence across cases, considering
+regressions, updating tests, and changing the single root `VERSION` value. Never
+fork teaching rules into a host-specific copy.
 
 ## Release
 
 1. Compile the Python sources, audit the curriculum, and run all repository tests on Windows and Linux.
-2. Run both Skill Creator validators and Plugin Creator validation.
+2. Run both Skill Creator validators, portable installation tests, and Codex Plugin Creator validation.
 3. Validate `quality/evals/plugin-evals.json`; update it whenever triggering or teaching behavior changes.
 4. Update version and changelog, then build twice, audit the archive against the intended Git ref, and compare Windows/Linux artifacts byte-for-byte.
-5. Install from the archive in fresh Codex tasks and run the complete conversation suite three times with unique run IDs. Critical cases must pass every run, aggregate case pass rate must be at least 90%, every non-critical case must pass at least two of three runs, and no case may be blocked or omitted.
+5. Install from the archive in fresh Codex tasks and run the complete Codex conversation suite three
+   times with unique run IDs. Critical cases must pass every run, aggregate case pass rate must be at
+   least 90%, every non-critical case must pass at least two of three runs, and no case may be blocked
+   or omitted. Repeat host-labeled fresh-session evaluations before upgrading any additional adapter
+   from behavior-pending.
 6. Push to GitHub and publish only artifacts produced from the tagged tree; attach provenance when available.
-7. Reinstall the plugin through its configured marketplace and start a new task.
+7. Reinstall the Codex plugin through its configured marketplace, verify portable installation into
+   temporary host directories, and start a new task.
 8. Publish behavior claims only at the evidence level actually achieved; learner-effect claims require the outcome protocol in `docs/evaluation.md`.

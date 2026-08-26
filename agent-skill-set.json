@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "name": "mastery-tutor",
+  "version_source": "VERSION",
+  "specification": "https://agentskills.io/specification",
+  "description": "A local-first mastery tutor for compatible AI agents.",
+  "skills": [
+    {
+      "name": "mastery-coach",
+      "source": "skills/mastery-coach",
+      "required": true
+    },
+    {
+      "name": "mastery-tool-creator",
+      "source": "skills/mastery-tool-creator",
+      "required": true
+    }
+  ],
+  "adapters": {
+    "agent-skills": {
+      "user_directory": "~/.agents/skills",
+      "project_directory": ".agents/skills",
+      "status": "core-compatible"
+    },
+    "claude-code": {
+      "user_directory": "~/.claude/skills",
+      "project_directory": ".claude/skills",
+      "status": "experimental"
+    },
+    "github-copilot": {
+      "user_directory": "~/.copilot/skills",
+      "project_directory": ".agents/skills",
+      "status": "experimental"
+    },
+    "codex": {
+      "source": "plugins/mastery-tutor",
+      "installer_contract": "AI_INSTALL.md",
+      "status": "verified-adapter"
+    },
+    "opencode": {
+      "status": "planned"
+    }
+  },
+  "capability_tiers": {
+    "full": ["filesystem", "persistent-state", "python", "safe-code-execution", "html-viewer"],
+    "guided": ["filesystem", "persistent-state", "python", "html-artifacts"],
+    "protocol": ["skill-loading"]
+  }
+}

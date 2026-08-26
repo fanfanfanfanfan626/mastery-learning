@@ -1,4 +1,4 @@
-# Mastery Learning roadmap
+# Mastery Tutor roadmap
 
 The project optimizes for trustworthy learning behavior before feature count. Priorities may change when real users reveal a more important failure.
 
@@ -11,6 +11,8 @@ The project optimizes for trustworthy learning behavior before feature count. Pr
 - run fresh-task Codex conversation evaluations repeatedly;
 - recruit the first 5–10 pilot learners and record consented, anonymized friction notes;
 - respond quickly to installation and onboarding issues.
+- keep one canonical Agent Skills bundle and publish an explicit host capability/support matrix;
+- verify deterministic installation into generic, Claude Code, and GitHub Copilot Skill directories.
 
 ## Next — prove reliability outside the author workflow
 
@@ -18,8 +20,9 @@ The project optimizes for trustworthy learning behavior before feature count. Pr
 - add curricula beyond the built-in ML/AI/LLM coverage skeleton;
 - split the state engine into state, validation, scheduling, registry, and migration modules;
 - add more cross-platform installation smoke tests;
-- document real lesson examples without exposing learner records.
-- define and test adapters before claiming support for additional AI agents or coding assistants;
+- document real lesson examples without exposing learner records;
+- run fresh-session behavior evaluations on Claude Code and GitHub Copilot before marking either
+  adapter behavior as verified.
 
 ## Later — evaluate learning outcomes
 

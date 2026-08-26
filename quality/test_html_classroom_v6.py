@@ -13,8 +13,8 @@ from urllib.request import Request, urlopen
 
 
 ROOT = Path(__file__).resolve().parents[1]
-COACH = ROOT / "plugins" / "mastery-learning" / "skills" / "mastery-coach"
-CREATOR = ROOT / "plugins" / "mastery-learning" / "skills" / "mastery-tool-creator"
+COACH = ROOT / "skills" / "mastery-coach"
+CREATOR = ROOT / "skills" / "mastery-tool-creator"
 RENDER = COACH / "scripts" / "render_classroom.py"
 SERVER = COACH / "scripts" / "serve_classroom.py"
 CURRICULUM = COACH / "assets" / "curricula" / "ml-ai-llm.json"

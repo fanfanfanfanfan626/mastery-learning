@@ -1,0 +1,7 @@
+interface:
+  display_name: "Mastery Coach"
+  short_description: "Guided lessons, practice, review, and local progress"
+  default_prompt: "Use $mastery-coach to help me learn this from my current level, without starting with an entrance exam."
+
+policy:
+  allow_implicit_invocation: true

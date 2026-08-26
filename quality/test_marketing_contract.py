@@ -22,18 +22,22 @@ class MarketingContractTests(unittest.TestCase):
     def test_readme_opens_with_value_demo_and_supported_install(self) -> None:
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
         head = "\n".join(readme.splitlines()[:50]).lower()
-        self.assertIn("# mastery learning", head)
-        self.assertIn("让 ai 教你，但不替你学", head)
-        self.assertIn("开源的 codex 学习插件", head)
+        normalized_head = " ".join(head.split())
+        self.assertIn("# mastery tutor", head)
+        self.assertIn("a local-first mastery tutor for ai agents", normalized_head)
+        self.assertIn("guided html lessons", normalized_head)
+        self.assertIn("verified adapter", normalized_head)
+        self.assertIn("experimental", normalized_head)
+        self.assertIn("core-compatible", normalized_head)
         self.assertIn("docs/assets/demo.gif", head)
-        self.assertIn("让 ai 安装", head)
         self.assertIn("ai_install.md", head)
-        self.assertIn("skill-installer", head)
+        self.assertIn("mastery-tutor", head)
+        self.assertIn("readme.zh-cn.md", head)
 
     def test_public_copy_prefers_concrete_actions_to_hype(self) -> None:
         readme = (ROOT / "README.md").read_text(encoding="utf-8").lower()
         manifest = json.loads(
-            (ROOT / "plugins" / "mastery-learning" / ".codex-plugin" / "plugin.json").read_text(
+            (ROOT / "plugins" / "mastery-tutor" / ".codex-plugin" / "plugin.json").read_text(
                 encoding="utf-8"
             )
         )
@@ -46,16 +50,18 @@ class MarketingContractTests(unittest.TestCase):
             self.assertNotIn(phrase, public_copy)
         for phrase in ["guided html lessons", "hands-on practice", "local progress"]:
             self.assertIn(phrase, public_copy)
+        self.assertIn("transfer checks", public_copy)
+        self.assertIn("learner-owned local progress", public_copy)
 
     def test_discovery_metadata_points_to_real_brand_assets(self) -> None:
         manifest = json.loads(
-            (ROOT / "plugins" / "mastery-learning" / ".codex-plugin" / "plugin.json").read_text(
+            (ROOT / "plugins" / "mastery-tutor" / ".codex-plugin" / "plugin.json").read_text(
                 encoding="utf-8"
             )
         )
-        self.assertEqual(manifest["homepage"], "https://github.com/fanfanfanfanfan626/mastery-learning")
+        self.assertEqual(manifest["homepage"], "https://github.com/fanfanfanfanfan626/mastery-tutor")
         self.assertEqual(manifest["repository"], manifest["homepage"])
-        self.assertEqual(manifest["interface"]["displayName"], "Mastery Learning")
+        self.assertEqual(manifest["interface"]["displayName"], "Mastery Tutor")
         self.assertEqual(
             manifest["interface"]["shortDescription"],
             "Guided lessons, hands-on practice, and local progress.",
@@ -65,7 +71,7 @@ class MarketingContractTests(unittest.TestCase):
                 set(manifest["keywords"])
             )
         )
-        plugin_root = ROOT / "plugins" / "mastery-learning"
+        plugin_root = ROOT / "plugins" / "mastery-tutor"
         interface = manifest["interface"]
         for field in ["composerIcon", "logo", "logoDark"]:
             path = plugin_root / interface[field].removeprefix("./")
@@ -83,6 +89,11 @@ class MarketingContractTests(unittest.TestCase):
             ".github/ISSUE_TEMPLATE/bug-report.yml",
             ".github/ISSUE_TEMPLATE/feature-request.yml",
             ".github/ISSUE_TEMPLATE/config.yml",
+            ".github/ISSUE_TEMPLATE/adapter-bug.yml",
+            ".github/pull_request_template.md",
+            "SECURITY.md",
+            "SUPPORT.md",
+            "CODE_OF_CONDUCT.md",
         ]:
             self.assertTrue((ROOT / relative).is_file(), f"missing maintainer entrypoint: {relative}")
 

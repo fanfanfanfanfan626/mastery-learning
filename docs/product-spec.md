@@ -19,6 +19,9 @@ The final outcome of learning is an independently usable capability. Therefore t
 8. Schedule retrieval and changed-context review.
 9. Keep the learner model small, local, inspectable, and revisable.
 10. Separate proposed product improvements from automatic session adaptation.
+11. Keep teaching behavior host-neutral: host adapters may narrow unavailable tools but may not
+    change mastery, privacy, source, answer-leakage, inspection, or deletion rules.
+12. Distinguish package conformance, host behavior, and learner outcomes in every support claim.
 
 ## Personalization
 
@@ -63,7 +66,7 @@ The research basis and product-specific claim boundary are documented in [pedago
 ## Release acceptance criteria
 
 - both Skills pass Skill Creator validation;
-- the plugin passes Plugin Creator validation;
+- the generated Codex adapter passes Plugin Creator validation;
 - curriculum identity, target closure, source provenance, scope, and DAG audit have no errors;
 - state initialization, explicit scope closure, cross-task discovery, serialized writes, interrupted-transaction recovery, derived-state recovery, conservative migration, strict durability transition, failure transition, due-review query, export, and confirmed deletion pass automated tests;
 - unfinished generated tools, incomplete lesson sequences, and placeholder checks fail; static validation never executes generated code; only separately observed sandbox/render results can mark a tool verified;
@@ -71,10 +74,10 @@ The research basis and product-specific claim boundary are documented in [pedago
 - the dedicated no-cache classroom server exposes only the current page and shared stylesheet from `.mastery/classroom`; learning profiles, plans, evidence, reviews, registries, and tools are never within its served root;
 - all local servers use OS-assigned loopback ports, retain an exact process/session identity, and are considered stopped only after the assigned port is verified closed;
 - tool objectives, sources, resource links, paths, and check commands are untrusted: HTML is escaped, remote references are credential-free HTTPS, check targets remain inside the tool snapshot, and links/junctions/reparse points fail closed;
-- README and `INSTALL.md` classify the distribution as one two-Skill plugin before any command runs;
-  platform installers validate both marketplace and plugin identities, never fall back to a partial
-  standalone-Skill install, and the exact release archive passes a fresh-clone smoke test before a
-  separate Codex installation check;
+- README and `AGENT_INSTALL.md` classify the distribution as one portable two-Skill system before
+  any command runs; the generic installer verifies both canonical trees and the Codex installer
+  validates marketplace and plugin identities. Neither path may fall back to a partial install, and
+  the exact release archive passes a fresh-clone smoke test before host-specific installation checks;
 - at least one cold-start, one single-reply personalized onboarding, and one cross-task resume conversation are manually evaluated for triggering, setup latency, answer leakage, overload, false mastery, preference boundaries, and workspace selection;
 - a version-bound conversation-evaluation suite covers direct, indirect, follow-up, negative, and boundary requests; release evidence contains three uniquely identified complete runs, all declared critical cases pass every run, aggregate case pass rate is at least 90%, and each non-critical case passes at least two of three runs;
 - any published behavior claim links to the validated release-evidence report and its synthetic transcript evidence; blocked, omitted, duplicate, or below-threshold runs cannot satisfy the tag gate;

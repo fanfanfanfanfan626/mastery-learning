@@ -11,8 +11,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-COACH = ROOT / "plugins" / "mastery-learning" / "skills" / "mastery-coach"
-CREATOR = ROOT / "plugins" / "mastery-learning" / "skills" / "mastery-tool-creator"
+COACH = ROOT / "skills" / "mastery-coach"
+CREATOR = ROOT / "skills" / "mastery-tool-creator"
 STATE = COACH / "scripts" / "mastery.py"
 AUDIT = COACH / "scripts" / "curriculum_audit.py"
 CURRICULUM = COACH / "assets" / "curricula" / "ml-ai-llm.json"
@@ -279,8 +279,7 @@ class ToolCreatorTests(unittest.TestCase):
             )
             tool = workspace / ".mastery" / "tools" / "version-check-lab" / "tool.json"
             generator = json.loads(tool.read_text(encoding="utf-8"))["generator"]
-            plugin = json.loads((ROOT / "plugins" / "mastery-learning" / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))
-            self.assertEqual(generator["version"], plugin["version"])
+            self.assertEqual(generator["version"], (ROOT / "VERSION").read_text(encoding="utf-8").strip())
 
     def customize_code_lab(self, tool: Path) -> None:
         manifest_path = tool / "tool.json"
@@ -361,9 +360,9 @@ class ToolCreatorTests(unittest.TestCase):
 
 class PackageTests(unittest.TestCase):
     def test_plugin_and_skill_structure(self) -> None:
-        plugin = json.loads((ROOT / "plugins" / "mastery-learning" / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))
-        self.assertEqual(plugin["name"], "mastery-learning")
-        self.assertEqual(plugin["version"], "0.4.2")
+        plugin = json.loads((ROOT / "plugins" / "mastery-tutor" / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))
+        self.assertEqual(plugin["name"], "mastery-tutor")
+        self.assertEqual(plugin["version"], (ROOT / "VERSION").read_text(encoding="utf-8").strip())
         self.assertEqual(plugin["skills"], "./skills/")
         for skill in [COACH, CREATOR]:
             content = (skill / "SKILL.md").read_text(encoding="utf-8")

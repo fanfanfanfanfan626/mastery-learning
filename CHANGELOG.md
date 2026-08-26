@@ -1,10 +1,36 @@
 # Changelog
 
+## 0.5.0 — unreleased
+
+- Renamed the product and Codex plugin identity to **Mastery Tutor** / `mastery-tutor` while
+  preserving the two Skill IDs, `.mastery/` learner workspaces, and legacy registry discovery.
+- Promoted `skills/mastery-coach` and `skills/mastery-tool-creator` to the only canonical sources;
+  Codex packaging is now a generated adapter with source-drift checks.
+- Added evidence-based compatibility labels, host contracts, migration and security guidance, and
+  separate English/Chinese repository entry pages.
+- Made `VERSION` the release version source and split deterministic artifacts into portable core,
+  Codex adapter, and maintainer bundle distributions.
+- Added a tag-only release workflow with evaluation evidence gates, cross-platform byte comparison,
+  checksums, provenance attestations, and GitHub Release upload.
+
 ## Unreleased
 
+- Promoted Mastery Learning from a Codex-only package to one portable two-Skill Agent Skills system:
+  added a canonical skill-set manifest, host capability tiers, an AI-readable cross-host install
+  contract, and a transactional installer for generic Agent Skills, Claude Code, and GitHub Copilot
+  directories. Codex remains the reference adapter, while unrun host behavior stays labeled pending.
+- Made generated-tool verification host-neutral without weakening it: new reports bind the observing
+  AI and execution boundary, executable checks cannot use a not-applicable boundary, and existing
+  Codex schema-v3 reports remain readable for upgrade continuity.
+- Moved new workspace registries to the product-owned `~/.mastery-learning` default while retaining
+  explicit `MASTERY_HOME`/`CODEX_HOME` support and automatic discovery of existing Codex registries.
+- Replaced the contradictory CLI hard stop with a controlled official-recovery state: installers
+  now emit machine-readable blocker details, distinguish an unlaunchable WindowsApps candidate from
+  a usable CLI, and let an explicitly authorized AI follow current OpenAI CLI documentation before
+  rerunning the same verified plugin flow.
 - Added a root `AI_INSTALL.md` contract and hardened both platform installers so an AI can complete
   a one-message GitHub install without guessing: legacy standalone Skills stop before mutation,
-  the existing Codex CLI is probed without downloading a replacement, and `codex plugin list`
+  the existing Codex CLI is probed before any authorized official recovery, and `codex plugin list`
   verifies the final installation.
 - Rewrote the GitHub first impression, plugin metadata, and marketing copy in a direct open-source
   voice that explains the learner workflow before package internals or product claims.

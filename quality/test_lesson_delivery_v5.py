@@ -10,8 +10,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-COACH = ROOT / "plugins" / "mastery-learning" / "skills" / "mastery-coach"
-CREATOR = ROOT / "plugins" / "mastery-learning" / "skills" / "mastery-tool-creator"
+COACH = ROOT / "skills" / "mastery-coach"
+CREATOR = ROOT / "skills" / "mastery-tool-creator"
 SCAFFOLD = CREATOR / "scripts" / "tool_scaffold.py"
 VALIDATE = CREATOR / "scripts" / "validate_tool.py"
 EVALS = ROOT / "quality" / "evals" / "plugin-evals.json"

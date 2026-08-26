@@ -7,7 +7,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parents[1]
 DOC_ASSETS = ROOT / "docs" / "assets"
-PLUGIN_ASSETS = ROOT / "plugins" / "mastery-learning" / "assets"
+PLUGIN_ASSETS = ROOT / "adapters" / "codex" / "plugin" / "assets"
 
 INK = "#F8FAFC"
 MUTED = "#A7B0C5"
@@ -134,10 +134,10 @@ def social_preview() -> Image.Image:
     draw = ImageDraw.Draw(image)
     mark = logo_mark(172, dark=True)
     image.paste(mark, (76, 76), mark)
-    draw.text((284, 84), "Mastery Learning", font=font(68, bold=True), fill=INK)
+    draw.text((284, 84), "Mastery Tutor", font=font(68, bold=True), fill=INK)
     draw.text(
         (78, 270),
-        "A local classroom for learning with AI",
+        "A local-first tutor for learning with AI",
         font=font(39, bold=True),
         fill=INK,
     )
@@ -149,13 +149,13 @@ def social_preview() -> Image.Image:
     )
     draw.text(
         (80, 430),
-        "Open source  ·  Codex plugin  ·  Progress stays on your machine",
+        "Agent Skills  ·  Verified Codex adapter  ·  Learner-owned progress",
         font=font(22, bold=True),
         fill=CYAN,
     )
     draw.text(
         (80, 522),
-        "github.com/fanfanfanfanfan626/mastery-learning",
+        "github.com/fanfanfanfan626/mastery-tutor",
         font=font(23),
         fill="#8792AB",
     )
@@ -195,7 +195,7 @@ def lesson_screenshot() -> Image.Image:
     draw.ellipse((124, 64, 140, 80), fill=GREEN)
     draw.text(
         (174, 54),
-        "Mastery Learning · Attention Lab",
+        "Mastery Tutor · Attention Lab",
         font=font(25, bold=True),
         fill=INK,
     )
@@ -247,7 +247,7 @@ def lesson_screenshot() -> Image.Image:
 def demo_frame(step: int) -> Image.Image:
     image = background((960, 540))
     draw = ImageDraw.Draw(image)
-    draw.text((48, 32), "Mastery Learning", font=font(27, bold=True), fill=INK)
+    draw.text((48, 32), "Mastery Tutor", font=font(27, bold=True), fill=INK)
     draw.text((272, 36), "Learn by doing", font=font(20, bold=True), fill=PURPLE)
     titles = [
         "Tell it what you want to learn",

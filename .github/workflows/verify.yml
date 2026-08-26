@@ -24,75 +24,75 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - id: version
+        name: Read release version
+        shell: bash
+        run: echo "value=$(tr -d '\r\n' < VERSION)" >> "$GITHUB_OUTPUT"
+      - name: Verify generated adapters
+        run: python quality/build_adapters.py --check
       - name: Audit curriculum
-        run: python plugins/mastery-learning/skills/mastery-coach/scripts/curriculum_audit.py
+        run: python skills/mastery-coach/scripts/curriculum_audit.py
       - name: Audit conversation eval suite
         run: python quality/eval_audit.py suite quality/evals/plugin-evals.json
       - name: Compile Python sources
-        run: python -m compileall -q plugins quality
+        run: python -m compileall -q skills adapters quality
       - name: Run system tests
         run: python -m unittest discover -s quality -p "test_*.py" -v
-      - name: Build release candidate
+      - name: Build core candidate
         run: >-
-          python quality/build_release.py
-          --output work/mastery-learning-0.4.2.zip
-          --checksum-output work/mastery-learning-0.4.2.zip.sha256
-      - name: Audit candidate against checked-out Git tree
-        run: python quality/release_audit.py archive work/mastery-learning-0.4.2.zip --git-ref HEAD --expected-version 0.4.2
-      - name: Upload platform candidate
+          python quality/build_release.py --kind core
+          --output work/mastery-tutor-${{ steps.version.outputs.value }}-core.zip
+          --checksum-output work/mastery-tutor-${{ steps.version.outputs.value }}-core.zip.sha256
+      - name: Build Codex candidate
+        run: >-
+          python quality/build_release.py --kind codex
+          --output work/mastery-tutor-${{ steps.version.outputs.value }}-codex.zip
+          --checksum-output work/mastery-tutor-${{ steps.version.outputs.value }}-codex.zip.sha256
+      - name: Audit candidates against checked-out Git tree
+        shell: bash
+        run: |
+          python quality/release_audit.py archive +            "work/mastery-tutor-${{ steps.version.outputs.value }}-core.zip" +            --kind core --git-ref HEAD --expected-version "${{ steps.version.outputs.value }}"
+          python quality/release_audit.py archive +            "work/mastery-tutor-${{ steps.version.outputs.value }}-codex.zip" +            --kind codex --git-ref HEAD --expected-version "${{ steps.version.outputs.value }}"
+      - name: Upload platform candidates
         uses: actions/upload-artifact@v4
         with:
           name: release-${{ matrix.os }}
           path: |
-            work/mastery-learning-0.4.2.zip
-            work/mastery-learning-0.4.2.zip.sha256
+            work/mastery-tutor-${{ steps.version.outputs.value }}-core.zip
+            work/mastery-tutor-${{ steps.version.outputs.value }}-core.zip.sha256
+            work/mastery-tutor-${{ steps.version.outputs.value }}-codex.zip
+            work/mastery-tutor-${{ steps.version.outputs.value }}-codex.zip.sha256
           if-no-files-found: error
           retention-days: 14
 
   release-reproducibility:
     needs: test
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-      attestations: write
-      artifact-metadata: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - id: version
+        name: Read release version
+        shell: bash
+        run: echo "value=$(tr -d '\r\n' < VERSION)" >> "$GITHUB_OUTPUT"
       - uses: actions/download-artifact@v4
         with:
           pattern: release-*
           path: work/release-candidates
-      - name: Compare Windows and Linux release bytes
+      - name: Compare Windows and Linux core bytes
         run: >-
           python quality/release_audit.py compare
-          work/release-candidates/release-ubuntu-latest/mastery-learning-0.4.2.zip
-          work/release-candidates/release-windows-latest/mastery-learning-0.4.2.zip
-      - name: Compare Windows and Linux checksum files
+          work/release-candidates/release-ubuntu-latest/mastery-tutor-${{ steps.version.outputs.value }}-core.zip
+          work/release-candidates/release-windows-latest/mastery-tutor-${{ steps.version.outputs.value }}-core.zip
+      - name: Compare Windows and Linux Codex bytes
         run: >-
           python quality/release_audit.py compare
-          work/release-candidates/release-ubuntu-latest/mastery-learning-0.4.2.zip.sha256
-          work/release-candidates/release-windows-latest/mastery-learning-0.4.2.zip.sha256
-      - name: Match a version tag to the archived plugin version
-        if: startsWith(github.ref, 'refs/tags/v')
+          work/release-candidates/release-ubuntu-latest/mastery-tutor-${{ steps.version.outputs.value }}-codex.zip
+          work/release-candidates/release-windows-latest/mastery-tutor-${{ steps.version.outputs.value }}-codex.zip
+      - name: Compare checksum files
         shell: bash
         run: |
-          version="${GITHUB_REF_NAME#v}"
-          python quality/release_audit.py archive \
-            work/release-candidates/release-ubuntu-latest/mastery-learning-0.4.2.zip \
-            --git-ref HEAD \
-            --expected-version "$version"
-      - name: Require release-quality conversation evidence for a version tag
-        if: startsWith(github.ref, 'refs/tags/v')
-        run: >-
-          python quality/eval_audit.py release-evidence
-          quality/evals/plugin-evals.json
-          quality/evals/results/0.4.2
-      - name: Attest tagged release candidate
-        if: startsWith(github.ref, 'refs/tags/v')
-        uses: actions/attest@v4
-        with:
-          subject-path: work/release-candidates/release-ubuntu-latest/mastery-learning-0.4.2.zip
+          python quality/release_audit.py compare +            "work/release-candidates/release-ubuntu-latest/mastery-tutor-${{ steps.version.outputs.value }}-core.zip.sha256" +            "work/release-candidates/release-windows-latest/mastery-tutor-${{ steps.version.outputs.value }}-core.zip.sha256"
+          python quality/release_audit.py compare +            "work/release-candidates/release-ubuntu-latest/mastery-tutor-${{ steps.version.outputs.value }}-codex.zip.sha256" +            "work/release-candidates/release-windows-latest/mastery-tutor-${{ steps.version.outputs.value }}-codex.zip.sha256"

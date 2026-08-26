@@ -105,7 +105,7 @@ class ConversationEvalContractTests(unittest.TestCase):
             },
         )
         manifest = json.loads(
-            (ROOT / "plugins" / "mastery-learning" / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8")
+            (ROOT / "plugins" / "mastery-tutor" / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8")
         )
         self.assertEqual(self.suite["plugin_version"], manifest["version"])
 

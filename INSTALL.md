@@ -1,97 +1,37 @@
-# Install Mastery Learning
+# Install Mastery Tutor
 
-Mastery Learning is a complete Codex plugin marketplace with two bundled Skills. Install the whole
-repository. Do not use `skill-installer` and do not copy a nested `SKILL.md`.
+Mastery Tutor contains two canonical Agent Skills. Choose the host you are actually using:
+
+| Host | Status | Instructions |
+|---|---|---|
+| Codex | Verified reference adapter | [docs/install/codex.md](docs/install/codex.md) |
+| Claude Code | Experimental | [docs/install/claude-code.md](docs/install/claude-code.md) |
+| GitHub Copilot | Experimental | [docs/install/github-copilot.md](docs/install/github-copilot.md) |
+| OpenCode | Planned | [docs/install/opencode.md](docs/install/opencode.md) |
+| Other Agent Skills host | Core only | [docs/install/generic-agent.md](docs/install/generic-agent.md) |
 
 ## Ask an AI to install it
 
-Send this one message to Codex:
+Send this message to the AI host you want to use:
 
 ```text
-请安装这个完整 Codex 插件：https://github.com/fanfanfanfan626/mastery-learning 。先读取并严格执行仓库根目录的 AI_INSTALL.md；完成其中全部成功条件前，不要宣称安装成功。
+请安装 Mastery Tutor：https://github.com/fanfanfanfan626/mastery-tutor 。先读取并严格执行仓库根目录的 AI_INSTALL.md，识别当前 AI 宿主并安装完整的两个 Skill；发现旧版本先告诉我，不要直接覆盖或删除任何 .mastery 学习数据。若当前宿主是 Codex 且 codex --version 不可用，我允许你仅按 OpenAI 官方 Codex CLI 文档安装或修复正式 CLI；禁止复制 WindowsApps 内部程序、修改其权限、使用 skill-installer 或拆装嵌套 Skill。完成对应宿主的全部成功条件前不要宣称安装成功。
 ```
 
-The machine-readable [AI_INSTALL.md](AI_INSTALL.md) defines the stable-directory rule, legacy-Skill
-check, CLI boundary, exact installer entrypoint, and final verification. The user does not need to
-repeat those details in the prompt.
+The AI-readable router is [AI_INSTALL.md](AI_INSTALL.md). Package status and feature limits are in
+[COMPATIBILITY.md](COMPATIBILITY.md). Existing `mastery-learning` users must read
+[MIGRATION.md](MIGRATION.md) before replacing the old Codex plugin identity.
 
-## Install it yourself
+## Portable manual install
 
-Keep the repository in a directory that will still exist after the current task ends.
-
-Windows PowerShell:
-
-```powershell
-git clone https://github.com/fanfanfanfan626/mastery-learning.git
-Set-Location .\mastery-learning
-powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1
-```
-
-macOS/Linux:
-
-```bash
-git clone https://github.com/fanfanfanfan626/mastery-learning.git
-cd mastery-learning
-sh ./install.sh
-```
-
-For a Release ZIP, verify its published SHA-256, extract the complete archive into a stable
-directory, and run the platform installer from the level containing both `.agents/` and `plugins/`.
-
-## What the installer checks
-
-Before changing Codex configuration, it verifies:
-
-- `.agents/plugins/marketplace.json` identifies the `mastery-learning` marketplace;
-- `plugins/mastery-learning/.codex-plugin/plugin.json` identifies the complete plugin;
-- no old standalone `mastery-coach` or `mastery-tool-creator` directory can shadow the plugin;
-- the existing `codex` command can run.
-
-It then runs:
+Python 3.10 or newer is required for the local state engine and deterministic HTML classroom.
 
 ```text
-codex plugin marketplace add <absolute-repository-root>
-codex plugin add mastery-learning@mastery-learning
-codex plugin list
+python install-agent-skills.py --host <agent-skills|claude-code|github-copilot> --scope <user|project>
+python install-agent-skills.py --host <same-host> --scope <same-scope> --check
 ```
 
-Installation is complete only when the add command succeeds and the list contains
-`mastery-learning`. Start a new Codex task afterward so both bundled Skills load.
-
-## If an old standalone Skill is found
-
-The installer stops before changing configuration and prints the exact paths. Review those paths
-and decide whether to remove or archive them. Neither the installer nor an AI agent should delete
-them without permission.
-
-## If the Codex CLI cannot run
-
-The installer stops and says that the plugin is not installed. It will not download a second Codex
-CLI or fall back to a partial Skill install.
-
-Open a normal local terminal where this succeeds:
-
-```text
-codex --version
-```
-
-Then return to the stable repository and rerun the platform installer. A cloned repository or a
-successful package preflight alone is not an installation.
-
-## Package-only preflight
-
-These commands validate repository structure without requiring Codex or changing configuration:
-
-```powershell
-.\install.ps1 -CheckOnly
-```
-
-```bash
-sh ./install.sh --check-only
-```
-
-## Why GitHub is one prompt, not a directory button
-
-OpenAI's public Plugins Directory provides the `+` install button. A GitHub repo marketplace is a
-separate distribution source and still depends on a local Codex host and CLI. Until this project is
-listed in the public directory, the supported GitHub experience is the one-message AI install above.
+Use `--project-root <absolute-path>` for another project or `--host custom --target
+<absolute-skills-directory>` for a documented compatible host. Existing differing Skill directories
+produce a conflict. Use `--replace` only after reviewing the paths; replacement keeps a recoverable
+sibling backup.

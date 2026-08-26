@@ -1,0 +1,71 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+  artifact-metadata: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONUTF8: "1"
+      MASTERY_HOME: ${{ github.workspace }}/work/release-mastery-home
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - id: version
+        name: Match tag to VERSION
+        shell: bash
+        run: |
+          version="$(tr -d '\r\n' < VERSION)"
+          test "${GITHUB_REF_NAME}" = "v${version}"
+          echo "value=${version}" >> "$GITHUB_OUTPUT"
+      - name: Verify generated adapters
+        run: python quality/build_adapters.py --check
+      - name: Verify curriculum and eval suite
+        shell: bash
+        run: |
+          python skills/mastery-coach/scripts/curriculum_audit.py
+          python quality/eval_audit.py suite quality/evals/plugin-evals.json
+      - name: Run full tests
+        run: python -m unittest discover -s quality -p "test_*.py" -v
+      - name: Require release-quality conversation evidence
+        run: >-
+          python quality/eval_audit.py release-evidence
+          quality/evals/plugin-evals.json
+          quality/evals/results/${{ steps.version.outputs.value }}
+      - name: Build release archives
+        shell: bash
+        run: |
+          python quality/build_release.py --kind core +            --output "work/mastery-tutor-${{ steps.version.outputs.value }}-core.zip" +            --checksum-output "work/mastery-tutor-${{ steps.version.outputs.value }}-core.zip.sha256"
+          python quality/build_release.py --kind codex +            --output "work/mastery-tutor-${{ steps.version.outputs.value }}-codex.zip" +            --checksum-output "work/mastery-tutor-${{ steps.version.outputs.value }}-codex.zip.sha256"
+      - name: Audit release archives
+        shell: bash
+        run: |
+          python quality/release_audit.py archive +            "work/mastery-tutor-${{ steps.version.outputs.value }}-core.zip" +            --kind core --git-ref HEAD --expected-version "${{ steps.version.outputs.value }}"
+          python quality/release_audit.py archive +            "work/mastery-tutor-${{ steps.version.outputs.value }}-codex.zip" +            --kind codex --git-ref HEAD --expected-version "${{ steps.version.outputs.value }}"
+      - name: Attest core archive
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: work/mastery-tutor-${{ steps.version.outputs.value }}-core.zip
+      - name: Attest Codex archive
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: work/mastery-tutor-${{ steps.version.outputs.value }}-codex.zip
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          gh release create "${GITHUB_REF_NAME}" +            --verify-tag +            --title "Mastery Tutor ${GITHUB_REF_NAME}" +            --generate-notes +            "work/mastery-tutor-${{ steps.version.outputs.value }}-core.zip" +            "work/mastery-tutor-${{ steps.version.outputs.value }}-core.zip.sha256" +            "work/mastery-tutor-${{ steps.version.outputs.value }}-codex.zip" +            "work/mastery-tutor-${{ steps.version.outputs.value }}-codex.zip.sha256"

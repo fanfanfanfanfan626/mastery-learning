@@ -6,17 +6,23 @@ The project reports five evidence levels separately:
 
 | Level | Question | Evidence |
 |---|---|---|
-| E0: package | Can Codex discover and load the plugin? | Creator validators, manifest checks, clean installation |
+| E0: package | Can a named host discover the complete two-Skill bundle? | Agent Skills validation, adapter manifests, clean installation |
 | E1: engine | Are state, scheduling, migration, privacy, and tool invariants correct? | Deterministic automated tests and fault injection |
-| E2: conversation | Does a fresh Codex task activate the right Skills and follow their instructions? | Versioned synthetic prompts, transcripts, rubric results, repeated runs |
+| E2: conversation | Does a fresh task on a named host activate the right Skills and follow their instructions? | Host-labeled synthetic prompts, transcripts, rubric results, repeated runs |
 | E3: usability | Can intended learners complete the workflow without avoidable confusion or overload? | Consenting pilot sessions, observation, abandonment and assistance data |
 | E4: outcomes | Does the product improve durable independent capability relative to an explicit comparison? | Predefined outcome study with delayed and transfer measures |
 
 Passing a lower level never implies that a higher level passed. In particular, the Python test count is E1 evidence, not a learning-effect measurement.
 
+E0 is recorded per distribution adapter, and E2 is recorded per host and version. A successful
+Claude Code or GitHub Copilot directory installation therefore remains “behavior pending” until
+fresh-session runs on that host satisfy the same critical-case and stability policy. Codex results
+must not be reused as evidence for another host.
+
 ## Conversation evaluation suite
 
-`quality/evals/plugin-evals.json` is the machine-readable E2 suite. It covers the request classes in [OpenAI's complete-plugin testing guidance](https://developers.openai.com/plugins/deploy/connect-chatgpt):
+`quality/evals/plugin-evals.json` is the machine-readable E2 suite for the Codex reference adapter.
+It covers the request classes in [OpenAI's complete-plugin testing guidance](https://developers.openai.com/plugins/deploy/connect-chatgpt):
 
 - direct requests;
 - indirect requests expressing the same goal;
@@ -35,7 +41,7 @@ Create a non-overwriting result template for an installed plugin and named Codex
 ```bash
 python quality/eval_audit.py init-result \
   quality/evals/plugin-evals.json \
-  quality/evals/results/0.4.2/run-001/result.json \
+  quality/evals/results/<version>/run-001/result.json \
   --run-id run-001 \
   --surface "Codex desktop" \
   --model "exact model identifier" \
@@ -49,17 +55,18 @@ Validate a completed result:
 ```bash
 python quality/eval_audit.py result \
   quality/evals/plugin-evals.json \
-  quality/evals/results/0.4.2/run-001/result.json
+  quality/evals/results/<version>/run-001/result.json
 ```
 
 The validator requires a complete result by default. Use `--allow-incomplete` only while checking a work-in-progress template. It binds a result to the canonical suite hash, requires every case and criterion, rejects unsafe, repeated, or missing transcript paths, and prevents an activation mismatch or observed forbidden behavior from being labeled `pass`. It does not grade prose automatically; the evidence still needs review.
 
-Version tags are gated by the `release_policy` embedded in the hash-bound suite. For 0.4.2, collect three independent complete runs with unique run IDs:
+Version tags are gated by the `release_policy` embedded in the hash-bound suite. For the value in
+`VERSION`, collect three independent complete runs with unique run IDs:
 
 ```bash
 python quality/eval_audit.py release-evidence \
   quality/evals/plugin-evals.json \
-  quality/evals/results/0.4.2
+  quality/evals/results/<version>
 ```
 
 The release gate requires all of the following:

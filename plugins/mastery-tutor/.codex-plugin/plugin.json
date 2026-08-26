@@ -1,0 +1,52 @@
+{
+  "name": "mastery-tutor",
+  "version": "0.5.0",
+  "description": "Codex adapter for Mastery Tutor: guided HTML lessons, hands-on practice, transfer checks, spaced review, and learner-owned local progress.",
+  "author": {
+    "name": "Mastery Tutor Contributors"
+  },
+  "homepage": "https://github.com/fanfanfanfanfan626/mastery-tutor",
+  "repository": "https://github.com/fanfanfanfanfan626/mastery-tutor",
+  "license": "MIT",
+  "keywords": [
+    "ai-teaching",
+    "teaching-skill",
+    "ai-tutor",
+    "agent-skill",
+    "interactive-html",
+    "codex",
+    "education",
+    "learning",
+    "mastery-learning",
+    "spaced-repetition",
+    "machine-learning",
+    "llm",
+    "programming"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Mastery Tutor",
+    "shortDescription": "Guided lessons, hands-on practice, and local progress.",
+    "longDescription": "This adapter loads the portable Mastery Tutor Agent Skills into Codex. Tell it what you want to learn and how much time you have. It plans a route, opens each teaching turn in a local HTML classroom, prepares exercises and interactive labs, checks independent work and later recall, and resumes from learner-owned progress in a new task.",
+    "developerName": "Mastery Tutor Contributors",
+    "category": "Education",
+    "capabilities": [
+      "Interactive",
+      "Local-first",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/fanfanfanfanfan626/mastery-tutor",
+    "brandColor": "#6D5EF8",
+    "composerIcon": "./assets/logo.png",
+    "logo": "./assets/logo.png",
+    "logoDark": "./assets/logo-dark.png",
+    "screenshots": [
+      "./assets/screenshot1.png"
+    ],
+    "defaultPrompt": [
+      "Help me learn this topic from my current level.",
+      "Continue from my saved progress and start with anything due for review.",
+      "Turn this concept into a guided lesson with a hands-on exercise."
+    ]
+  }
+}

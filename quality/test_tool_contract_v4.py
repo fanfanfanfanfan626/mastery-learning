@@ -12,8 +12,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-CREATOR = ROOT / "plugins" / "mastery-learning" / "skills" / "mastery-tool-creator"
-COACH = ROOT / "plugins" / "mastery-learning" / "skills" / "mastery-coach"
+CREATOR = ROOT / "skills" / "mastery-tool-creator"
+COACH = ROOT / "skills" / "mastery-coach"
 SCAFFOLD = CREATOR / "scripts" / "tool_scaffold.py"
 VALIDATE = CREATOR / "scripts" / "validate_tool.py"
 FINALIZE = CREATOR / "scripts" / "finalize_tool.py"
@@ -195,14 +195,17 @@ class ToolContractV4Tests(unittest.TestCase):
             finalized = json.loads(run(
                 FINALIZE,
                 tool,
-                "--sandboxed-by", "codex-workspace-sandbox",
+                "--observer", "codex",
+                "--execution-boundary", "host-sandbox",
                 "--review-notes", "Observed the learner TODO failure and the rubric-linked deterministic feedback.",
                 "--observed-exit-code", observed.returncode,
                 "--observed-output-file", output,
             ).stdout)
             verified_sha = finalized["tool_snapshot"]["sha256"]
             report = json.loads(Path(finalized["report"]).read_text(encoding="utf-8"))
-            self.assertEqual(report["schema_version"], 3)
+            self.assertEqual(report["schema_version"], 4)
+            self.assertEqual(report["observer"], "codex")
+            self.assertEqual(report["execution_boundary"], "host-sandbox")
             self.assertEqual(report["tool_snapshot"]["sha256"], verified_sha)
             self.assertEqual(report["manifest_sha256"], next(item["sha256"] for item in report["tool_snapshot"]["files"] if item["path"] == "tool.json"))
             self.assertEqual(report["inspection"], {"notes": None, "required": False, "result": "not-required"})
@@ -264,11 +267,22 @@ class ToolContractV4Tests(unittest.TestCase):
             )
             output = workspace / "cache-observed.txt"
             output.write_text(observed.stdout + observed.stderr, encoding="utf-8")
-            self.assertEqual(json.loads(run(
-                FINALIZE, tool, "--sandboxed-by", "codex-workspace-sandbox",
+            refused = run(
+                FINALIZE, tool, "--observer", "generic-agent", "--execution-boundary", "not-applicable",
+                "--review-notes", "Observed output exists, but no executable isolation boundary was declared.",
+                "--observed-exit-code", observed.returncode, "--observed-output-file", output,
+                expect=1,
+            )
+            self.assertIn("requires an explicit execution boundary", refused.stderr)
+            finalized = json.loads(run(
+                FINALIZE, tool, "--observer", "claude-code", "--execution-boundary", "isolated-container",
                 "--review-notes", "Observed the learner-facing deterministic failure without runtime caches.",
                 "--observed-exit-code", observed.returncode, "--observed-output-file", output,
-            ).stdout)["status"], "verified")
+            ).stdout)
+            self.assertEqual(finalized["status"], "verified")
+            report = json.loads(Path(finalized["report"]).read_text(encoding="utf-8"))
+            self.assertEqual(report["observer"], "claude-code")
+            self.assertEqual(report["execution_boundary"], "isolated-container")
             cache = tool / "__pycache__"
             cache.mkdir()
             (cache / "mutable_payload.py").write_text("print('changed outside snapshot')\n", encoding="utf-8")

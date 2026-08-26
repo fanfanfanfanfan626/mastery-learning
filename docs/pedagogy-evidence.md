@@ -1,6 +1,9 @@
 # Pedagogy evidence and claim boundary
 
-Mastery Learning uses research-informed design rules. That phrase is deliberate: evidence for a teaching principle does not by itself prove that this particular Codex plugin improves learner outcomes. Product effectiveness requires direct evaluation of the installed plugin with real conversations and, separately, consenting learners.
+Mastery Tutor uses research-informed design rules. That phrase is deliberate: evidence for a
+teaching principle does not by itself prove that this AI teaching Skill improves learner outcomes.
+Product effectiveness requires direct evaluation of each claimed host adapter with real
+conversations and, separately, consenting learners.
 
 ## Evidence map
 
@@ -39,14 +42,16 @@ Mastery Learning uses research-informed design rules. That phrase is deliberate:
 
 The following remain hypotheses until evaluated directly:
 
-1. Evidence gates reduce false mastery declarations compared with an unstructured Codex learning conversation.
+1. Evidence gates reduce false mastery declarations compared with an unstructured AI learning conversation.
 2. Delayed retrieval plus changed-context tasks improve later independent performance.
 3. Local structured handoffs improve cross-task continuity without encouraging transcript surveillance.
 4. Tool-generation gates improve practice quality without leaking assessed answers.
 5. A complete coverage graph plus a short active path reduces omission without increasing overload.
 6. A lightweight experience preset plus adaptive method selection improves usability without locking learners into fixed styles.
 
-Program tests can show that these rules are encoded and that state transitions are correct. Conversation evaluations can show whether Codex follows the rules consistently. Only learner-outcome studies can estimate educational benefit.
+Program tests can show that these rules are encoded and that state transitions are correct.
+Host-specific conversation evaluations can show whether a named AI follows the rules consistently.
+Only learner-outcome studies can estimate educational benefit.
 
 ## Allowed and disallowed claims
 
@@ -62,4 +67,4 @@ Not acceptable without direct learner evidence:
 - “Proven to improve learning.”
 - “Learners retain knowledge significantly longer.”
 - “Scientifically optimized review intervals.”
-- “More effective than teachers, courses, tutors, or ordinary Codex.”
+- “More effective than teachers, courses, tutors, or ordinary AI chat.”

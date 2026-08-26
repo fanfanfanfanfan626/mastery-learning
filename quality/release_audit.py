@@ -17,10 +17,10 @@ if str(ROOT / "quality") not in sys.path:
     sys.path.insert(0, str(ROOT / "quality"))
 
 from build_release import (  # noqa: E402
-    PLUGIN_MANIFEST,
     canonical_release_bytes,
     release_files,
     safe_archive_name,
+    version,
     verify_archive,
 )
 
@@ -53,21 +53,26 @@ def git_blob(reference: str, relative: Path) -> tuple[bytes | None, str | None]:
     return completed.stdout, None
 
 
-def audit_archive(path: Path, *, git_ref: str | None = None, expected_version: str | None = None) -> dict[str, Any]:
+def audit_archive(
+    path: Path,
+    *,
+    kind: str = "bundle",
+    git_ref: str | None = None,
+    expected_version: str | None = None,
+) -> dict[str, Any]:
     path = path.resolve()
     errors: list[str] = []
     if not path.is_file():
         return {"ok": False, "archive": str(path), "errors": ["archive does not exist"]}
 
     try:
-        manifest = json.loads(PLUGIN_MANIFEST.read_text(encoding="utf-8"))
-        version = manifest.get("version")
-        verify_archive(path, version)
+        source_version = version()
+        verify_archive(path, source_version, kind)
     except (OSError, ValueError, KeyError, zipfile.BadZipFile, SystemExit) as exc:
         errors.append(str(exc))
-        version = None
+        source_version = None
 
-    expected_paths = release_files()
+    expected_paths = release_files(kind)
     expected_names = [safe_archive_name(relative) for relative in expected_paths]
     archive_names: list[str] = []
     if not errors:
@@ -100,25 +105,24 @@ def audit_archive(path: Path, *, git_ref: str | None = None, expected_version: s
 
             if expected_version is not None:
                 try:
-                    archived_manifest = json.loads(
-                        archive.read("plugins/mastery-learning/.codex-plugin/plugin.json")
-                    )
-                except (KeyError, json.JSONDecodeError) as exc:
-                    errors.append(f"cannot read archived plugin version: {exc}")
+                    archived_version = archive.read("VERSION").decode("utf-8").strip()
+                except (KeyError, UnicodeDecodeError) as exc:
+                    errors.append(f"cannot read archived VERSION: {exc}")
                 else:
-                    if archived_manifest.get("version") != expected_version:
+                    if archived_version != expected_version:
                         errors.append(
-                            f"archived version {archived_manifest.get('version')!r} "
+                            f"archived version {archived_version!r} "
                             f"does not match expected {expected_version!r}"
                         )
 
     return {
         "ok": not errors,
         "archive": str(path),
+        "kind": kind,
         "sha256": sha256_bytes(path.read_bytes()),
         "files": len(archive_names),
         "source": f"git:{git_ref}" if git_ref else "working-tree",
-        "version": version,
+        "version": source_version,
         "errors": errors,
     }
 
@@ -139,11 +143,12 @@ def compare_archives(paths: list[Path]) -> dict[str, Any]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Audit reproducible Mastery Learning release archives")
+    parser = argparse.ArgumentParser(description="Audit reproducible Mastery Tutor release archives")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     archive_parser = subparsers.add_parser("archive", help="Audit one archive against source bytes")
     archive_parser.add_argument("archive", type=Path)
+    archive_parser.add_argument("--kind", choices=("bundle", "core", "codex"), default="bundle")
     archive_parser.add_argument("--git-ref")
     archive_parser.add_argument("--expected-version")
 
@@ -152,7 +157,12 @@ def main() -> None:
 
     args = parser.parse_args()
     if args.command == "archive":
-        report = audit_archive(args.archive, git_ref=args.git_ref, expected_version=args.expected_version)
+        report = audit_archive(
+            args.archive,
+            kind=args.kind,
+            git_ref=args.git_ref,
+            expected_version=args.expected_version,
+        )
     else:
         if len(args.archives) < 2:
             parser.error("compare requires at least two archives")

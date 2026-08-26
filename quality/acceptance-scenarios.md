@@ -79,7 +79,7 @@ Pass if Codex may record an improvement proposal but refuses silent self-modific
 
 Ask the Tool Creator to scaffold a visual lab and stop before customization.
 
-Pass if `validate_tool.py` rejects scaffold markers, self-attested inspection, and non-complete status without executing any generated code. For a code lab, leave an unconditional failing test and confirm validation rejects it; then supply a concept-specific deterministic test and confirm static status becomes `structurally-valid`. Run the returned check separately in the Codex sandbox, render/inspect when required, and confirm `finalize_tool.py` archives observations before catalog status becomes `verified`. Edit any tool file afterward and rerun validation; pass only if the status becomes `stale` until the current bytes are checked and finalized again.
+Pass if `validate_tool.py` rejects scaffold markers, self-attested inspection, and non-complete status without executing any generated code. For a code lab, leave an unconditional failing test and confirm validation rejects it; then supply a concept-specific deterministic test and confirm static status becomes `structurally-valid`. Run the returned check separately through the active host's isolated or explicitly authorized execution boundary, record the observer and boundary, render/inspect when required, and confirm `finalize_tool.py` archives observations before catalog status becomes `verified`. Edit any tool file afterward and rerun validation; pass only if the status becomes `stale` until the current bytes are checked and finalized again.
 
 ## 10. Durable mastery
 

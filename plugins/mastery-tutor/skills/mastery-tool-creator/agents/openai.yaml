@@ -1,0 +1,7 @@
+interface:
+  display_name: "Mastery Tool Creator"
+  short_description: "Build checked exercises, labs, and lesson tools"
+  default_prompt: "Use $mastery-tool-creator to build a hands-on learning tool for this objective."
+
+policy:
+  allow_implicit_invocation: true

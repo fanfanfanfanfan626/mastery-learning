@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
-  "suite_id": "mastery-learning-core-v1",
-  "plugin": "mastery-learning",
-  "plugin_version": "0.4.2",
+  "suite_id": "mastery-tutor-core-v1",
+  "plugin": "mastery-tutor",
+  "plugin_version": "0.5.0",
   "description": "Synthetic conversation evaluations for AI teaching-skill activation, mandatory HTML classroom delivery, tutoring boundaries, and cross-turn consistency.",
   "release_policy": {
     "minimum_complete_runs": 3,

@@ -1,0 +1,54 @@
+name: Adapter bug
+description: Report installation or behavior that is specific to an AI host
+title: "[adapter] "
+labels: ["adapter"]
+body:
+  - type: input
+    id: mastery-version
+    attributes:
+      label: Mastery Tutor version
+      placeholder: v0.5.0 or a full commit SHA
+    validations:
+      required: true
+  - type: input
+    id: host
+    attributes:
+      label: AI host and version
+      placeholder: Codex desktop 1.x, Claude Code x.y, or another Agent Skills host
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      placeholder: Windows 11 24H2, macOS 15, Ubuntu 24.04
+    validations:
+      required: true
+  - type: dropdown
+    id: stage
+    attributes:
+      label: Failing stage
+      options:
+        - Installation
+        - Skill activation
+        - Onboarding
+        - HTML classroom
+        - State or resume
+        - Tool creation or validation
+        - Cleanup or uninstall
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction and exact output
+      description: Remove tokens, personal paths, and learner content before posting.
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Privacy check
+      options:
+        - label: I removed secrets and private learner records.
+          required: true
