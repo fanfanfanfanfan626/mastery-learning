@@ -9,9 +9,10 @@ The final outcome of learning is an independently usable capability. Therefore t
 1. Translate a vague aspiration into an observable capability and proof artifact.
 2. Estimate the smallest set of prerequisites that changes the near-term plan from background and skippable self-positioning, then refine it through guided work rather than an entrance exam.
 3. Maintain a complete, versioned, sourced coverage graph, a learner-confirmed prerequisite-closed scope, and a short adaptive active path.
-4. Teach through active, turn-based interaction rather than monologue; for a substantial new
-   concept, preserve one complete causal spine from orientation and modeling through guided action
-   and close, while keeping future ideas labeled as previews.
+4. Teach through active, turn-based interaction rather than monologue. For a beginner, create one
+   concrete experience before naming an abstraction, reveal a limitation or contrast, then guide
+   one use of the newly named idea. Preserve one complete causal spine while keeping future ideas
+   and the full field map optional or labeled as previews.
 5. Render every learner-facing turn in one polished, accessible, local HTML classroom. Generate
    executable tools only where they make a relationship or performance observable.
 6. Give feedback at the earliest causal error and allow retries.
@@ -47,11 +48,13 @@ For ML/AI/LLM learning, the built-in pack covers computing, mathematics, classic
 6. Evidence updates mastery and review dates.
 7. A capstone and defense verify integrated capability.
 
-For the built-in ML/AI/LLM map, a learner without prior evidence begins with `ai-landscape`: what
-AI, machine learning, deep learning, foundation models, and LLMs are; how the intended final system
-fits together; and how learned behavior differs from hand-written rules. Prediction precedes error,
-error precedes loss, and loss precedes optimization. A convenient worksheet must never determine
-the conceptual starting point.
+For the built-in ML/AI/LLM map, a learner without prior evidence begins inside `ai-landscape`, but
+does not receive the whole taxonomy as the first lesson. The first turn starts with one familiar
+problem, asks for a prediction, makes the limitation of a hand-written rule visible, and only then
+names learning from examples as machine learning. AI, deep learning, foundation models, and LLMs
+enter later as an optional roadmap and synthesis. Prediction precedes error, error precedes loss,
+and loss precedes optimization. A taxonomy or convenient worksheet must never determine the
+conceptual starting point.
 
 ## Non-goals for the initial release
 
@@ -71,6 +74,9 @@ The research basis and product-specific claim boundary are documented in [pedago
 - state initialization, explicit scope closure, cross-task discovery, serialized writes, interrupted-transaction recovery, derived-state recovery, conservative migration, strict durability transition, failure transition, due-review query, export, and confirmed deletion pass automated tests;
 - unfinished generated tools, incomplete lesson sequences, and placeholder checks fail; static validation never executes generated code; only separately observed sandbox/render results can mark a tool verified;
 - the deterministic classroom renderer escapes learner content, rejects unsafe links, uses a local-only no-script CSP, exposes exactly one current action, and never requires learner-operated servers or internal Skill commands;
+- a beginner classroom puts the concrete problem and current action in the initial viewport, uses
+  real accessible controls for choices, introduces no more than three new terms per turn, and does
+  not use a glossary or taxonomy dump as the opening lesson;
 - the dedicated no-cache classroom server exposes only the current page and shared stylesheet from `.mastery/classroom`; learning profiles, plans, evidence, reviews, registries, and tools are never within its served root;
 - all local servers use OS-assigned loopback ports, retain an exact process/session identity, and are considered stopped only after the assigned port is verified closed;
 - tool objectives, sources, resource links, paths, and check commands are untrusted: HTML is escaped, remote references are credential-free HTTPS, check targets remain inside the tool snapshot, and links/junctions/reparse points fail closed;

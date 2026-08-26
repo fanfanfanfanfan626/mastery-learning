@@ -37,33 +37,42 @@ UI_TEXT = {
         "skip": "Skip to the lesson",
         "brand_label": "Mastery Tutor classroom",
         "tagline": "AI teaching skill · local classroom",
+        "progress": "Current learning turn",
         "action_label": "Now · one action",
         "response_prefix": "Reply in the AI conversation:",
         "sources": "Sources to verify",
         "rail_label": "How to use this classroom",
         "rail": [
-            ("Read the model", "Build the picture before trying to perform."),
+            ("Meet the situation", "Use the concrete example before the technical label."),
             ("Do one action", "The highlighted task is the only required next step."),
             ("Return to the tutor", "The AI checks reasoning; page activity alone is not mastery."),
         ],
         "footer": "Generated locally. No analytics, remote runtime, or hidden mastery claim.",
         "annotated": "annotated example",
+        "choices_label": "Onboarding choices",
+        "choices_fallback": (
+            "Use these controls as a local scratchpad, then reply in the AI conversation. "
+            "Selections are not submitted or saved by this page."
+        ),
     },
     "zh": {
         "skip": "跳到本节内容",
         "brand_label": "Mastery Tutor 本地课堂",
         "tagline": "AI 教学 Skill · 本地课堂",
+        "progress": "当前学习回合",
         "action_label": "现在 · 一个任务",
         "response_prefix": "回到 AI 对话回复：",
         "sources": "参考来源",
         "rail_label": "如何使用这个课堂",
         "rail": [
-            ("先建立模型", "理解整体图景后再动手，不要求凭空作答。"),
+            ("先看具体情境", "先从例子看见差别，再给它补上术语。"),
             ("只做一个任务", "高亮任务是当前唯一必须完成的动作。"),
             ("回到 AI 教练", "AI 检查你的推理；浏览和点击本身不代表掌握。"),
         ],
         "footer": "本地生成；无遥测、无远程运行时，也不会暗中宣称掌握。",
         "annotated": "带教学注释的示例",
+        "choices_label": "入门选择",
+        "choices_fallback": "可在本页勾选作为临时草稿，然后回到 AI 对话回复；本页不会提交或保存选择。",
     },
 }
 
@@ -246,12 +255,23 @@ def render_section(section: Any, index: int, ui: dict[str, Any]) -> str:
             seen_ids.add(item_id)
             prompt = text(item.get("prompt"), f"sections[{index}].items[{item_index}].prompt", maximum=180)
             options = text_list(item.get("options"), f"sections[{index}].items[{item_index}].options", maximum=6)
+            option_controls: list[str] = []
+            group_name = f"choice-{index}-{item_id}"
+            for option_index, option in enumerate(options):
+                control_id = f"choice-{index}-{item_index}-{option_index}"
+                option_controls.append(
+                    f'<label class="choice-option" for="{control_id}">'
+                    f'<input id="{control_id}" type="radio" name="{escape(group_name)}" '
+                    f'value="{escape(option)}"><span>{escape(option)}</span></label>'
+                )
             groups.append(
-                f'<li data-choice-group="{escape(item_id)}"><strong>{escape(prompt)}</strong><ul>'
-                + "".join(f"<li>{escape(option)}</li>" for option in options)
-                + "</ul></li>"
+                f'<fieldset data-choice-group="{escape(item_id)}"><legend>{escape(prompt)}</legend>'
+                f'<div class="choice-options">{"".join(option_controls)}</div></fieldset>'
             )
-        content = f'<ol class="launch-choices">{"".join(groups)}</ol>'
+        content = (
+            f'<div class="launch-choices" role="group" aria-label="{escape(ui["choices_label"])}">'
+            f'{"".join(groups)}</div><p class="choice-fallback">{escape(ui["choices_fallback"])}</p>'
+        )
     else:
         summary = text(section.get("summary"), f"sections[{index}].summary", maximum=1_200)
         href = text(section.get("href"), f"sections[{index}].href", maximum=500)
@@ -316,7 +336,7 @@ def render(spec: dict[str, Any]) -> str:
     title = text(spec.get("title"), "title", maximum=220)
     lead = text(spec.get("lead"), "lead", maximum=1_500)
     course = text(spec.get("course", "Mastery Tutor"), "course", maximum=120)
-    progress = text(spec.get("progress", "Current learning turn"), "progress", maximum=120)
+    progress = text(spec.get("progress", ui["progress"]), "progress", maximum=120)
 
     meta = spec.get("meta", [])
     if not isinstance(meta, list) or len(meta) > 4:
@@ -355,8 +375,6 @@ def render(spec: dict[str, Any]) -> str:
           <p>{escape(action_prompt)}</p>
           <p class="response-hint">{escape(ui["response_prefix"])} {escape(response_hint)}</p>
         </section>"""
-    flow_html = f"{action_html}\n{sections_html}" if kind == "onboarding" else f"{sections_html}\n{action_html}"
-
     references = validate_references(spec.get("references"))
     references_html = ""
     if references:
@@ -391,15 +409,18 @@ def render(spec: dict[str, Any]) -> str:
     <p class="progress-chip">{escape(progress)}</p>
   </header>
   <main id="classroom-main" class="classroom-shell">
-    <header class="lesson-hero">
-      <p class="eyebrow">{escape(eyebrow)}</p>
-      <h1>{escape(title)}</h1>
-      <p class="lead">{escape(lead)}</p>
-      <div class="meta-grid">{"".join(meta_html)}</div>
-    </header>
+    <div class="turn-intro">
+      {action_html}
+      <header class="lesson-hero">
+        <p class="eyebrow">{escape(eyebrow)}</p>
+        <h1>{escape(title)}</h1>
+        <p class="lead">{escape(lead)}</p>
+        <div class="meta-grid">{"".join(meta_html)}</div>
+      </header>
+    </div>
     <div class="lesson-grid">
       <article class="lesson-flow">
-        {flow_html}
+        {sections_html}
         {references_html}
       </article>
       <aside class="learning-rail" aria-label="{escape(ui["rail_label"])}">

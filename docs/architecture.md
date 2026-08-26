@@ -66,13 +66,24 @@ existing review.
 ## Classroom model
 
 Every substantive teaching turn updates one learner-facing local HTML classroom. The page carries
-orientation, explanation, examples, visual structure, a single next action, and progress context.
-Chat acts as a short handoff, not a second competing lesson.
+one concrete situation, a prediction or choice, an observable reveal, the smallest needed
+explanation, a single next action, and progress context. Beginner turns put experience before
+terminology and keep the complete field map behind progressive disclosure. Chat acts as a short
+handoff, not a second competing lesson.
 
 Static classroom rendering remains available when a host cannot create or inspect a richer tool.
 Reusable dynamic artifacts go through Tool Creator. Both surfaces escape learner-controlled text,
 avoid remote dependencies, provide a non-script fallback, support narrow screens and reduced motion,
 and use loopback HTTP rather than `file://` when a browser is required.
+
+## Optional teaching organization
+
+The core remains fully usable by one agent. A capable host may prepare a substantial lesson through
+bounded planning, subject review, classroom production, and independent assurance. These are
+temporary work roles, not learner-facing personas. They exchange one `TeachingTurnSpec`; the Coach
+remains the integration owner and sole learner-facing voice, and only the state owner may update
+`.mastery/`. Ordinary feedback stays single-agent. Failure, timeout, or missing orchestration
+capability falls back to the same single-agent contract rather than blocking the lesson.
 
 ## Host adapters
 

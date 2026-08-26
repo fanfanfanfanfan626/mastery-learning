@@ -11,7 +11,7 @@
     "critical_case_ids": [
       "follow-up-onboarding-one-reply",
       "follow-up-rich-post-orientation-lesson",
-      "follow-up-ai-course-starts-with-landscape",
+      "follow-up-ai-course-starts-with-experience",
       "follow-up-feedback-stays-in-classroom",
       "follow-up-resume-from-another-directory",
       "follow-up-confidence-is-not-mastery",
@@ -84,8 +84,8 @@
       "class": "follow-up",
       "messages": [
         {"role": "user", "content": "我想从零开始学习机器学习和大模型，每天20到40分钟，最好有优美的互动网页和讲清楚的代码。"},
-        {"role": "assistant", "content": "HTML 全景课已完成：我们区分了规则系统、机器学习、深度学习和大模型；下一步会从 Python 的值、名字、顺序执行与输出进入第一个动态代码课。"},
-        {"role": "user", "content": "全景已经清楚了。现在开始动态代码课；互动网页优先，代码要有教学注释，作业可选。"}
+        {"role": "assistant", "content": "HTML 课堂已经通过垃圾邮件例子讲清了手写规则与从例子学习的区别；完整领域地图仍是可选路线图。下一步会从 Python 的值、名字、顺序执行与输出进入第一个动态代码课。"},
+        {"role": "user", "content": "规则和学习的区别已经清楚了。现在开始动态代码课；互动网页优先，代码要有教学注释，作业可选。"}
       ],
       "expected": {
         "activate": ["mastery-coach", "mastery-tool-creator"],
@@ -101,7 +101,7 @@
       }
     },
     {
-      "id": "follow-up-ai-course-starts-with-landscape",
+      "id": "follow-up-ai-course-starts-with-experience",
       "class": "follow-up",
       "messages": [
         {"role": "user", "content": "我想系统学习机器学习、人工智能和大模型，最终能训练、理解和改造模型。"},
@@ -112,19 +112,20 @@
         "activate": ["mastery-coach"],
         "must_not_activate": ["mastery-tool-creator"],
         "criteria": [
-          {"id": "starts-with-ai-landscape", "description": "Begins with the AI/ML/deep-learning/foundation-model/LLM landscape and the learner's end-to-end destination before downstream mechanisms."},
-          {"id": "rule-versus-learned", "description": "Uses one concrete contrast between hand-written rules and behavior learned from examples."},
+          {"id": "starts-with-concrete-experience", "description": "Begins with one familiar problem and lets the learner predict or choose before introducing the first technical term; the full AI/ML/DL/foundation-model/LLM map is deferred or optional."},
+          {"id": "rule-versus-learned", "description": "Makes a hand-written rule visibly fail, then names learning from examples as machine learning after the learner has seen the need."},
           {"id": "html-classroom-auto-delivery", "description": "Renders, starts, and opens the shared classroom internally, with no path, port, shell command, Skill invocation, or validation log assigned to the learner."},
-          {"id": "one-orientation-action", "description": "Ends with one classification or mapping action that requires no unmodeled algebra or code."}
+          {"id": "one-mental-move", "description": "Ends with one small changed-example action that applies the just-named idea and requires no unmodeled algebra, code, or taxonomy memorization."},
+          {"id": "beginner-language", "description": "Uses short conversational sentences, no more than three new terms, and explains any abstraction with an example, counterexample, and visual or observable state."}
         ],
-        "forbidden": ["opens the course with loss, gradient descent, tensor shapes, attention, or a Python worksheet", "asks the learner to paste a generated submission summary"]
+        "forbidden": ["opens the course with a taxonomy or glossary dump", "opens the course with loss, gradient descent, tensor shapes, attention, or a Python worksheet", "asks the learner to paste a generated submission summary"]
       }
     },
     {
       "id": "follow-up-feedback-stays-in-classroom",
       "class": "follow-up",
       "messages": [
-        {"role": "user", "content": "继续 AI 全景课，给我一个规则系统与学习系统的例子。"},
+        {"role": "user", "content": "继续刚才的课，给我一个规则系统与学习系统的例子。"},
         {"role": "assistant", "content": "HTML 课堂已更新，页面展示了一个人工规则系统和一个从样本训练的系统。"},
         {"role": "user", "content": "我在 HTML 课堂里判断这个系统属于机器学习，因为它用了很多 if 规则。"}
       ],

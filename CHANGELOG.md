@@ -12,6 +12,12 @@
   Codex adapter, and maintainer bundle distributions.
 - Added a tag-only release workflow with evaluation evidence gates, cross-platform byte comparison,
   checksums, provenance attestations, and GitHub Release upload.
+- Rebuilt beginner teaching around concrete experience, prediction, visible contrast, concept
+  naming, guided use, and transfer instead of opening with a taxonomy or glossary.
+- Made the classroom learning-first: real accessible choice controls, a compact initial viewport,
+  progressive depth, and one immediately visible learner action.
+- Added an optional bounded multi-agent preparation protocol for substantial lessons while keeping
+  one learner-facing tutor, one state writer, and a complete single-agent fallback.
 
 ## Unreleased
 
@@ -51,9 +57,9 @@
 - Separated the mutable classroom display layer from verified executable teaching tools, and made
   the Coach internally choose an available loopback port, open the browser, and own server cleanup
   instead of assigning paths, commands, internal Skills, or result-copy chores to learners.
-- Added `ai-landscape` to every built-in target profile and made domain orientation the mandatory
-  start for new ML/AI/LLM learners, preventing loss, gradients, tensor shapes, attention, or a
-  convenient Python worksheet from becoming an unexplained first lesson.
+- Added `ai-landscape` to every built-in target profile and made its first beginner turn start from
+  a familiar problem and the difference between written rules and learning from examples. The full
+  AI/ML/DL/foundation-model/LLM map is now a later synthesis rather than the opening glossary.
 - Repositioned the project as an **AI Teaching Skill** with a Codex-tested reference adapter,
   expanded teaching/agent/HTML discovery metadata, and kept unverified cross-platform compatibility
   out of the claims.

@@ -17,6 +17,12 @@ A full adapter provides:
 - loading of both Skills and recovery in a new agent session;
 - reliable process cleanup and install/uninstall lifecycle hooks.
 
+Subagent creation is an optional quality accelerator, not a Full-adapter requirement. When a host
+provides it, the tutor may delegate bounded planning, subject review, rendering, or assurance for a
+substantial lesson. It must retain one learner-facing lead, one state writer, a shared turn contract,
+and a single-agent fallback; ordinary feedback must not spawn an organization merely because the
+capability exists.
+
 ### Guided
 
 A guided adapter can persist state and render HTML artifacts but may require the learner to open a

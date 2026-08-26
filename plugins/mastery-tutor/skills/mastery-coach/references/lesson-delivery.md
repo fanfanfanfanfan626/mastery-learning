@@ -3,6 +3,8 @@
 Use this contract for a substantial first encounter with a concept. The shared HTML classroom is
 the learner-facing interface for every turn. A verified lesson artifact may supply executable
 interaction, but it never owns planning, feedback, evidence, or mastery.
+For a novice or any unencountered abstraction, apply
+[novice-first-teaching.md](novice-first-teaching.md) to every constituent turn.
 
 ## Establish the learning boundary
 
@@ -11,12 +13,14 @@ lesson. Label motivating later ideas as a **preview**. A preview may create orie
 interest, but it cannot produce evidence for the previewed concept or silently bypass its
 prerequisites.
 
-For a learner starting from zero, do not require syntax, notation, or operations that were neither
+For a learner starting from zero, start with a concrete learner problem, not a taxonomy, glossary,
+or map of the field. Do not require syntax, notation, or operations that were neither
 self-positioned as usable nor modeled first. Self-positioning remains a hypothesis. Use a concrete
 domain example early, but keep the recorded target honest. In ML/AI/LLM learning, establish the
-AI-to-ML-to-deep-learning-to-LLM landscape and the learner's destination before introducing a
-model-and-loss example. Loss answers “how wrong was the prediction?” and is meaningless as an
-opening concept before prediction, data, and learned behavior have a purpose.
+AI landscape from a learner problem and reveal its labels only as they resolve the experience; do
+not recite AI-to-ML-to-deep-learning-to-LLM as the opening. Establish the learner's destination
+before introducing a model-and-loss example. Loss answers “how wrong was the prediction?” and is
+meaningless as an opening concept before prediction, data, and learned behavior have a purpose.
 
 Use a **zero-baseline ladder** instead of compressing prerequisites into comments. For programming,
 establish values, names and assignment, sequential execution, and visible output before requiring
@@ -32,20 +36,20 @@ for orientation, modeling, manipulation, one guided attempt, and a close; do not
 an arbitrary word count. For shorter sessions, preserve the same causal spine and defer extension.
 
 Use **progressive disclosure** so the core path stays scannable while derivations, terminology,
-sources, and optional depth remain available. Introduce no more than 3–5 interacting new elements
-before learner action.
+sources, and optional depth remain available. Introduce no more than 3–5 interacting elements
+before learner action, and no more than three new terms in a beginner turn.
 
 ## Compose the lesson
 
 Use this sequence flexibly:
 
-1. State the outcome, relevance to the learner's goal, estimated time, current target, and preview.
-2. Start from a concrete situation or observable phenomenon.
-3. Give the smallest mental model and define new terms.
-4. Show one complete **worked example**, including intermediate states rather than only the answer.
-5. When code is part of the outcome, provide **annotated code** that explains new syntax and causal
+1. Start from one concrete learner problem or observable phenomenon without unexplained terminology.
+2. State the one mental move and the immediate useful outcome; keep previews optional.
+3. Contrast an example and close counterexample, then show one visual of the deciding difference.
+4. Name at most three new terms and give the smallest mental model they label.
+5. Show one complete **worked example**, including intermediate states rather than only the answer.
+6. When code is part of the outcome, provide **annotated code** that explains new syntax and causal
    decisions. Prefer explicit loops and named intermediate values before compact idioms.
-6. Expose a synchronized visual, table, trace, or experiment when state changes matter.
 7. Complete one step with the learner, then invite one coherent guided action.
 8. Give feedback at the earliest causal error and fade support.
 9. Add one changed-condition transfer challenge only after the base model is usable.

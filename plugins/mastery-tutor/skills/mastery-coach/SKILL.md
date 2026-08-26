@@ -26,16 +26,20 @@ transferable capability--not content consumption or apparent fluency.
 11. Separate research-informed design from product-effect evidence. Never claim this plugin is proven to improve learning without direct learner-outcome evaluation.
 12. Render every learner-facing onboarding, lesson, feedback, review, and close through the shared
     HTML classroom; never make the learner operate servers, internal Skills, paths, or validation.
+13. For a novice, begin from a learner problem and concrete experience, then introduce at most three
+    terms around one mental move; never use the first turn as a taxonomy dump.
 
 Read [learning-contract.md](references/learning-contract.md) for the complete failure-mode and interaction rules before running a first session.
 Read [html-classroom.md](references/html-classroom.md) before emitting any learner-facing teaching
 turn. The classroom requirement is a product invariant, not a learning-style preference.
+Read [novice-first-teaching.md](references/novice-first-teaching.md) before teaching a new learner or
+an unencountered concept; it owns the detailed beginner turn and optional coordination contract.
 
 ## Route the request
 
-- **New goal or vague goal**: follow [diagnostic-and-planning.md](references/diagnostic-and-planning.md); default to guided teaching, not an entrance exam.
+- **New goal or vague goal**: follow [diagnostic-and-planning.md](references/diagnostic-and-planning.md) and, without observed usable schema, [novice-first-teaching.md](references/novice-first-teaching.md); default to guided teaching, not an entrance exam.
 - **Continue learning**: locate the durable learner workspace, validate it, then read `.mastery/profile.json`, `.mastery/plan.json`, `.mastery/mastery.json`, and due reviews before choosing today's work.
-- **Teach a concept**: follow [teaching-session.md](references/teaching-session.md).
+- **Teach a concept**: follow [teaching-session.md](references/teaching-session.md); for a new concept, also follow [novice-first-teaching.md](references/novice-first-teaching.md).
 - **Deliver any teaching turn**: render it with `scripts/render_classroom.py` under [html-classroom.md](references/html-classroom.md).
 - **Deliver a substantial new or dynamic lesson**: also read [lesson-delivery.md](references/lesson-delivery.md); keep one current target, label previews, and link a verified `lesson_lab` from the classroom when executable interaction materially improves learning.
 - **Choose a teaching or review method**: follow [method-repertoire.md](references/method-repertoire.md); select methods from the learner's current need, not novelty or a fixed style label.
@@ -67,17 +71,18 @@ For resume requests, run `locate` first when the learner did not name a workspac
 
 ## Run the learning loop
 
-For a new learner or an unencountered concept, default to guided mode: show one concrete model or
-worked fragment, complete one step together, then fade support. Do not start with a scored quiz,
+For a new learner or an unencountered concept, default to guided mode: start from one concrete
+learner problem, show a worked fragment, complete one step together, then fade support. Do not start with a scored quiz,
 percentage rubric, no-search rule, or a sequence of prerequisite tests. Offer fast placement only
 when the learner explicitly asks to skip familiar material.
 
 For a substantial first encounter, apply [lesson-delivery.md](references/lesson-delivery.md). Do not
 require hidden prerequisites. A motivating preview of a later concept is not today's evidence
 target. Size the lesson to the learner's session budget, and prefer a complete worked trace plus one
-guided action over a short explanation followed by a worksheet. For a new ML/AI/LLM learner, begin
-with the `ai-landscape` orientation and the learner's end-to-end destination; do not open with loss,
-gradients, tensor shapes, or another downstream mechanism merely because it makes an easy exercise.
+guided action over a short explanation followed by a worksheet. For a new ML/AI/LLM learner, keep
+`ai-landscape` as the internal first target but open with a concrete learner problem, not the full
+AI/ML/deep-learning/LLM taxonomy; do not start with loss, gradients, tensor shapes, or another
+downstream mechanism merely because it makes an easy exercise.
 
 For each session:
 

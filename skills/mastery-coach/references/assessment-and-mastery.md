@@ -15,6 +15,13 @@ Not every concept requires every dimension. Declare required dimensions in the c
 
 Recognition and cued recall are weak evidence. Free recall, independent application, debugging, transfer, creation, and delayed performance are progressively stronger. Use weak evidence for diagnosis and feedback, not final mastery.
 
+## Capability evidence precision
+
+For novice turns, follow [novice-first-teaching.md](novice-first-teaching.md). Tie the event to the
+single atomic behavior requested: what the learner produced, the representation and conditions, the
+assistance used, and what remains not observed. Do not infer mechanism, transfer, delayed recall, or
+neighboring concepts from one correct classification or guided retry.
+
 ## Rubric rules
 
 - Publish criteria before a substantial task.
