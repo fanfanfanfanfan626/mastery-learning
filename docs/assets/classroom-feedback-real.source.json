@@ -4,14 +4,11 @@
   "kind": "feedback",
   "language": "zh-CN",
   "course": "Mastery Tutor",
-  "progress": "第 1 课 · 第一次修正",
-  "eyebrow": "先修正最早的一步",
+  "progress": "垃圾邮件规则 · 再看一次",
+  "eyebrow": "换一个判断依据",
   "title": "可疑，不等于这条规则会拦截",
   "lead": "我们保留原来的邮件和规则，只把判断依据换回题目真正检查的文字。",
-  "meta": [
-    {"label": "当前动作", "value": "修正一次判断"},
-    {"label": "提示", "value": "第 1 级，共 5 级"}
-  ],
+  "meta": [],
   "sections": [
     {
       "type": "callout",
@@ -27,16 +24,12 @@
         ["你", "它看起来是否可疑", "可疑"],
         ["程序", "标题是否含有‘中奖’", "等你重新判断"]
       ]
-    },
-    {
-      "type": "details",
-      "title": "为什么暂时不直接给答案",
-      "body": ["这一步只把注意力拉回规则；最后的拦截或放行仍由你完成。"]
     }
   ],
   "teaching_turn": {
     "schema_version": 1,
     "learner_problem": "为什么有些垃圾邮件能绕过手写规则？",
+    "learner_promise": "为什么有些垃圾邮件能绕过规则？",
     "current_target": "根据一条明确规则修正对新例子的判断。",
     "mental_move": "repair",
     "new_terms": [],
@@ -79,8 +72,15 @@
     "solution_revealed": false
   },
   "action": {
-    "title": "重新判断同一封邮件",
+    "title": "再看一眼这封邮件",
     "prompt": "仍按‘标题含有中奖才拦截’这条规则，‘限时福利，马上领取’会被拦截还是放行？只写结果和一行依据。",
-    "response_hint": "格式：结果 + 一行依据"
+    "response_hint": "先写结果，再用一句话说说你看的是哪几个字",
+    "response": {
+      "type": "long-text",
+      "label": "你的判断",
+      "placeholder": "结果是……，因为标题里……",
+      "max_length": 500,
+      "submit_label": "交给老师看看"
+    }
   }
 }

@@ -57,12 +57,17 @@ Do not translate the internal curriculum map into a learner-facing list. Avoid s
 nouns such as “AI、机器学习、深度学习、基础模型、大语言模型” before the learner has a problem
 that needs those distinctions. Precision comes from the example and boundary, not from denser jargon.
 
+Apply [teacher-voice.md](teacher-voice.md) after the pedagogy check. The internal turn object may be
+technical; the rendered lesson must not sound like that object or narrate its rules.
+
 ## TeachingTurnSpec
 
 Before rendering a beginner turn, compose exactly one `TeachingTurnSpec`. It is the internal
 coordination boundary, not a learner-facing schema:
 
 - `learner_problem`: the concrete tension or desired result in the learner's language;
+- `learner_promise`: one short, natural question or outcome carried from onboarding; put the exact
+  phrase in the first lesson title or lead so a supporting example cannot silently replace the goal;
 - `current_target`: one observable capability, with previews excluded;
 - `mental_move`: exactly one verb such as notice, predict, classify, trace, choose, repair, or explain;
 - `new_terms`: zero to three unfamiliar terms, with a short plain-language meaning for each;
@@ -131,6 +136,7 @@ response, then write state. The learner-facing behavior and evidence standard do
 Before rendering, answer yes to all of these:
 
 - Does the learner meet the problem or experience before its terminology?
+- Does the title or lead visibly keep the learner promise?
 - Is there exactly one mental move and one highlighted action?
 - Are there no more than three genuinely new terms?
 - For an abstraction, do the example, counterexample, and visual expose the same deciding feature?

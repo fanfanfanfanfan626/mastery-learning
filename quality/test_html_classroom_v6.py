@@ -9,6 +9,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from urllib.error import HTTPError
+from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 
@@ -71,7 +72,7 @@ def orientation_spec() -> dict[str, object]:
         "progress": "第 1 步 · 先看规则会漏掉什么",
         "eyebrow": "先遇到问题，再给它名字",
         "title": "为什么有些垃圾邮件能绕过规则？",
-        "lead": "今天只做一件事：看清电脑是在照规则办事，还是能从例子里改变判断。",
+        "lead": "我们从‘为什么有些垃圾邮件能绕过规则？’开始。先看清电脑是在照规则办事，还是能从例子里改变判断。",
         "meta": [
             {"label": "预计时间", "value": "5 分钟"},
             {"label": "新词", "value": "暂时 0 个"},
@@ -101,6 +102,7 @@ def orientation_spec() -> dict[str, object]:
         "teaching_turn": {
             "schema_version": 1,
             "learner_problem": "为什么有些垃圾邮件能绕过手写规则？",
+            "learner_promise": "为什么有些垃圾邮件能绕过规则？",
             "current_target": "根据一条明确规则追踪系统对新例子的判断。",
             "mental_move": "predict",
             "new_terms": [],
@@ -212,8 +214,8 @@ class HtmlClassroomV6Tests(unittest.TestCase):
             output = Path(temporary) / "classroom"
             run_render(spec, output)
             page = (output / "index.html").read_text(encoding="utf-8")
-            self.assertIn("AI 教学 Skill · 本地课堂", page)
-            self.assertIn("当前学习回合", page)
+            self.assertIn("陪你一步一步学会", page)
+            self.assertIn("接着往下学", page)
             self.assertNotIn("Current learning turn", page)
             self.assertIn('data-classroom-block="choices"', page)
             self.assertIn('data-classroom-block="details"', page)
@@ -221,10 +223,12 @@ class HtmlClassroomV6Tests(unittest.TestCase):
             self.assertLess(page.index('data-classroom-action="one"'), page.index('data-classroom-block="details"'))
             self.assertIn('<fieldset data-choice-group="pace">', page)
             self.assertIn('<legend>节奏</legend>', page)
-            self.assertIn('type="radio" name="choice-0-pace"', page)
+            self.assertIn('type="radio" name="choice.pace"', page)
             self.assertIn('<label class="choice-option" for="choice-0-0-0">', page)
             self.assertIn('class="choice-fallback"', page)
-            self.assertNotIn("<form", page.lower())
+            self.assertIn('<form class="classroom-response" method="post" action="/respond"', page)
+            self.assertIn('name="choice.pace"', page)
+            self.assertIn(" checked", page)
             self.assertNotIn("Now · one action", page)
 
     def test_new_material_is_modeled_before_the_single_action(self) -> None:
@@ -262,11 +266,12 @@ class HtmlClassroomV6Tests(unittest.TestCase):
             css = (output / "assets" / "classroom.css").read_text(encoding="utf-8")
             self.assertIn('<div class="launch-choices" role="group" aria-label="Onboarding choices">', page)
             self.assertIn('<fieldset data-choice-group="route">', page)
-            self.assertIn('id="choice-0-0-0" type="radio" name="choice-0-route"', page)
+            self.assertIn('id="choice-0-0-0" type="radio" name="choice.route"', page)
             self.assertIn('&lt;guided&gt;', page)
             self.assertNotIn('<guided>', page)
-            self.assertIn("Selections are not submitted or saved by this page.", page)
-            self.assertIn("form-action 'none'", page)
+            self.assertIn("The recommended choices are already selected.", page)
+            self.assertIn("form-action 'self'", page)
+            self.assertIn('type="submit"', page)
             self.assertNotIn("<script", page.lower())
             self.assertIn("overflow-wrap: anywhere", css)
             self.assertIn("grid-template-columns: auto minmax(0, 1fr)", css)
@@ -315,6 +320,7 @@ class HtmlClassroomV6Tests(unittest.TestCase):
             run_render(valid, root / "valid")
             page = (root / "valid" / "index.html").read_text(encoding="utf-8")
             self.assertRegex(page, r'data-teaching-turn-sha256="[0-9a-f]{64}"')
+            self.assertRegex(page, r'data-response-contract-sha256="[0-9a-f]{64}"')
 
             too_many_terms = orientation_spec()
             too_many_terms["teaching_turn"]["new_terms"] = [
@@ -332,6 +338,18 @@ class HtmlClassroomV6Tests(unittest.TestCase):
             mismatched_visual["teaching_turn"]["visual"]["deciding_feature"] = "邮件长度"
             failed = run_render(mismatched_visual, root / "visual", expect=1)
             self.assertIn("share one deciding_feature", failed.stderr)
+
+            drifted = orientation_spec()
+            drifted["teaching_turn"]["learner_promise"] = "为什么孩子会像父母？"
+            failed = run_render(drifted, root / "drifted", expect=1)
+            self.assertIn("learner_promise must appear exactly", failed.stderr)
+
+    def test_renderer_rejects_internal_control_voice_in_visible_copy(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            spec = orientation_spec()
+            spec["lead"] = "学习档案已通过校验，现在开始本轮目标。"
+            failed = run_render(spec, Path(temporary) / "internal-voice", expect=1)
+            self.assertIn("internal teaching-control language", failed.stderr)
 
     def test_feedback_preserves_attempt_context_and_enforces_hint_boundary(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -354,10 +372,10 @@ class HtmlClassroomV6Tests(unittest.TestCase):
             run_render(feedback, root / "feedback")
             page = (root / "feedback" / "index.html").read_text(encoding="utf-8")
             css = (root / "feedback" / "assets" / "classroom.css").read_text(encoding="utf-8")
-            for marker in ["刚才的任务", "你的回答", "最早需要修正的地方", "本轮提示 · 1/5"]:
+            for marker in ["刚才那道题", "你刚才的想法", "问题出在这里", "给你一个提示 · 1/5"]:
                 self.assertIn(marker, page)
             self.assertLess(page.index('data-classroom-action="one"'), page.index('class="lesson-hero"'))
-            self.assertLess(page.index("刚才的任务"), page.index(feedback["action"]["prompt"]))
+            self.assertLess(page.index("刚才那道题"), page.index(feedback["action"]["prompt"]))
             self.assertIn('body[data-turn-kind="feedback"] .turn-intro', css)
             self.assertIn('body[data-turn-kind="feedback"] .feedback-context', css)
 
@@ -380,6 +398,19 @@ class HtmlClassroomV6Tests(unittest.TestCase):
             leaked_format["action"]["response_hint"] = "例如：放行，因为……"
             failed = run_render(leaked_format, root / "leaked-format", expect=1)
             self.assertIn("must not reveal answer option", failed.stderr)
+
+            leaked_placeholder = orientation_spec()
+            leaked_placeholder["kind"] = "feedback"
+            leaked_placeholder["page_id"] = "spam-rule-leaked-placeholder"
+            leaked_placeholder["teaching_turn"]["mental_move"] = "repair"
+            leaked_placeholder["feedback_context"] = dict(feedback["feedback_context"])
+            leaked_placeholder["action"]["response_hint"] = "格式：结果 + 一行依据"
+            leaked_placeholder["action"]["response"] = {
+                "type": "long-text",
+                "placeholder": "例如：放行，因为……",
+            }
+            failed = run_render(leaked_placeholder, root / "leaked-placeholder", expect=1)
+            self.assertIn("action.response.placeholder must not reveal", failed.stderr)
 
     def test_dedicated_server_is_no_cache_and_cannot_expose_learning_state(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -441,6 +472,78 @@ class HtmlClassroomV6Tests(unittest.TestCase):
             with socket.socket() as probe:
                 probe.settimeout(1)
                 self.assertNotEqual(probe.connect_ex(("127.0.0.1", server["port"])), 0)
+
+    def test_classroom_form_submits_one_bound_packet_and_consume_deletes_it(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary) / "classroom"
+            run_render(orientation_spec(), output)
+            contract = json.loads((output / ".response-contract.json").read_text(encoding="utf-8"))
+            process = subprocess.Popen(
+                [sys.executable, "-u", str(SERVER), "--root", str(output), "--port", "0"],
+                cwd=ROOT,
+                env={**os.environ, "PYTHONUTF8": "1", "PYTHONDONTWRITEBYTECODE": "1"},
+                text=True,
+                encoding="utf-8",
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+            try:
+                assert process.stdout is not None
+                server = json.loads(process.stdout.readline())
+                form = {
+                    "page_id": contract["page_id"],
+                    "contract_id": contract["contract_id"],
+                    "form_token": contract["form_token"],
+                    "answer": "放行",
+                }
+                request = Request(
+                    f'http://127.0.0.1:{server["port"]}/respond',
+                    data=urlencode(form).encode("utf-8"),
+                    headers={
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        "Origin": "null",
+                    },
+                    method="POST",
+                )
+                with urlopen(request, timeout=5) as response:
+                    confirmation = response.read().decode("utf-8")
+                    self.assertIn("收到啦", confirmation)
+                with self.assertRaises(HTTPError) as hidden:
+                    urlopen(f'http://127.0.0.1:{server["port"]}/.learner-response.json', timeout=5)
+                self.assertEqual(hidden.exception.code, 404)
+
+                consumed = subprocess.run(
+                    [
+                        sys.executable, str(SERVER), "--root", str(output),
+                        "--consume-response", "--page-id", contract["page_id"],
+                    ],
+                    cwd=ROOT,
+                    env={
+                        **os.environ,
+                        "PYTHONUTF8": "0",
+                        "PYTHONIOENCODING": "cp1252",
+                        "PYTHONDONTWRITEBYTECODE": "1",
+                    },
+                    text=True,
+                    encoding="utf-8",
+                    capture_output=True,
+                    check=False,
+                )
+                self.assertEqual(consumed.returncode, 0, consumed.stderr)
+                packet = json.loads(consumed.stdout)["response"]
+                self.assertEqual(packet["fields"], {"answer": "放行"})
+                self.assertFalse((output / ".learner-response.json").exists())
+            finally:
+                process.terminate()
+                try:
+                    process.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    process.kill()
+                    process.wait(timeout=5)
+                if process.stdout is not None:
+                    process.stdout.close()
+                if process.stderr is not None:
+                    process.stderr.close()
 
     def test_workspace_renderer_refuses_a_symlink_escape(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

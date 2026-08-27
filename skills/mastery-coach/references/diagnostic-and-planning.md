@@ -20,8 +20,11 @@ learner already supplied. Include at most these six groups:
    constraints. Do not ask whether teaching should use HTML: the shared classroom is mandatory.
 6. **Persistence** -- proposed stable path, custom path, or no local memory, plus a one-sentence explanation of `.mastery/` and the path-only registry.
 
-Allow `start now` or all fields skipped. In that case use conservative beginner defaults and refine
-them from teaching. A learner who says `zero background` need not label advanced capabilities.
+Preselect one clearly marked recommended default in every group. Submit the packet through the
+classroom's local response form; selections are not a scratchpad. Allow `start now` or all defaults
+unchanged. In that case use conservative beginner defaults and refine them from teaching. A learner
+who says `zero background` need not label advanced capabilities. If the learner later says only
+“好了”, consume the page's bound response packet instead of guessing or silently choosing defaults.
 Treat one launch packet as setup, not as a violation of the one-cognitive-task rule that governs
 teaching turns.
 
@@ -48,6 +51,10 @@ After the state operations, render the provisional starting point and first guid
 the same classroom update. Do not ask another setup question, repeat workspace consent, or
 administer an entrance test. Apply [novice-first-teaching.md](novice-first-teaching.md) when no usable
 schema has been observed.
+
+Write one short `learner_promise` from the requested outcome before choosing the first example. Keep
+that exact natural phrase in the first lesson title or lead. A prerequisite or analogy may support
+the promise, but it may not become a different unexplained course opening.
 
 For an ML/AI/LLM goal with no prior evidence, put `ai-landscape` first in the active path and begin
 from a concrete learner problem such as why a chat assistant can sound confident and still be wrong.

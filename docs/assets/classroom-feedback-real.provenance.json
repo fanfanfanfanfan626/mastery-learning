@@ -3,19 +3,19 @@
   "description": "Byte-level provenance for the real classroom renderer screenshot used by both READMEs.",
   "source": {
     "path": "docs/assets/classroom-feedback-real.source.json",
-    "sha256": "a0d66c9a3bdddc01b8b54153260c8502c8dd2128864105fafc793f600481b8d5"
+    "sha256": "da2b2acfd2c180c10e9e04cbc0886d5515ea087c9f7687583653b1dd43b204bb"
   },
   "renderer": {
     "path": "skills/mastery-coach/scripts/render_classroom.py",
-    "sha256": "dae1172ac7e29730f234e493f775626992341c3e4ba05506d549024c623116d0"
+    "sha256": "1440e4c9a9889aa3d1ac459c574597dc5c24a685478d1c520fe942cf67f602b0"
   },
   "stylesheet": {
     "path": "skills/mastery-coach/assets/classroom-template/classroom.css",
-    "sha256": "24359cc4ea539d1a6a33f9d047c0918167eed65d8503a270b05bc5ad5a78171e"
+    "sha256": "8f01c7a4431737e7f9e0e4e460841175a0193497f77de60a2012630c19ba78a1"
   },
   "image": {
     "path": "docs/assets/classroom-feedback-real.png",
-    "sha256": "eb2afa179d46bb3ad0e9e0ed8691c137d6cf916f4007a81767ada183dfe48d31",
+    "sha256": "deb843c6fe9793825da55026c5a5e7c8b9914a1b919f9c0914b79436259a1dca",
     "width": 1280,
     "height": 720
   },

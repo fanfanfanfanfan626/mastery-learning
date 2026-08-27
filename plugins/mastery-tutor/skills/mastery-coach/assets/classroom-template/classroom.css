@@ -36,13 +36,13 @@ body {
 }
 
 main, section, article, aside, p, li, dd, dt, h1, h2, h3, a, code,
-fieldset, legend, label, span, strong, summary, input {
+fieldset, legend, label, span, strong, summary, input, textarea, button {
   overflow-wrap: anywhere;
 }
 
 a { color: var(--violet-deep); text-decoration-thickness: .1em; text-underline-offset: .2em; }
 a:hover { text-decoration-thickness: .16em; }
-a:focus-visible, [tabindex]:focus-visible { outline: 3px solid var(--amber); outline-offset: 4px; }
+a:focus-visible, [tabindex]:focus-visible, input:focus-visible, textarea:focus-visible, button:focus-visible { outline: 3px solid var(--amber); outline-offset: 4px; }
 .skip-link { position: fixed; z-index: 20; top: -5rem; left: 1rem; padding: .7rem 1rem; color: white; background: #111827; border-radius: 999px; }
 .skip-link:focus { top: 1rem; }
 
@@ -155,6 +155,17 @@ pre { margin: 0; overflow-x: auto; padding: 1.2rem; font: .9rem/1.7 var(--mono);
 .choice-option input { width: 1.05rem; height: 1.05rem; margin: .2rem 0 0; accent-color: var(--violet); }
 .choice-option input:checked + span { color: var(--violet-deep); font-weight: 800; }
 .choice-fallback { margin: .75rem 0 0; color: var(--muted); font-size: .88rem; }
+.classroom-response { min-width: 0; }
+.answer-field { display: grid; gap: .55rem; min-width: 0; margin: 1rem 0 0; padding: 0; border: 0; color: #f8f7ff; font-weight: 750; }
+.answer-field legend, .answer-field > span { margin-bottom: .35rem; color: #e8e4ff; font-size: .9rem; font-weight: 800; }
+.answer-field input[type="text"], .answer-field textarea { width: 100%; border: 1px solid rgb(255 255 255 / 28%); border-radius: 13px; padding: .8rem .9rem; color: #17152b; background: #fff; font: inherit; resize: vertical; }
+.answer-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); gap: .55rem; }
+.answer-option { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: .65rem; align-items: start; padding: .72rem .8rem; border: 1px solid rgb(255 255 255 / 24%); border-radius: 13px; background: rgb(255 255 255 / 9%); cursor: pointer; }
+.answer-option input { width: 1.08rem; height: 1.08rem; margin: .22rem 0 0; accent-color: #cfc7ff; }
+.answer-option input:checked + span { font-weight: 850; }
+.answer-submit { align-self: flex-start; margin-top: 1rem; border: 0; border-radius: 999px; padding: .75rem 1.05rem; color: #251c58; background: #f4efad; font: 800 .95rem/1.2 var(--sans); cursor: pointer; box-shadow: 0 9px 24px rgb(0 0 0 / 18%); }
+.answer-submit:hover { background: #fff8c9; }
+.submit-note { max-width: 58ch; margin: .75rem 0 0; color: #d9d3ff; font-size: .84rem; }
 
 .current-action { display: flex; min-width: 0; margin: 0 0 .85rem; padding: clamp(1.2rem, 2.5vw, 1.7rem); flex-direction: column; justify-content: center; border: 2px solid var(--violet); border-radius: 24px; color: #f9f8ff; background: linear-gradient(140deg, #29214e, #4c3aae); box-shadow: 0 16px 40px rgb(73 55 181 / 18%); scroll-margin-top: 1rem; }
 .turn-intro > .current-action { margin-bottom: 0; }
@@ -178,7 +189,8 @@ body[data-turn-kind="feedback"] .feedback-context { grid-template-columns: repea
 .rail-card p { margin: .3rem 0 0; color: var(--muted); font-size: .84rem; line-height: 1.5; }
 footer { padding: 2rem 1rem 3rem; color: var(--muted); text-align: center; font-size: .78rem; }
 
-body[data-turn-kind="onboarding"] .lesson-hero h1 { max-width: 21ch; }
+body[data-turn-kind="onboarding"] .lesson-hero { padding-block: clamp(1.15rem, 2.2vw, 1.65rem); }
+body[data-turn-kind="onboarding"] .lesson-hero h1 { max-width: 24ch; font-size: clamp(1.8rem, 3.7vw, 3rem); }
 body[data-turn-kind="onboarding"] .lesson-grid { margin-top: .8rem; }
 
 @media (max-width: 860px) {
@@ -228,6 +240,7 @@ body[data-turn-kind="onboarding"] .lesson-grid { margin-top: .8rem; }
   a { color: #c7bfff; }
   .progress-chip, .process-steps li, .concept-map li, table,
   .launch-choices fieldset, .choice-option, .rail-card { background: rgb(255 255 255 / 4%); }
+  .answer-field input[type="text"], .answer-field textarea { color: #f1f2f7; background: #171925; }
   .classroom-section, .sources, .rail-card { box-shadow: 0 12px 34px rgb(0 0 0 / 16%); }
 }
 

@@ -15,6 +15,7 @@ class NoviceFirstPedagogyV7ContractTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.skill = (COACH / "SKILL.md").read_text(encoding="utf-8")
         cls.contract = (REFERENCES / "novice-first-teaching.md").read_text(encoding="utf-8")
+        cls.voice = (REFERENCES / "teacher-voice.md").read_text(encoding="utf-8")
         cls.learning = (REFERENCES / "learning-contract.md").read_text(encoding="utf-8")
         cls.diagnostic = (REFERENCES / "diagnostic-and-planning.md").read_text(encoding="utf-8")
         cls.session = (REFERENCES / "teaching-session.md").read_text(encoding="utf-8")
@@ -84,6 +85,7 @@ class NoviceFirstPedagogyV7ContractTests(unittest.TestCase):
         body = heading.group("body")
         for field in [
             "learner_problem",
+            "learner_promise",
             "current_target",
             "mental_move",
             "new_terms",
@@ -123,6 +125,19 @@ class NoviceFirstPedagogyV7ContractTests(unittest.TestCase):
         lowered = self.learning.lower()
         self.assertIn("encyclopedia opening", lowered)
         self.assertIn("problem → experience → language", lowered)
+
+    def test_teacher_voice_separates_control_copy_edit_and_learner_promise(self) -> None:
+        lowered = self.voice.lower()
+        for marker in [
+            "teaching control",
+            "teacher expression",
+            "copy edit",
+            "learner_promise",
+            "do not solve tone problems with a synonym blacklist alone",
+        ]:
+            self.assertIn(marker, lowered)
+        for internal in ["teachingturnspec", "evidence-boundary", "skill routing"]:
+            self.assertIn(internal, lowered)
 
 
 if __name__ == "__main__":

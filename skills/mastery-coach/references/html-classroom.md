@@ -1,8 +1,12 @@
 # HTML classroom delivery contract
 
-The classroom is the learner-facing surface for every active Mastery Coach turn. Chat remains the
-transport for learner replies and a minimal “classroom updated/opened” handoff; it must not carry a
-second Markdown lesson, setup instructions, internal paths, validation logs, or server commands.
+The classroom is the learner-facing surface for every active Mastery Coach turn. Its local form is
+the primary input surface; chat carries only a minimal “classroom updated/opened” handoff and a
+short return signal after submission. Chat must not carry a second Markdown lesson, setup
+instructions, internal paths, validation logs, or server commands.
+
+Read [teacher-voice.md](teacher-voice.md) before composing visible copy. Internal teaching and state
+objects are not learner-facing prose.
 
 ## Separate display from executable teaching tools
 
@@ -28,19 +32,26 @@ Before sending learner-facing teaching content:
    A `feedback` page must also include `feedback_context` with the original task, attributable
    learner response, earliest causal error, current hint and level, and whether a full solution was
    revealed. The renderer rejects feedback that drops this context or claims a revealed solution
-   below hint level 5.
+   below hint level 5. Give onboarding choice groups one recommended default each. Add
+   `action.response` when the inferred control is not appropriate; use `submit-only` for onboarding
+   choices, `choice` for a finite answer, and `short-text` or `long-text` for learner-produced
+   reasoning.
 2. For an agreed learner workspace, render to `<workspace>/.mastery/classroom/index.html`. Before
    workspace selection, render the launch packet to a task-local temporary output directory; do not
    initialize durable learner state merely to display onboarding.
 3. Start the bundled `scripts/serve_classroom.py --root <serve_root> --port 0`; do not use a generic
    file server and never serve `.mastery` itself. Read its one-line JSON for the assigned URL, port,
    and PID. The allowlisted server exposes only the classroom page and stylesheet, disables caches,
-   and cannot expose profile, evidence, plans, registries, or sibling tools.
+   accepts one nonce-bound same-origin form at `/respond`, and cannot expose profile, evidence,
+   plans, registries, response files, or sibling tools.
 4. Open the returned URL with the available browser capability. On later turns update the same page
    and refresh it. At lesson/session close, stop the exact recorded process/session and verify that
    its assigned port is closed. Do not assume that sending `Ctrl+C` succeeded.
-5. In chat, say only that the classroom is ready or updated, provide a clickable page link when the
-   surface supports it, and ask the learner to respond in chat after the single highlighted action.
+5. After the learner submits and returns, run `serve_classroom.py --root <serve_root>
+   --consume-response --page-id <page_id>`. Interpret only a response whose page and contract match;
+   consumption deletes the transient packet. In chat, use one natural sentence with the classroom
+   link or open status and ask the learner to return after submitting. Do not narrate rendering,
+   validation, state writes, server lifecycle, or Skill routing.
 
 If automatic browser control is unavailable, still generate the HTML and provide its clickable
 local file or loopback link. Do not replace the learning content with Markdown. If neither local
@@ -76,13 +87,16 @@ review may put the retrieval prompt first because the model is intentionally wit
 ## Interaction boundary
 
 The HTML page may show the full explanation needed for the present step, but it must highlight
-exactly one learner action. The learner replies through the AI conversation unless a verified local
-tool has a governed input channel. Never ask the learner to run a server, type a shell command,
+exactly one learner action. The shared classroom posts bounded radio/text fields to its loopback
+server without JavaScript. The learner then gives only a short return signal in the AI conversation;
+the Coach consumes the bound packet and never guesses from an ambiguous “done”. A separately
+verified tool may use its own governed input channel. Never ask the learner to run a server, type a shell command,
 stop a process, locate internal files, invoke the sibling Skill, or paste a long auto-generated
 “submission summary.”
 
-Page views, scrolling, clicks, and generated summaries are not evidence. The Coach must observe an
-attributable learner explanation, calculation, decision, code change, or transfer attempt before
+Page views, scrolling, and default selections are not evidence. Submitted self-positioning remains
+a preference or hypothesis. A submitted teaching response is attributable learner work, but the
+Coach must inspect its explanation, calculation, decision, code change, or transfer attempt before
 recording evidence.
 
 Feedback must be self-contained. Never replace the original situation with an ordinal reference
@@ -97,5 +111,6 @@ feedback hints and response-format examples below level 5.
 
 The classroom page is a current presentation surface, not a raw transcript archive. Overwrite it as
 the lesson advances. Persist only compact evidence/session handoffs and reusable, learner-neutral
-lesson or reference artifacts. Do not store the learner's full conversation merely because HTML
-rendering makes that easy.
+lesson or reference artifacts. The server stores at most one size-bounded transient response packet;
+consume and delete it before updating the page. Do not store the learner's full conversation merely
+because HTML rendering makes that easy.

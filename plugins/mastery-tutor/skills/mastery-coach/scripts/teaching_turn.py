@@ -22,6 +22,7 @@ FIELDS = {
     "evidence_boundary",
     "feedback_plan",
 }
+OPTIONAL_FIELDS = {"learner_promise"}
 
 
 class TeachingTurnError(ValueError):
@@ -37,11 +38,14 @@ def _text(value: Any, field: str, maximum: int = 2_000) -> str:
     return result
 
 
-def _exact_object(value: Any, field: str, fields: set[str]) -> dict[str, Any]:
+def _exact_object(
+    value: Any, field: str, fields: set[str], optional_fields: set[str] | None = None
+) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise TeachingTurnError(f"teaching_turn.{field} must be an object")
     missing = sorted(fields - set(value))
-    unknown = sorted(set(value) - fields)
+    optional_fields = optional_fields or set()
+    unknown = sorted(set(value) - fields - optional_fields)
     if missing or unknown:
         raise TeachingTurnError(
             f"teaching_turn.{field} fields are invalid; missing={missing}, unknown={unknown}"
@@ -58,7 +62,7 @@ def _case(value: Any, field: str) -> dict[str, str]:
 
 
 def validate_teaching_turn(value: Any, action_prompt: str) -> dict[str, Any]:
-    turn = _exact_object(value, "root", FIELDS)
+    turn = _exact_object(value, "root", FIELDS, OPTIONAL_FIELDS)
     if turn.get("schema_version") != 1:
         raise TeachingTurnError("teaching_turn.schema_version must equal 1")
 
@@ -124,9 +128,13 @@ def validate_teaching_turn(value: Any, action_prompt: str) -> dict[str, Any]:
         turn.get("feedback_plan"), "feedback_plan", {"earliest_error", "first_hint", "retry_shape"}
     )
 
+    learner_problem = _text(turn.get("learner_problem"), "learner_problem")
+    learner_promise = _text(turn.get("learner_promise", learner_problem), "learner_promise", 240)
+
     return {
         "schema_version": 1,
-        "learner_problem": _text(turn.get("learner_problem"), "learner_problem"),
+        "learner_problem": learner_problem,
+        "learner_promise": learner_promise,
         "current_target": _text(turn.get("current_target"), "current_target"),
         "mental_move": mental_move,
         "new_terms": normalized_terms,
