@@ -57,6 +57,36 @@ of WindowsApps, or change WindowsApps permissions.
 "@
 }
 
+function Invoke-CodexCapture {
+    param(
+        [string]$Command,
+        [string[]]$Arguments
+    )
+
+    try {
+        $CommandInfo = Get-Command -Name $Command -ErrorAction Stop | Select-Object -First 1
+    } catch {
+        throw "Codex CLI launch failed: $($_.Exception.Message)"
+    }
+
+    $PreviousErrorActionPreference = $ErrorActionPreference
+    try {
+        # Native programs may emit advisory stderr while still succeeding. Windows PowerShell
+        # turns redirected native stderr into ErrorRecord objects and, under the script-wide
+        # Stop policy, would otherwise throw before LASTEXITCODE can be checked.
+        $ErrorActionPreference = "Continue"
+        $Output = @(& $CommandInfo @Arguments 2>&1)
+        $ExitCode = $LASTEXITCODE
+    } finally {
+        $ErrorActionPreference = $PreviousErrorActionPreference
+    }
+
+    return [pscustomobject]@{
+        ExitCode = $ExitCode
+        Output = @($Output | ForEach-Object { [string]$_ })
+    }
+}
+
 $RepositoryRoot = (Resolve-Path (Join-Path $PSScriptRoot ".")).Path
 $MarketplacePath = Join-Path $RepositoryRoot ".agents\plugins\marketplace.json"
 $PluginManifestPath = Join-Path $RepositoryRoot "plugins\mastery-tutor\.codex-plugin\plugin.json"
@@ -140,27 +170,29 @@ silently and do not install around them.
 }
 
 try {
-    $CodexVersion = @(& $CodexCommand --version 2>&1)
+    $CodexVersionResult = Invoke-CodexCapture -Command $CodexCommand -Arguments @("--version")
 } catch {
     $CliBlockerMessage = New-CliBlockerMessage -Command $CodexCommand -Detail "Codex CLI launch failed: $($_.Exception.Message)"
     [Console]::Error.WriteLine($CliBlockerMessage)
     exit 1
 }
-if ($LASTEXITCODE -ne 0) {
-    $CliBlockerMessage = New-CliBlockerMessage -Command $CodexCommand -Detail "Codex CLI probe failed with exit code $LASTEXITCODE."
+if ($CodexVersionResult.ExitCode -ne 0) {
+    $CliBlockerMessage = New-CliBlockerMessage -Command $CodexCommand -Detail "Codex CLI probe failed with exit code $($CodexVersionResult.ExitCode)."
     [Console]::Error.WriteLine($CliBlockerMessage)
     exit 1
 }
+$CodexVersion = $CodexVersionResult.Output
 Write-Output "Codex CLI: $($CodexVersion -join ' ')"
 
 try {
-    $ExistingPluginList = @(& $CodexCommand plugin list 2>&1)
+    $ExistingPluginListResult = Invoke-CodexCapture -Command $CodexCommand -Arguments @("plugin", "list")
 } catch {
     throw "Could not inspect existing Codex plugins before installation. No plugin changes were made. $($_.Exception.Message)"
 }
-if ($LASTEXITCODE -ne 0) {
+if ($ExistingPluginListResult.ExitCode -ne 0) {
     throw "Could not inspect existing Codex plugins before installation. No plugin changes were made."
 }
+$ExistingPluginList = $ExistingPluginListResult.Output
 $ExistingPluginListText = $ExistingPluginList -join [Environment]::NewLine
 if ($ExistingPluginListText -match '(?im)(^|\s)mastery-learning(\s|$)') {
     throw @"
@@ -174,31 +206,34 @@ installer. Never delete .mastery learner data during the product rename.
 }
 
 try {
-    & $CodexCommand plugin marketplace add $RepositoryRoot
+    $MarketplaceAddResult = Invoke-CodexCapture -Command $CodexCommand -Arguments @("plugin", "marketplace", "add", $RepositoryRoot)
 } catch {
     throw "Could not launch the Codex CLI for marketplace registration. Do not use skill-installer as a fallback. $($_.Exception.Message)"
 }
-if ($LASTEXITCODE -ne 0) {
-    throw "Codex marketplace registration failed with exit code $LASTEXITCODE. The plugin was not installed."
+$MarketplaceAddResult.Output | Write-Output
+if ($MarketplaceAddResult.ExitCode -ne 0) {
+    throw "Codex marketplace registration failed with exit code $($MarketplaceAddResult.ExitCode). The plugin was not installed."
 }
 
 try {
-    & $CodexCommand plugin add "mastery-tutor@mastery-tutor"
+    $PluginAddResult = Invoke-CodexCapture -Command $CodexCommand -Arguments @("plugin", "add", "mastery-tutor@mastery-tutor")
 } catch {
     throw "Could not launch the Codex CLI for plugin installation. Do not copy a nested Skill as a fallback. $($_.Exception.Message)"
 }
-if ($LASTEXITCODE -ne 0) {
-    throw "Codex plugin installation failed with exit code $LASTEXITCODE."
+$PluginAddResult.Output | Write-Output
+if ($PluginAddResult.ExitCode -ne 0) {
+    throw "Codex plugin installation failed with exit code $($PluginAddResult.ExitCode)."
 }
 
 try {
-    $PluginList = @(& $CodexCommand plugin list 2>&1)
+    $PluginListResult = Invoke-CodexCapture -Command $CodexCommand -Arguments @("plugin", "list")
 } catch {
     throw "The plugin command completed, but installation verification could not run. $($_.Exception.Message)"
 }
-if ($LASTEXITCODE -ne 0) {
-    throw "The plugin command completed, but 'codex plugin list' failed with exit code $LASTEXITCODE."
+if ($PluginListResult.ExitCode -ne 0) {
+    throw "The plugin command completed, but 'codex plugin list' failed with exit code $($PluginListResult.ExitCode)."
 }
+$PluginList = $PluginListResult.Output
 $PluginListText = $PluginList -join [Environment]::NewLine
 if ($PluginListText -notmatch '(?im)mastery-tutor') {
     throw "Installation verification failed: 'codex plugin list' did not contain mastery-tutor."

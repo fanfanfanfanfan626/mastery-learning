@@ -123,6 +123,51 @@ class InstallContractTests(unittest.TestCase):
             ])
             self.assertNotIn("skill-installer", "\n".join(calls))
 
+    @unittest.skipUnless(os.name == "nt", "Windows PowerShell native-stderr regression")
+    def test_windows_installer_accepts_advisory_stderr_when_codex_exits_zero(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            temporary_path = Path(temporary)
+            capture = temporary_path / "calls.txt"
+            environment = os.environ.copy()
+            environment["MASTERY_INSTALL_CAPTURE"] = str(capture)
+            environment["CODEX_HOME"] = str(temporary_path / "codex-home")
+            powershell = shutil.which("pwsh") or shutil.which("powershell")
+            self.assertIsNotNone(powershell, "PowerShell is required on Windows")
+            fake = temporary_path / "codex.cmd"
+            fake.write_text(
+                '@echo off\r\n'
+                '>>"%MASTERY_INSTALL_CAPTURE%" echo %*\r\n'
+                '1>&2 echo WARNING: advisory cleanup message\r\n'
+                'if "%~1"=="--version" echo codex-cli 0.test\r\n'
+                'if "%~1"=="plugin" if "%~2"=="list" echo mastery-tutor installed enabled\r\n'
+                'exit /b 0\r\n',
+                encoding="utf-8",
+            )
+            completed = subprocess.run(
+                [
+                    str(powershell), "-NoProfile", "-ExecutionPolicy", "Bypass", "-File",
+                    str(ROOT / "install.ps1"), "-CodexCommand", str(fake),
+                ],
+                cwd=ROOT,
+                env=environment,
+                text=True,
+                encoding="utf-8",
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=False,
+            )
+            self.assertEqual(completed.returncode, 0, completed.stdout + completed.stderr)
+            self.assertEqual(
+                capture.read_text(encoding="utf-8").splitlines(),
+                [
+                    "--version",
+                    "plugin list",
+                    f"plugin marketplace add {ROOT}",
+                    "plugin add mastery-tutor@mastery-tutor",
+                    "plugin list",
+                ],
+            )
+
     def test_installer_stops_before_mutation_when_standalone_skills_exist(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             temporary_path = Path(temporary)
