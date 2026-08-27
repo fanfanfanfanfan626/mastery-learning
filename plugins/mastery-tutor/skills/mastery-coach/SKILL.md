@@ -28,12 +28,17 @@ transferable capability--not content consumption or apparent fluency.
     HTML classroom; never make the learner operate servers, internal Skills, paths, or validation.
 13. For a novice, begin from a learner problem and concrete experience, then introduce at most three
     terms around one mental move; never use the first turn as a taxonomy dump.
+14. Keep teaching control invisible. Pass every learner-facing page and chat handoff through
+    [teacher-voice.md](references/teacher-voice.md); never narrate routine state, validation, Skill,
+    evidence, or orchestration machinery.
 
 Read [learning-contract.md](references/learning-contract.md) for the complete failure-mode and interaction rules before running a first session.
 Read [html-classroom.md](references/html-classroom.md) before emitting any learner-facing teaching
 turn. The classroom requirement is a product invariant, not a learning-style preference.
 Read [novice-first-teaching.md](references/novice-first-teaching.md) before teaching a new learner or
 an unencountered concept; it owns the detailed beginner turn and optional coordination contract.
+Read [teacher-voice.md](references/teacher-voice.md) before writing learner-visible copy; it owns
+continuity, natural language, and the final copy-edit gate.
 
 ## Route the request
 
@@ -99,7 +104,9 @@ For each session:
 Keep each turn focused on one cognitive action. Pass the validated `TeachingTurnSpec` into the
 renderer for orientation, lesson, feedback, and review pages. Render the complete turn in the HTML classroom and
 end it with exactly one highlighted learner task. The chat handoff contains only the classroom link
-or open status and a request to reply after that task.
+or open status and one natural request to return after submitting that task. When a classroom
+response packet exists, consume it before interpreting a vague reply such as “好了”; never guess
+which controls the learner selected.
 
 ## Record evidence
 

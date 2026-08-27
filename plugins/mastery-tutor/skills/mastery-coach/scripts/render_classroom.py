@@ -9,6 +9,7 @@ import html
 import json
 import os
 import re
+import secrets
 import stat
 import tempfile
 from pathlib import Path, PurePosixPath
@@ -29,62 +30,80 @@ ARTIFACT_PATH_PATTERN = re.compile(r"^[A-Za-z0-9._/-]+$")
 FRAGMENT_PATTERN = re.compile(r"^[A-Za-z0-9_-]*$")
 MAX_SPEC_BYTES = 256_000
 MAX_SECTIONS = 16
+RESPONSE_CONTRACT_FILE = ".response-contract.json"
+RESPONSE_PACKET_FILE = ".learner-response.json"
 TEMPLATE_ROOT = Path(__file__).resolve().parents[1] / "assets" / "classroom-template"
 SERVER_SCRIPT = Path(__file__).resolve().parent / "serve_classroom.py"
 CONTENT_SECURITY_POLICY = (
     "default-src 'none'; style-src 'self'; img-src 'self' data:; font-src 'self'; "
     "script-src 'none'; connect-src 'none'; media-src 'self'; object-src 'none'; "
-    "frame-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'"
+    "frame-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'self'"
 )
+INTERNAL_COPY_MARKERS = {
+    "teachingturnspec",
+    "按照教练规则",
+    "学习档案已初始化",
+    "学习档案已通过校验",
+    "状态引擎已",
+    "知识图谱已",
+    "证据边界",
+    "当前唯一任务",
+    "current sole task",
+    "according to the coach contract",
+    "mastery state validated",
+}
 UI_TEXT = {
     "en": {
         "skip": "Skip to the lesson",
         "brand_label": "Mastery Tutor classroom",
-        "tagline": "AI teaching skill · local classroom",
-        "progress": "Current learning turn",
-        "action_label": "Now · one action",
-        "response_prefix": "Reply in the AI conversation:",
-        "feedback_task": "Original task",
-        "feedback_response": "Your response",
-        "feedback_error": "Earliest point to repair",
-        "feedback_hint": "Current hint",
+        "tagline": "Learn one clear step at a time",
+        "progress": "Continue from here",
+        "action_label": "Your turn",
+        "response_prefix": "A helpful way to answer:",
+        "submit_note": "Submit here, then return to the conversation and say you are ready to continue.",
+        "submit": "Send my answer",
+        "feedback_task": "The question we were working on",
+        "feedback_response": "What you tried",
+        "feedback_error": "Here is where the idea changed direction",
+        "feedback_hint": "A small hint",
         "sources": "Sources to verify",
-        "rail_label": "How to use this classroom",
+        "rail_label": "A simple rhythm",
         "rail": [
-            ("Meet the situation", "Use the concrete example before the technical label."),
-            ("Do one action", "The highlighted task is the only required next step."),
-            ("Return to the tutor", "The AI checks reasoning; page activity alone is not mastery."),
+            ("See it first", "Start with the example; the name can come later."),
+            ("Try one small step", "Use the box at the end when the idea feels concrete."),
+            ("Keep going together", "After you submit, the next explanation follows your answer."),
         ],
-        "footer": "Generated locally. No analytics, remote runtime, or hidden mastery claim.",
+        "footer": "This classroom stays on your device, with no analytics or remote trackers.",
         "annotated": "annotated example",
         "choices_label": "Onboarding choices",
-        "choices_fallback": (
-            "Use these controls as a local scratchpad, then reply in the AI conversation. "
-            "Selections are not submitted or saved by this page."
-        ),
+        "choices_fallback": "The recommended choices are already selected. Change only what does not fit you.",
+        "tone_labels": {"concept": "Key idea", "example": "Example", "caution": "Watch for this", "insight": "What to notice"},
     },
     "zh": {
         "skip": "跳到本节内容",
         "brand_label": "Mastery Tutor 本地课堂",
-        "tagline": "AI 教学 Skill · 本地课堂",
-        "progress": "当前学习回合",
-        "action_label": "现在 · 一个任务",
-        "response_prefix": "回到 AI 对话回复：",
-        "feedback_task": "刚才的任务",
-        "feedback_response": "你的回答",
-        "feedback_error": "最早需要修正的地方",
-        "feedback_hint": "本轮提示",
+        "tagline": "陪你一步一步学会",
+        "progress": "接着往下学",
+        "action_label": "轮到你了",
+        "response_prefix": "可以这样回答：",
+        "submit_note": "在这里提交后，回到对话说一声“好了”，我会顺着你的回答继续。",
+        "submit": "提交给老师看看",
+        "feedback_task": "刚才那道题",
+        "feedback_response": "你刚才的想法",
+        "feedback_error": "问题出在这里",
+        "feedback_hint": "给你一个提示",
         "sources": "参考来源",
-        "rail_label": "如何使用这个课堂",
+        "rail_label": "这一小节怎么学",
         "rail": [
-            ("先看具体情境", "先从例子看见差别，再给它补上术语。"),
-            ("只做一个任务", "高亮任务是当前唯一必须完成的动作。"),
-            ("回到 AI 教练", "AI 检查你的推理；浏览和点击本身不代表掌握。"),
+            ("先看个例子", "先把这件事看明白，不急着背名字。"),
+            ("再自己试试", "页面最后留了一小步给你。"),
+            ("然后接着讲", "提交后回到对话，我会顺着你的思路继续。"),
         ],
-        "footer": "本地生成；无遥测、无远程运行时，也不会暗中宣称掌握。",
+        "footer": "内容留在你的电脑上，不含统计代码或远程跟踪。",
         "annotated": "带教学注释的示例",
         "choices_label": "入门选择",
-        "choices_fallback": "可在本页勾选作为临时草稿，然后回到 AI 对话回复；本页不会提交或保存选择。",
+        "choices_fallback": "推荐项已经替你选好；不合适的地方再改就行。",
+        "tone_labels": {"concept": "关键想法", "example": "举个例子", "caution": "这里容易混", "insight": "值得留意"},
     },
 }
 
@@ -114,6 +133,94 @@ def escape(value: str) -> str:
 
 def interface_text(language: str) -> dict[str, Any]:
     return UI_TEXT["zh"] if language.lower().split("-", 1)[0] == "zh" else UI_TEXT["en"]
+
+
+def visible_texts(spec: dict[str, Any]) -> list[tuple[str, str]]:
+    result: list[tuple[str, str]] = []
+
+    def walk(value: Any, field: str) -> None:
+        if isinstance(value, str):
+            result.append((field, value))
+        elif isinstance(value, list):
+            for index, item in enumerate(value):
+                walk(item, f"{field}[{index}]")
+        elif isinstance(value, dict):
+            for key, item in value.items():
+                if key in {"href", "url", "value", "id", "type", "tone", "language"}:
+                    continue
+                walk(item, f"{field}.{key}")
+
+    for field in ["course", "progress", "eyebrow", "title", "lead", "meta", "sections", "action", "feedback_context"]:
+        if field in spec:
+            walk(spec[field], field)
+    for index, reference in enumerate(spec.get("references", [])):
+        if isinstance(reference, dict) and "title" in reference:
+            walk(reference["title"], f"references[{index}].title")
+    return result
+
+
+def validate_teacher_voice(spec: dict[str, Any]) -> None:
+    for field, value in visible_texts(spec):
+        lowered = value.casefold()
+        for marker in INTERNAL_COPY_MARKERS:
+            if marker.casefold() in lowered:
+                fail(f"{field} exposes internal teaching-control language: {marker!r}")
+
+
+def normalize_options(value: Any, field: str, *, maximum: int = 8) -> list[dict[str, str]]:
+    if not isinstance(value, list) or not 1 <= len(value) <= maximum:
+        fail(f"{field} must contain 1..{maximum} options")
+    result: list[dict[str, str]] = []
+    seen: set[str] = set()
+    for index, raw in enumerate(value):
+        if isinstance(raw, str):
+            option_value = text(raw, f"{field}[{index}]", maximum=500)
+            label = option_value
+        elif isinstance(raw, dict) and set(raw) == {"value", "label"}:
+            option_value = text(raw.get("value"), f"{field}[{index}].value", maximum=120)
+            label = text(raw.get("label"), f"{field}[{index}].label", maximum=420)
+        else:
+            fail(f"{field}[{index}] must be text or an object with value and label")
+        key = option_value.casefold()
+        if key in seen:
+            fail(f"{field} option values must be unique")
+        seen.add(key)
+        result.append({"value": option_value, "label": label})
+    return result
+
+
+def collect_choice_fields(sections: list[Any], kind: str) -> dict[str, dict[str, Any]]:
+    fields: dict[str, dict[str, Any]] = {}
+    for section_index, section in enumerate(sections):
+        if not isinstance(section, dict) or section.get("type") != "choices":
+            continue
+        if kind != "onboarding":
+            fail("choices sections are reserved for onboarding; use action.response for teaching answers")
+        items = section.get("items")
+        if not isinstance(items, list) or not 1 <= len(items) <= 6:
+            fail(f"sections[{section_index}].items must contain 1..6 choice groups")
+        for item_index, item in enumerate(items):
+            if not isinstance(item, dict):
+                fail(f"sections[{section_index}].items[{item_index}] must be an object")
+            item_id = text(item.get("id"), f"sections[{section_index}].items[{item_index}].id", maximum=60)
+            if not PAGE_ID_PATTERN.fullmatch(item_id):
+                fail(f"sections[{section_index}].items[{item_index}].id must be lowercase hyphen-case")
+            name = f"choice.{item_id}"
+            if name in fields:
+                fail(f"choice id {item_id!r} must be unique across the page")
+            options = normalize_options(item.get("options"), f"sections[{section_index}].items[{item_index}].options", maximum=6)
+            default = item.get("default", options[0]["value"])
+            default = text(default, f"sections[{section_index}].items[{item_index}].default", maximum=500)
+            allowed = [option["value"] for option in options]
+            if default not in allowed:
+                fail(f"sections[{section_index}].items[{item_index}].default must match an option value")
+            fields[name] = {
+                "type": "choice",
+                "required": True,
+                "allowed_values": allowed,
+                "max_length": max(len(value) for value in allowed),
+            }
+    return fields
 
 
 def render_paragraphs(items: list[str]) -> str:
@@ -182,7 +289,7 @@ def render_section(section: Any, index: int, ui: dict[str, Any]) -> str:
         body = text_list(section.get("body"), f"sections[{index}].body", maximum=6)
         return (
             f'<section class="classroom-section callout callout--{tone}" data-classroom-block="callout">'
-            f'<p class="section-index">{label} · {escape(tone)}</p><h2>{escape(title)}</h2>'
+            f'<p class="section-index">{label} · {escape(ui["tone_labels"][tone])}</p><h2>{escape(title)}</h2>'
             f"{render_paragraphs(body)}</section>"
         )
     elif section_type == "steps":
@@ -266,15 +373,26 @@ def render_section(section: Any, index: int, ui: dict[str, Any]) -> str:
                 fail(f"sections[{index}].items[{item_index}].id must be unique lowercase hyphen-case")
             seen_ids.add(item_id)
             prompt = text(item.get("prompt"), f"sections[{index}].items[{item_index}].prompt", maximum=180)
-            options = text_list(item.get("options"), f"sections[{index}].items[{item_index}].options", maximum=6)
+            options = normalize_options(
+                item.get("options"), f"sections[{index}].items[{item_index}].options", maximum=6
+            )
+            default = text(
+                item.get("default", options[0]["value"]),
+                f"sections[{index}].items[{item_index}].default",
+                maximum=500,
+            )
+            if default not in {option["value"] for option in options}:
+                fail(f"sections[{index}].items[{item_index}].default must match an option value")
             option_controls: list[str] = []
-            group_name = f"choice-{index}-{item_id}"
+            group_name = f"choice.{item_id}"
             for option_index, option in enumerate(options):
                 control_id = f"choice-{index}-{item_index}-{option_index}"
+                checked = " checked" if option["value"] == default else ""
                 option_controls.append(
                     f'<label class="choice-option" for="{control_id}">'
                     f'<input id="{control_id}" type="radio" name="{escape(group_name)}" '
-                    f'value="{escape(option)}"><span>{escape(option)}</span></label>'
+                    f'value="{escape(option["value"])}" required{checked}>'
+                    f'<span>{escape(option["label"])}</span></label>'
                 )
             groups.append(
                 f'<fieldset data-choice-group="{escape(item_id)}"><legend>{escape(prompt)}</legend>'
@@ -360,6 +478,103 @@ def render_feedback_context(value: Any, ui: dict[str, Any]) -> str:
     )
 
 
+def render_action_response(
+    value: Any,
+    *,
+    kind: str,
+    answer_options: list[str],
+    has_choice_fields: bool,
+    ui: dict[str, Any],
+) -> tuple[str, dict[str, dict[str, Any]], str]:
+    if value is None:
+        if kind == "onboarding":
+            response_type = "submit-only"
+            raw: dict[str, Any] = {}
+        elif answer_options:
+            response_type = "choice"
+            raw = {"options": answer_options}
+        else:
+            response_type = "long-text"
+            raw = {}
+    elif isinstance(value, dict):
+        raw = value
+        response_type = raw.get("type")
+    else:
+        fail("action.response must be an object")
+    if response_type not in {"submit-only", "choice", "short-text", "long-text"}:
+        fail("action.response.type must be submit-only, choice, short-text, or long-text")
+
+    allowed_keys = {
+        "submit-only": {"type", "submit_label"},
+        "choice": {"type", "label", "options", "submit_label"},
+        "short-text": {"type", "label", "placeholder", "max_length", "submit_label"},
+        "long-text": {"type", "label", "placeholder", "max_length", "submit_label"},
+    }[response_type]
+    unknown = sorted(set(raw) - allowed_keys)
+    if unknown:
+        fail(f"action.response has unknown fields for {response_type}: {unknown}")
+    submit_label = text(raw.get("submit_label", ui["submit"]), "action.response.submit_label", maximum=80)
+    fields: dict[str, dict[str, Any]] = {}
+    control = ""
+
+    if response_type == "submit-only":
+        if kind != "onboarding" or not has_choice_fields:
+            fail("submit-only is allowed only for onboarding with choice fields")
+    elif response_type == "choice":
+        options = normalize_options(raw.get("options", answer_options), "action.response.options")
+        values = [option["value"] for option in options]
+        if answer_options and set(value.casefold() for value in values) != set(
+            value.casefold() for value in answer_options
+        ):
+            fail("action.response choice values must match teaching_turn.answer_options")
+        label = text(raw.get("label", ui["action_label"]), "action.response.label", maximum=120)
+        controls = []
+        for index, option in enumerate(options):
+            control_id = f"answer-option-{index}"
+            controls.append(
+                f'<label class="answer-option" for="{control_id}">'
+                f'<input id="{control_id}" type="radio" name="answer" '
+                f'value="{escape(option["value"])}" required><span>{escape(option["label"])}</span></label>'
+            )
+        control = (
+            f'<fieldset class="answer-field"><legend>{escape(label)}</legend>'
+            f'<div class="answer-options">{"".join(controls)}</div></fieldset>'
+        )
+        fields["answer"] = {
+            "type": "choice",
+            "required": True,
+            "allowed_values": values,
+            "max_length": max(len(item) for item in values),
+        }
+    else:
+        default_max = 500 if response_type == "short-text" else 2_000
+        maximum = raw.get("max_length", default_max)
+        if not isinstance(maximum, int) or isinstance(maximum, bool) or not 1 <= maximum <= default_max:
+            fail(f"action.response.max_length must be an integer from 1 to {default_max}")
+        label = text(raw.get("label", ui["action_label"]), "action.response.label", maximum=120)
+        placeholder = text(
+            raw.get("placeholder", "…"), "action.response.placeholder", minimum=0, maximum=240
+        )
+        if response_type == "short-text":
+            control = (
+                f'<label class="answer-field"><span>{escape(label)}</span>'
+                f'<input type="text" name="answer" maxlength="{maximum}" '
+                f'placeholder="{escape(placeholder)}" required></label>'
+            )
+        else:
+            control = (
+                f'<label class="answer-field"><span>{escape(label)}</span>'
+                f'<textarea name="answer" maxlength="{maximum}" rows="5" '
+                f'placeholder="{escape(placeholder)}" required></textarea></label>'
+            )
+        fields["answer"] = {
+            "type": "text",
+            "required": True,
+            "max_length": maximum,
+        }
+    return control, fields, submit_label
+
+
 def load_spec(path: Path) -> dict[str, Any]:
     if not path.is_file() or path.stat().st_size > MAX_SPEC_BYTES:
         fail(f"spec must be a regular JSON file no larger than {MAX_SPEC_BYTES} bytes")
@@ -372,7 +587,7 @@ def load_spec(path: Path) -> dict[str, Any]:
     return value
 
 
-def render(spec: dict[str, Any]) -> str:
+def build_classroom(spec: dict[str, Any]) -> tuple[str, dict[str, Any]]:
     if spec.get("schema_version") != SCHEMA_VERSION:
         fail(f"schema_version must equal {SCHEMA_VERSION}")
     page_id = text(spec.get("page_id"), "page_id", maximum=96)
@@ -381,6 +596,7 @@ def render(spec: dict[str, Any]) -> str:
     kind = spec.get("kind")
     if kind not in KINDS:
         fail(f"kind must be one of {sorted(KINDS)}")
+    validate_teacher_voice(spec)
     language = text(spec.get("language", "zh-CN"), "language", maximum=32)
     if not LANGUAGE_PATTERN.fullmatch(language):
         fail("language must be a BCP-47-like language tag")
@@ -413,6 +629,7 @@ def render(spec: dict[str, Any]) -> str:
         fail("orientation pages require a map or comparison that establishes the field structure")
     if kind == "lesson" and not section_types.intersection({"steps", "comparison", "code", "map"}):
         fail("lesson pages require a worked structure such as steps, comparison, code, or map")
+    choice_fields = collect_choice_fields(sections, kind)
     rendered_sections = [
         (section.get("type") == "details", render_section(section, index, ui))
         for index, section in enumerate(sections)
@@ -432,6 +649,10 @@ def render(spec: dict[str, Any]) -> str:
             teaching_turn = validate_teaching_turn(spec.get("teaching_turn"), action_prompt)
         except TeachingTurnError as error:
             fail(str(error))
+        if kind in {"orientation", "lesson"} and "learner_promise" in spec["teaching_turn"]:
+            promise = teaching_turn["learner_promise"]
+            if promise not in title and promise not in lead:
+                fail("teaching_turn.learner_promise must appear exactly in the learner-facing title or lead")
     elif spec.get("teaching_turn") is not None:
         fail(f"teaching_turn is required only for {sorted(TEACHING_KINDS)}")
     feedback_html = ""
@@ -445,12 +666,47 @@ def render(spec: dict[str, Any]) -> str:
                 "feedback_context.hint": spec["feedback_context"]["hint"],
                 "action.response_hint": response_hint,
             }
+            raw_response = action.get("response")
+            if isinstance(raw_response, dict) and raw_response.get("type") in {"short-text", "long-text"}:
+                for key in ["label", "placeholder", "submit_label"]:
+                    if isinstance(raw_response.get(key), str):
+                        leak_surfaces[f"action.response.{key}"] = raw_response[key]
             for field, surface in leak_surfaces.items():
                 for option in teaching_turn["answer_options"]:
                     if option.casefold() in surface.casefold():
                         fail(f"{field} must not reveal answer option {option!r} below hint level 5")
     elif spec.get("feedback_context") is not None:
         fail("feedback_context is allowed only when kind is feedback")
+
+    answer_options = teaching_turn["answer_options"] if teaching_turn is not None else []
+    response_control, action_fields, submit_label = render_action_response(
+        action.get("response"),
+        kind=kind,
+        answer_options=answer_options,
+        has_choice_fields=bool(choice_fields),
+        ui=ui,
+    )
+    response_fields = {**choice_fields, **action_fields}
+    public_contract = {
+        "schema_version": 1,
+        "page_id": page_id,
+        "language": language,
+        "fields": response_fields,
+    }
+    contract_id = hashlib.sha256(
+        json.dumps(public_contract, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+    form_token = secrets.token_urlsafe(24)
+    response_contract = {
+        **public_contract,
+        "contract_id": contract_id,
+        "form_token": form_token,
+    }
+    form_hidden = (
+        f'<input type="hidden" name="page_id" value="{escape(page_id)}">'
+        f'<input type="hidden" name="contract_id" value="{contract_id}">'
+        f'<input type="hidden" name="form_token" value="{escape(form_token)}">'
+    )
     action_html = f"""
         <section class="current-action" data-classroom-action="one">
           <p class="action-label">{escape(ui["action_label"])}</p>
@@ -458,6 +714,9 @@ def render(spec: dict[str, Any]) -> str:
           {feedback_html}
           <p>{escape(action_prompt)}</p>
           <p class="response-hint">{escape(ui["response_prefix"])} {escape(response_hint)}</p>
+          {response_control}
+          <button class="answer-submit" type="submit">{escape(submit_label)}</button>
+          <p class="submit-note">{escape(ui["submit_note"])}</p>
         </section>"""
     references = validate_references(spec.get("references"))
     references_html = ""
@@ -478,11 +737,23 @@ def render(spec: dict[str, Any]) -> str:
         ).hexdigest()
 
     action_first = kind in {"feedback", "review"}
-    intro_action_html = action_html if action_first else ""
-    flow_action_html = "" if action_first else action_html
     intro_class = "turn-intro" if action_first else "turn-intro turn-intro--hero-only"
 
-    return f"""<!doctype html>
+    response_form_open = (
+        f'<form class="classroom-response" method="post" action="/respond" accept-charset="UTF-8">{form_hidden}'
+    )
+    response_form_close = "</form>"
+    if kind == "onboarding":
+        intro_action_html = ""
+        flow_core_html = response_form_open + core_sections_html + action_html + response_form_close
+    elif action_first:
+        intro_action_html = response_form_open + action_html + response_form_close
+        flow_core_html = core_sections_html
+    else:
+        intro_action_html = ""
+        flow_core_html = core_sections_html + response_form_open + action_html + response_form_close
+
+    page = f"""<!doctype html>
 <html lang="{escape(language)}">
 <head>
   <meta charset="utf-8">
@@ -492,7 +763,7 @@ def render(spec: dict[str, Any]) -> str:
   <title>{escape(title)} · {escape(course)}</title>
   <link rel="stylesheet" href="assets/classroom.css">
 </head>
-<body data-page-id="{escape(page_id)}" data-turn-kind="{escape(kind)}" data-teaching-turn-sha256="{turn_hash}">
+<body data-page-id="{escape(page_id)}" data-turn-kind="{escape(kind)}" data-teaching-turn-sha256="{turn_hash}" data-response-contract-sha256="{contract_id}">
   <a class="skip-link" href="#classroom-main">{escape(ui["skip"])}</a>
   <div class="ambient ambient--one" aria-hidden="true"></div>
   <div class="ambient ambient--two" aria-hidden="true"></div>
@@ -515,8 +786,7 @@ def render(spec: dict[str, Any]) -> str:
     </div>
     <div class="lesson-grid">
       <article class="lesson-flow">
-        {core_sections_html}
-        {flow_action_html}
+        {flow_core_html}
         {optional_sections_html}
         {references_html}
       </article>
@@ -529,6 +799,11 @@ def render(spec: dict[str, Any]) -> str:
 </body>
 </html>
 """
+    return page, response_contract
+
+
+def render(spec: dict[str, Any]) -> str:
+    return build_classroom(spec)[0]
 
 
 def atomic_write(path: Path, content: str) -> None:
@@ -543,6 +818,14 @@ def atomic_write(path: Path, content: str) -> None:
     finally:
         if os.path.exists(temporary):
             os.unlink(temporary)
+
+
+def remove_transient_response(path: Path) -> None:
+    if not path.exists():
+        return
+    if is_reparse_point(path) or not path.is_file():
+        fail("existing classroom response must be a regular file")
+    path.unlink()
 
 
 def main() -> None:
@@ -579,8 +862,18 @@ def main() -> None:
     assets_dir.mkdir(parents=True, exist_ok=True)
     assets_dir = ensure_contained_directory(output_dir, assets_dir, "classroom assets")
     atomic_write(assets_dir / "classroom.css", stylesheet.read_text(encoding="utf-8"))
+    page_html, response_contract = build_classroom(spec)
+    response_path = output_dir / RESPONSE_PACKET_FILE
+    remove_transient_response(response_path)
+    contract_path = output_dir / RESPONSE_CONTRACT_FILE
+    if contract_path.exists() and (is_reparse_point(contract_path) or not contract_path.is_file()):
+        fail("existing classroom response contract must be a regular file")
+    atomic_write(
+        contract_path,
+        json.dumps(response_contract, ensure_ascii=False, sort_keys=True, indent=2) + "\n",
+    )
     page = output_dir / "index.html"
-    atomic_write(page, render(spec))
+    atomic_write(page, page_html)
     print(json.dumps({
         "ok": True,
         "page": str(page),

@@ -3,7 +3,7 @@
   "suite_id": "mastery-tutor-core-v1",
   "plugin": "mastery-tutor",
   "plugin_version_source": "VERSION",
-  "description": "Synthetic conversation evaluations for AI teaching-skill activation, mandatory HTML classroom delivery, tutoring boundaries, and cross-turn consistency.",
+  "description": "Synthetic conversation evaluations for AI teaching-skill activation, bidirectional HTML classroom delivery, human teacher voice, tutoring boundaries, and cross-turn consistency.",
   "release_policy": {
     "minimum_complete_runs": 3,
     "minimum_overall_pass_rate": {"numerator": 9, "denominator": 10},
@@ -34,7 +34,7 @@
         "must_not_activate": [],
         "criteria": [
           {"id": "observable-goal", "description": "Restates an observable target or isolates the highest-value ambiguity."},
-          {"id": "compact-launch-card", "description": "Renders only missing setup in one compact, skippable HTML launch card with a one-line reply path, rather than serial questions."},
+          {"id": "compact-launch-card", "description": "Renders only missing setup in one compact, skippable HTML launch card with recommended defaults and one local submit action, rather than serial questions or nonfunctional scratchpad controls."},
           {"id": "html-classroom-opened", "description": "Creates and opens the local HTML classroom; chat contains only a minimal handoff rather than the teaching content."},
           {"id": "no-entrance-test", "description": "Does not administer a scored performance task, percentage rubric, or no-search entrance test."},
           {"id": "no-curriculum-dump", "description": "Does not dump the full curriculum or treat background and familiarity labels as evidence."}
@@ -47,14 +47,15 @@
       "class": "follow-up",
       "messages": [
         {"role": "user", "content": "我想从零到一掌握大模型技术，最后能自己实现小型 Transformer，并完成开源模型微调、评测和部署。"},
-        {"role": "assistant", "content": "我会用一张可跳过的启动卡一次了解目标边界、时间、相关背景、能力熟悉度、教学体验和本地保存；这些只用来选择起点，不算成绩。"},
-        {"role": "user", "content": "选全栈大模型工程；每周6小时、每次45分钟；会Python，矩阵乘法听过，注意力和训练循环没学过，其余跳过；项目型，语气直接但耐心，作业可选，只做里程碑检查；同意默认稳定目录。"}
+        {"role": "assistant", "content": "启动卡已经打开，推荐项都已选好；不合适的地方改一下，然后在页面里提交。"},
+        {"role": "user", "content": "好了。启动卡已提交：全栈大模型工程；每周6小时、每次45分钟；会Python，矩阵乘法听过，注意力和训练循环没学过，其余跳过；项目型，语气直接但耐心，作业可选，只做里程碑检查；同意默认稳定目录。"}
       ],
       "expected": {
         "activate": ["mastery-coach"],
         "must_not_activate": ["mastery-tool-creator"],
         "criteria": [
           {"id": "no-second-setup-round", "description": "Does not ask another setup, workspace-consent, or entrance-test question after the explicit complete reply."},
+          {"id": "consumes-bound-form", "description": "Consumes the current page-bound response packet before interpreting ‘好了’, rather than guessing controls or silently applying defaults."},
           {"id": "initializes-confirmed-boundary", "description": "Initializes durable state, applies the explicitly selected target boundary, and stores the stated preferences and self-positioning with their proper uncertainty."},
           {"id": "guided-start-now", "description": "Updates the HTML classroom with the provisional route and begins guided orientation in the same response before one learner action."},
           {"id": "honors-experience-boundaries", "description": "Uses a direct-but-patient, project-oriented interaction without assigning mandatory homework or a formal quiz; named teaching methods remain tutor-selected and revisable."},
@@ -105,20 +106,21 @@
       "class": "follow-up",
       "messages": [
         {"role": "user", "content": "我想系统学习机器学习、人工智能和大模型，最终能训练、理解和改造模型。"},
-        {"role": "assistant", "content": "HTML 启动卡已打开，请一次填写目标、基础、节奏和保存选择。"},
-        {"role": "user", "content": "全栈路线；Python知道，其他基本不了解；数学还行；每天都有时间；按推荐方式；同意默认保存。"}
+        {"role": "assistant", "content": "启动卡已经打开，推荐项都已选好；改完后在页面里提交就行。"},
+        {"role": "user", "content": "好了。页面已提交：全栈路线；Python知道，其他基本不了解；数学还行；每天都有时间；按推荐方式；同意默认保存。"}
       ],
       "expected": {
         "activate": ["mastery-coach"],
         "must_not_activate": ["mastery-tool-creator"],
         "criteria": [
           {"id": "starts-with-concrete-experience", "description": "Begins with one familiar problem and lets the learner predict or choose before introducing the first technical term; the full AI/ML/DL/foundation-model/LLM map is deferred or optional."},
+          {"id": "keeps-learner-promise", "description": "Carries the natural learner promise from onboarding into the first lesson title or lead; a convenient prerequisite example does not silently replace the requested goal."},
           {"id": "rule-versus-learned", "description": "Makes a hand-written rule visibly fail, then names learning from examples as machine learning after the learner has seen the need."},
           {"id": "html-classroom-auto-delivery", "description": "Renders, starts, and opens the shared classroom internally, with no path, port, shell command, Skill invocation, or validation log assigned to the learner."},
           {"id": "one-mental-move", "description": "Ends with one small changed-example action that applies the just-named idea and requires no unmodeled algebra, code, or taxonomy memorization."},
-          {"id": "beginner-language", "description": "Uses short conversational sentences, no more than three new terms, and explains any abstraction with an example, counterexample, and visual or observable state."}
+          {"id": "beginner-language", "description": "Uses natural, conversational teacher language, no more than three new terms, and explains any abstraction with an example, counterexample, and visual or observable state without narrating product machinery."}
         ],
-        "forbidden": ["opens the course with a taxonomy or glossary dump", "opens the course with loss, gradient descent, tensor shapes, attention, or a Python worksheet", "asks the learner to paste a generated submission summary"]
+        "forbidden": ["opens the course with a taxonomy or glossary dump", "opens the course with loss, gradient descent, tensor shapes, attention, or a Python worksheet", "asks the learner to paste a generated submission summary", "exposes state initialization, validation, Skill routing, evidence-boundary, or orchestration language"]
       }
     },
     {
@@ -139,7 +141,7 @@
           {"id": "hint-does-not-leak-answer", "description": "Hint levels 1–4 narrow the reasoning without supplying the target answer; a full solution is explicitly level 5 and assisted."},
           {"id": "one-retry", "description": "Asks exactly one smaller changed example or justification before advancing."}
         ],
-        "forbidden": ["returns the teaching feedback only in chat", "refers to vanished steps without restating the task", "reveals the target answer in a level 1–4 hint", "records the incorrect answer as mastery"]
+        "forbidden": ["returns the teaching feedback only in chat", "refers to vanished steps without restating the task", "reveals the target answer in a level 1–4 hint", "records the incorrect answer as mastery", "uses administrative headings such as current sole task or evidence boundary in learner-facing copy"]
       }
     },
     {
