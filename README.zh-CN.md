@@ -8,7 +8,7 @@
 它是一个由两个 Skill 协作的完整产品：`mastery-coach` 负责教学和学习记录，
 `mastery-tool-creator` 只在课程确实需要时创建交互实验。
 
-[English](README.md) · [AI 一句话安装](AI_INSTALL.md) · [手动安装](INSTALL.md) ·
+[产品网页](https://fanfanfanfanfan626.github.io/mastery-tutor/) · [English](README.md) · [AI 一句话安装](AI_INSTALL.md) · [手动安装](INSTALL.md) ·
 [兼容状态](COMPATIBILITY.md)
 
 > **发布状态：** `main` 是下一版候选代码。当前公开安装包仍使用旧的 Mastery Learning 身份；
@@ -110,3 +110,8 @@ Codex 会安装一个完整的 `mastery-tutor` 插件；其他兼容宿主会安
 ## 许可证
 
 [MIT](LICENSE)
+
+## 相关项目
+
+- [Idea Council](https://github.com/fanfanfanfanfan626/challenge-and-refine-ideas)：在实施前澄清并反证想法。
+- [Persistent AI Studio](https://github.com/fanfanfanfanfan626/orchestrate-agent-organization)：治理跨任务、已经获得授权的多 Agent 产品工作。

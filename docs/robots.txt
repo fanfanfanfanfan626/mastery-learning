@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://fanfanfanfanfan626.github.io/mastery-tutor/sitemap.xml

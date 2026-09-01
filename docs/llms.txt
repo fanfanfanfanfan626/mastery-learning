@@ -1,0 +1,29 @@
+# Mastery Tutor
+
+> Open-source, local-first mastery learning system for compatible AI agents.
+
+Canonical repository: https://github.com/fanfanfanfanfan626/mastery-tutor
+Source version: 0.5.0 release candidate
+Latest tagged release: 0.4.1 under the former Mastery Learning identity
+License: MIT
+Languages: English, Simplified Chinese
+
+## What it does
+
+- Creates guided HTML lessons and local learning workspaces.
+- Uses hands-on practice, independent retrieval, application, transfer checks, and delayed review.
+- Gives staged hints without immediately leaking answers.
+- Stores learner-owned progress in `.mastery/` workspaces without a hosted account or database.
+- Uses two required Skills together: `mastery-coach` and `mastery-tool-creator`.
+
+## Compatibility boundary
+
+- Codex: engineering-verified; fresh-conversation E2 evidence pending for 0.5.0.
+- Claude Code and GitHub Copilot: experimental adapters.
+- Generic Agent Skills hosts: core-compatible packaging.
+- Automated tests do not prove learning outcomes.
+
+Installation contract: https://github.com/fanfanfanfanfan626/mastery-tutor/blob/main/AI_INSTALL.md
+Compatibility evidence: https://github.com/fanfanfanfanfan626/mastery-tutor/blob/main/COMPATIBILITY.md
+English README: https://github.com/fanfanfanfanfan626/mastery-tutor/blob/main/README.md
+Chinese README: https://github.com/fanfanfanfanfan626/mastery-tutor/blob/main/README.zh-CN.md
