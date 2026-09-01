@@ -15,7 +15,7 @@ Mastery Tutor contains two canonical Agent Skills. Choose the host you are actua
 Send this message to the AI host you want to use:
 
 ```text
-请安装 Mastery Tutor：https://github.com/fanfanfanfan626/mastery-tutor 。先读取并严格执行仓库根目录的 AI_INSTALL.md，识别当前 AI 宿主并安装完整的两个 Skill；发现旧版本先告诉我，不要直接覆盖或删除任何 .mastery 学习数据。若当前宿主是 Codex 且 codex --version 不可用，我允许你仅按 OpenAI 官方 Codex CLI 文档安装或修复正式 CLI；禁止复制 WindowsApps 内部程序、修改其权限、使用 skill-installer 或拆装嵌套 Skill。完成对应宿主的全部成功条件前不要宣称安装成功。
+请安装 Mastery Tutor：https://github.com/fanfanfanfanfan626/mastery-tutor 。先读取并严格执行仓库根目录的 AI_INSTALL.md，识别当前 AI 宿主并安装完整的两个 Skill；发现旧版本先告诉我，不要直接覆盖或删除任何 .mastery 学习数据。若当前宿主是 Codex 且 codex --version 不可用，我允许你仅按 OpenAI 官方 Codex CLI 文档安装或修复正式 CLI；禁止复制 WindowsApps 内部程序、修改其权限、使用 skill-installer 或拆装嵌套 Skill。完成对应宿主的全部成功条件前不要宣称安装成功。
 ```
 
 The AI-readable router is [AI_INSTALL.md](AI_INSTALL.md). Package status and feature limits are in

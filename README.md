@@ -8,11 +8,11 @@ your own workspace.
 It ships as one product with two cooperating Skills: `mastery-coach` teaches and tracks learning;
 `mastery-tool-creator` builds the interactive labs a lesson actually needs.
 
-[简体中文](README.zh-CN.md) · [AI one-prompt install](AI_INSTALL.md) ·
+[Website](https://fanfanfanfanfan626.github.io/mastery-tutor/) · [简体中文](README.zh-CN.md) · [AI one-prompt install](AI_INSTALL.md) ·
 [Manual install](INSTALL.md) · [Compatibility](COMPATIBILITY.md)
 
-[![CI](https://github.com/fanfanfanfanfan626/mastery-tutor/actions/workflows/verify.yml/badge.svg)](https://github.com/fanfanfanfan626/mastery-tutor/actions/workflows/verify.yml)
-[![Release](https://img.shields.io/github/v/release/fanfanfanfanfan626/mastery-tutor?label=release)](https://github.com/fanfanfanfan626/mastery-tutor/releases)
+[![CI](https://github.com/fanfanfanfanfan626/mastery-tutor/actions/workflows/verify.yml/badge.svg)](https://github.com/fanfanfanfanfan626/mastery-tutor/actions/workflows/verify.yml)
+[![Release](https://img.shields.io/github/v/release/fanfanfanfanfan626/mastery-tutor?label=release)](https://github.com/fanfanfanfanfan626/mastery-tutor/releases)
 
 > **Release status:** `main` is the next release candidate. The latest published package still uses
 > the legacy Mastery Learning identity; do not describe `main` as a released adapter until the E2
@@ -135,3 +135,7 @@ dedicated issue form so compatibility claims stay reproducible.
 
 [MIT](LICENSE)
 
+## Related projects
+
+- [Idea Council](https://github.com/fanfanfanfanfan626/challenge-and-refine-ideas) helps an agent clarify and stress-test ideas before implementation.
+- [Persistent AI Studio](https://github.com/fanfanfanfanfan626/orchestrate-agent-organization) governs authorized multi-agent product work across tasks.
